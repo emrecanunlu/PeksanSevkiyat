@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_500">#4A4A4A</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_light">#C2C2C2</color>
+    <color name="replik">#010052</color>
+    <color name="replik_200">#1C1B71</color>
+    <color name="replik_700">#040339</color>
+    <color name="button_border">#707070</color>
+    <color name="fragment_bg">#2D3340</color>
+    <color name="btn_green">#1D512B</color>
+    <color name="btn_red">#571617</color>
+</resources>

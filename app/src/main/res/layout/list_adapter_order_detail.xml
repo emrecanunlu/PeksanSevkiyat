@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/txtStokKodu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="055.057CSP30B"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/txtStok"
+            app:layout_constraintTop_toBottomOf="@+id/txtStok" />
+
+        <TextView
+            android:id="@+id/txtStok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="32mm. Tek Parça Çakma Pet Sise Kapagi (Distan Yirtmali)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtYapi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="3dp"
+            android:text="Sarı01 / Sarı01 / -"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/txtStokKodu"
+            app:layout_constraintTop_toBottomOf="@+id/txtStok" />
+
+        <TextView
+            android:id="@+id/txtPaletTipi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EURO PALET"
+            app:layout_constraintStart_toStartOf="@+id/txtStokKodu"
+            app:layout_constraintTop_toBottomOf="@+id/txtStokKodu" />
+
+        <TextView
+            android:id="@+id/txtSevkSekli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="60 KOLİ PALETTE kalem"
+            app:layout_constraintStart_toStartOf="@+id/txtPaletTipi"
+            app:layout_constraintTop_toBottomOf="@+id/txtPaletTipi" />
+
+        <TextView
+            android:id="@+id/txtToplanan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/txtMiktar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="10000"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/txtSlash"
+            app:layout_constraintTop_toTopOf="@+id/txtToplanan" />
+
+        <TextView
+            android:id="@+id/txtSlash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="3dp"
+            android:text="/"
+            app:layout_constraintEnd_toStartOf="@+id/txtToplanan"
+            app:layout_constraintTop_toTopOf="@+id/txtToplanan" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/txtSipNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="321654987654321ST"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtCari"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="osman pazarlama aş hizmetleri genel müdürlüğü"
+            app:layout_constraintStart_toStartOf="@+id/txtSipNo"
+            app:layout_constraintTop_toBottomOf="@+id/txtSipNo" />
+
+        <TextView
+            android:id="@+id/txtTarih"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="21.01.2023"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtSipNo" />
+
+        <TextView
+            android:id="@+id/txtNumuneMi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="halilin siparişi"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/txtCari"
+            app:layout_constraintTop_toBottomOf="@+id/txtCari" />
+
+        <TextView
+            android:id="@+id/txtSipHemenSevk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 kalem"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtCari" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

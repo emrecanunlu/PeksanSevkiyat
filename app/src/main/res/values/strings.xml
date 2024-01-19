@@ -1,0 +1,108 @@
+<resources>
+    <string name="company_name">REPLİK</string>
+    <string name="app_name">PEKSAN - SEVKİYAT</string>
+    <string name="loading">Yükleniyor...</string>
+    <!-- Strings related to login -->
+    <string name="empty"></string>
+    <string name="sample_url">http://192.168.1.11:7057/</string>
+    <string name="url_error">Sunucu Bilgisi Hatalı</string>
+    <string name="dot">...</string>
+    <string name="user_name">Kullanıcı Adı</string>
+    <string name="password">Şifre</string>
+    <string name="prompt_email">Kullanıcı Adı</string>
+    <string name="login">GİRİŞ</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu">İŞLEMLER</string>
+    <string name="menu_palette">PALET İŞLEMLERİ</string>
+    <string name="menu_palette_add">PALET OLUŞTUR / DÜZENLE</string>
+    <string name="menu_palette_edit">PALET SİL / DÜZENLE</string>
+    <string name="menu_palette_print">PALET ETİKET YAZDIRMA</string>
+    <string name="menu_order">SİPARİŞ İŞLEMLERİ</string>
+    <string name="menu_order_send">SİPARİŞ SEVK</string>
+    <string name="menu_settings">AYARLAR</string>
+    <string name="palette_add">PALET OLUŞTUR</string>
+    <string name="palette_edit">PALET DÜZENLE</string>
+    <string name="test_user">HALİL</string>
+    <string name="search">Arama</string>
+    <string name="barcode">Barkod</string>
+    <string name="please_select_user">Lütfen Personel Seçimi Yapınız.</string>
+    <string name="please_select">Seçiniz...</string>
+    <string name="error">HATA</string>
+    <string name="danger">UYARI</string>
+    <string name="cancel">İPTAL</string>
+    <string name="close">KAPAT</string>
+    <string name="print_pallet">PALET ETİKETİ</string>
+    <string name="del_pallet">PALETİ TAMAMEN SİL</string>
+    <string name="seri">Seri</string>
+    <string name="stock_code">Stok Kodu</string>
+    <string name="code">Kod</string>
+    <string name="stock">Stok</string>
+    <string name="order_detail_column_stok">Gövde / Üst / Logo</string>
+    <string name="quantity_koli">Koli</string>
+    <string name="quantity_collected_koli">T.Koli</string>
+    <string name="quantity">Miktar</string>
+    <string name="quantity2">Miktar2</string>
+    <string name="error_pallet_barcode">Lütfen Palet Barkodu Okutunuz</string>
+    <string name="error_wrong_pallet">Seri Başka Palette Tanımlı</string>
+    <string name="no">HAYIR</string>
+    <string name="yes">EVET</string>
+    <string name="sure">Emin Misiniz?</string>
+    <string name="question_pallet_detail_delete">Seri Paletten Silinecek</string>
+    <string name="question_pallet_delete">Palet Tamamen Silinecek</string>
+    <string name="question_pallet_detail_add">Seri Palete Eklenecek</string>
+    <string name="question_order_detail_delete">Toplanmış Seri/Palet \nSiparişten Silinecek</string>
+    <string name="success">İşlem Başarılı</string>
+    <string name="no_pallet">Palet Bulunamadı</string>
+    <string name="sip_list">Sipariş Listesi</string>
+    <string name="sip_no">Sipariş No</string>
+    <string name="sip_cari">Müşteri</string>
+    <string name="finish_order">SİPARİŞİ SONLANDIR</string>
+    <string name="finish_order_end">SEVK İŞLEMİNİ BİTİR</string>
+    <string name="date">Tarih</string>
+    <string name="question_order_detail_back">Sipariş Sevk İşlemi Yarıda Kalacak</string>
+    <string name="question_order_finish">Sipariş Sevk Edilecek</string>
+    <string name="question_order_shipping_add">Yeni Teslimat Bilgisi Oluşturulacak</string>
+    <string name="question_pallet_print">Palet Etiketi Yazıdırılacak\nLütfen Yazıcınızı Kontrol Ediniz!</string>
+    <string name="question_end">İşlem Sonlandırılacak</string>
+    <string name="question_new_version">Yeni Versiyon Mevcut Kurulsun mu?</string>
+    <string name="save">KAYDET</string>
+    <string name="set_quantity">MİKTAR GİRİNİZ</string>
+    <string name="empty_list">Liste Boş</string>
+    <string name="info">BİLGİ</string>
+    <string name="question_pallet_not_print">UYARI\nPalet Etiketi Yazdırılmadı!\nYazdırmayı Başlat</string>
+    <string name="order_tasiyici_bilgileri">TAŞIYICI BİLGİLERİ</string>
+    <string name="order_plaka">PLAKA *</string>
+    <string name="order_vergino">VERGİ NO *</string>
+    <string name="order_isim">İSİM *</string>
+    <string name="order_ilce">İLÇE *</string>
+    <string name="order_il">İL *</string>
+    <string name="order_ulke">ÜLKE *</string>
+    <string name="order_posta">POSTA KODU *</string>
+    <string name="order_sofor_ad">ŞOFÖR AD *</string>
+    <string name="order_sofor_soyad">ŞOFÖR SOYAD *</string>
+    <string name="order_sofor_aciklama">AÇIKLAMA</string>
+    <string name="order_sofor_tc">ŞOFÖR TC *</string>
+    <string name="order_sofor_dorse">DORSE PLAKA</string>
+    <string name="order_sofor_dorse2">DORSE PLAKA 2</string>
+    <string name="add_order_shipping">TESLİMAT BİLGİSİ EKLE</string>
+    <string name="server_address">Api Adresi</string>
+    <string name="printer_name">Yazıcı</string>
+    <string name="not_empty">Boş Geçilemez!</string>
+
+    <string-array name="planets_array">
+        <item>MERCURY</item>
+        <item>VENUS</item>
+        <item>EARTH</item>
+        <item>MARS</item>
+        <item>SATURN</item>
+        <item>URANUS</item>
+    </string-array>
+</resources>
