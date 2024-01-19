@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity implements Interfaces.Bl
     Button btnSearch, btnSave;
     TextView txtUserName;
     AlertDialog alert;
+    private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity implements Interfaces.Bl
         setContentView(R.layout.activity_settings);
 
         txtApiUrl = findViewById(R.id.txtApiUrl);
-        txtApiUrl.setText(GlobalVariable.getApiUrl());
+        txtApiUrl.setText(GlobalVariable.getApiUrl() == null ? "http://192.168.2.251:7076/" : GlobalVariable.getApiUrl());
         txtPrinterName = findViewById(R.id.txtPrinterName);
         txtPrinterName.setText(GlobalVariable.printerName);
 
@@ -73,7 +76,8 @@ public class SettingsActivity extends AppCompatActivity implements Interfaces.Bl
                 GlobalVariable.setApiUrl(txtApiUrl.getText().toString());
                 GlobalVariable.setPrinter(txtPrinterName.getText().toString());
 
-                fnWriteText("URL|" + txtApiUrl.getText().toString(), "PRN|" + txtPrinterName.getText().toString());
+                // fnWriteText("URL|" + txtApiUrl.getText().toString(), "PRN|" + txtPrinterName.getText().toString());
+                writeDatabase(txtApiUrl.getText().toString(), txtPrinterName.getText().toString());
 
                 onBackPressed();
             }
@@ -119,6 +123,23 @@ public class SettingsActivity extends AppCompatActivity implements Interfaces.Bl
             e.printStackTrace();
         }
     }
+
+    void writeDatabase(String apiUrl, String printerName) {
+        database = this.openOrCreateDatabase("PeksanSevkiyat", MODE_PRIVATE, null);
+        Cursor cursor = database.rawQuery("SELECT * FROM Parameter",null);
+
+        boolean hasValue = false;
+
+        while (cursor.moveToNext()) {
+            hasValue = true;
+        }
+
+        if(hasValue)
+            database.execSQL("UPDATE Parameter SET apiUrl = '"+apiUrl+"', printerName = '"+printerName+"' WHERE id = 1");
+        else
+            database.execSQL("INSERT INTO Parameter (id, apiUrl, printerName) VALUES(1, '"+apiUrl+"', '"+printerName+"')");
+    }
+
     void requestPer() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             requestPermissions(new String[] {

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -61,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList personelList;
     PersonelList personels;
     Integer SelectedPersonelId = -1;
+
+    private SQLiteDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!GlobalVariable.apiUrl.isEmpty()) {
+                    apiInterface = APIClient.getRetrofit().create(APIInterface.class);
                     getPersonelList();
                     imgRefresh.setVisibility(View.GONE);
                 }
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ///Check Global Variable
-        boolean a = fileExist();
+        boolean a = checkDatabase();// fileExist();
         if(!a) {
             Intent i = new Intent(context, SettingsActivity.class);
             startActivity(i);
@@ -114,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
             imgRefresh.setVisibility(View.VISIBLE);
         }
         else {
-            fnReadText();
+            readDatabase();
+            //fnReadText();
 
             apiInterface = APIClient.getRetrofit().create(APIInterface.class);
             //Version Control
@@ -166,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 nDialog.hide();
                 if(response.isSuccessful()) {
                     if (!response.body().getVersion().equals(GlobalVariable.apiVersion)) {
-                        fnNewVersionDownload(response.body().getUrl());
+                         fnNewVersionDownload(response.body().getUrl());
                     }
                 }
                 else{
@@ -255,23 +262,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PersonelList> call, Response<PersonelList> response) {
                 nDialog.hide();
-                if(response.body().getSuccess())
-                {
-                    personels = response.body();
-                    personelList = new ArrayList<>();
-                    personelList.add(getString(R.string.please_select));
-                    for (Personel p : response.body().getPersonels()) {
-                        personelList.add(p.getFirstName() + " " + p.getLastName());
-                    }
+                if(response != null) {
+                    if (response.body().getSuccess()) {
+                        personels = response.body();
+                        personelList = new ArrayList<>();
+                        personelList.add(getString(R.string.please_select));
+                        for (Personel p : response.body().getPersonels()) {
+                            personelList.add(p.getFirstName() + " " + p.getLastName());
+                        }
 
-                    ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, personelList);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    ddlUser.setAdapter(adapter);
-                }
-                else {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
-                    alert.show();
+                        ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, personelList);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        ddlUser.setAdapter(adapter);
+                    } else {
+                        nDialog.hide();
+                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                        alert.show();
+                    }
                 }
             }
 
@@ -347,5 +354,44 @@ public class MainActivity extends AppCompatActivity {
         File path = new File(Environment.getExternalStorageDirectory().getPath() + GlobalVariable.FileName);
         boolean a = path.exists();
         return a;
+    }
+
+    boolean checkDatabase() {
+        database = this.openOrCreateDatabase("PeksanSevkiyat", MODE_PRIVATE, null);
+        database.execSQL("CREATE TABLE IF NOT EXISTS Parameter (id INT, apiUrl VARCHAR, printerName VARCHAR)");
+        Cursor cursor = database.rawQuery("SELECT * FROM Parameter",null);
+
+        boolean hasValue = false;
+
+        hasValue = cursor.getCount() > 0 ? true : false;
+
+        if(hasValue) {
+            int apiUrlIndex = cursor.getColumnIndex("apiUrl");
+            int printerNameNoIndex = cursor.getColumnIndex("printerName");
+
+            while (cursor.moveToNext())
+                if(cursor.getString(apiUrlIndex).toString().equals(""))
+                    return false;
+            return true;
+        }
+        else
+        {
+            database.execSQL("INSERT INTO Parameter (id, apiUrl, printerName) VALUES(1, '', '')");
+            return false;
+        }
+    }
+
+    void readDatabase() {
+        database = this.openOrCreateDatabase("PeksanSevkiyat", MODE_PRIVATE, null);
+
+        Cursor cursor = database.rawQuery("SELECT * FROM Parameter",null);
+
+        int apiUrlIndex = cursor.getColumnIndex("apiUrl");
+        int printerNameNoIndex = cursor.getColumnIndex("printerName");
+
+        while (cursor.moveToNext()) {
+            GlobalVariable.setApiUrl(cursor.getString(apiUrlIndex));
+            GlobalVariable.setPrinter(cursor.getString(printerNameNoIndex));
+        }
     }
 }
