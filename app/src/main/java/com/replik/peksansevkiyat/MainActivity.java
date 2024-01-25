@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 nDialog.hide();
                 if(response.isSuccessful()) {
                     if (!response.body().getVersion().equals(GlobalVariable.apiVersion)) {
-                         fnNewVersionDownload(response.body().getUrl());
+                         fnNewVersionDownload(response.body().getUrl(), response.body().getDetail());
                     }
                 }
                 else{
@@ -189,10 +189,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void fnNewVersionDownload(String url) {
+    void fnNewVersionDownload(String url, String detail) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(getString(R.string.sure));
-        builder.setMessage(getString(R.string.question_new_version));
+        builder.setTitle(getString(R.string.question_new_version));//getString(R.string.sure));
+        builder.setMessage(detail);//getString(R.string.question_new_version));
         builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

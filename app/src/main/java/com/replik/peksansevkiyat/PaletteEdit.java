@@ -46,7 +46,7 @@ public class PaletteEdit extends AppCompatActivity {
     Context context = PaletteEdit.this;
 
     ImageButton imgLogo, imgSettings;
-    TextView txtUserName, txtBarcode;
+    TextView txtUserName, txtBarcode, lblBoxCount;
     ListView lstData;
     Button btnPalletDelete;
 
@@ -63,6 +63,8 @@ public class PaletteEdit extends AppCompatActivity {
 
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtUserName.setText(GlobalVariable.getUserName());
+
+        lblBoxCount = (TextView) findViewById(R.id.lblBoxCount);
 
         imgSettings = findViewById(R.id.imgSettings);
         imgSettings.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +85,7 @@ public class PaletteEdit extends AppCompatActivity {
 
 
         txtBarcode = findViewById(R.id.txtSearch);
-        txtBarcode.setShowSoftInputOnFocus(false);
+        //txtBarcode.setShowSoftInputOnFocus(false);
         txtBarcode.setInputType(InputType.TYPE_NULL);
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -114,6 +116,7 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnBarcodeControl(String barcode) {
+        lblBoxCount.setText("0");
         txtBarcode.setText("");
         nDialog.show();
         if(barcode.endsWith("PLT"))
@@ -327,6 +330,8 @@ public class PaletteEdit extends AppCompatActivity {
                 btnPalletDelete.setVisibility(View.VISIBLE);
                 lst.add(p);
             }
+
+        lblBoxCount.setText(String.valueOf(lst.size()));
 
         ListAdapter_PalletDetail adapter = new ListAdapter_PalletDetail(context, R.layout.list_adapter_pallet_detail, lst);
         lstData.setAdapter(adapter);

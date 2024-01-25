@@ -19,65 +19,98 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APIInterface {
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getApkVersion")
     Call<ApkVersion> getApkVersion();
 
     // --------------- GET
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getPersonels")
     Call<PersonelList> getUserList();
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getSeriControl/{staffId}/{seri}")
     Call<spSeritraSingle> getSeriControl(@Path("staffId") Number staffId, @Path("seri") String barcode);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getSeriControlFromPallet/{staffId}/{seri}")
     Call<dtoPalletDetailAndSeritra_data> getSeriControlFromPallet(@Path("staffId") Number staffId, @Path("seri") String barcode);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getPalletControlByID/{staffId}/{id}")
     Call<PalletSingle> getPalletControl(@Path("staffId") Number staffId, @Path("id") Integer Id);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getPalletControl/{staffId}/{barcode}")
     Call<PalletSingle> getPalletControl(@Path("staffId") Number staffId, @Path("barcode") String barcode);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getPalletDetail/{staffId}/{palletId}")
     Call<PalletDetailList> getPalletDetail(@Path("staffId") Number staffId, @Path("palletId") Number palletId);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getOrderList/{staffId}")
     Call<OrderList> getOrderList(@Path("staffId") Number staffId, @Query("search") String search);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getOrderDetailList/{staffId}/{sipNo}")
     Call<OrderDetailList> getOrderDetailList(@Path("staffId") Number staffId, @Path("sipNo") String sipNo);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getPalletPrint/{staffId}")
     Call<dtoPalletPrint.PalletPrintList> getPalletPrint(@Path("staffId") Number staffId);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/getOrderShippingList/{staffId}")
     Call<OrderShippingList> getOrderShippingList(@Path("staffId") Number staffId, @Query("search") String search);
 
     // --------------- SET
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/setPalletDetail")
     Call<PalletDetailList> setPalletDetail(@Body PalletDetailDtos.setPalletDetailColumn palletDetailColumn);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/setPalletPrint")
     Call<Result> setPalletPrint(@Body getStandartLong getStandartLong);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/setOrderCollectedByBarcode")
     Call<Result> setOrderCollectedByBarcode(@Body OrderDtos.setPickingItem pickingData);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/setOrderStatus")
     Call<Result> setOrderStatus(@Body OrderDtos.setOrderStatus data);
 
     // --------------- DELETE
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @HTTP(method = "DELETE", path = "api/delPalletDetail", hasBody = true)
     Call<PalletDetailList> delPalletDetail(@Body PalletDetailDtos.delPalletDetailColumn delPalletDetailColumn);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @HTTP(method = "DELETE", path = "api/delPallet", hasBody = true)
     Call<Result> delPallet(@Body getStandartLong delStandartColumn);
 
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @HTTP(method = "DELETE", path = "api/delOrderPicking", hasBody = true)
     Call<Result> delOrderPicking(@Body OrderDtos.delPickingItem delPickingItem);
+
+
+    // --------------- NETSIS PROP
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/setNetsisEIrsPacked/{belgeNo}")
+    Call<Result> setNetsisEIrsPacked(@Path("belgeNo") String belgeNo);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/setNetsisEIrsSend/{belgeNo}/{cariKod}")
+    Call<Result> setNetsisEIrsSend(@Path("belgeNo") String belgeNo, @Path("cariKod") String cariKod);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/setNetsisPrint/{gibBelgeNo}")
+    Call<Result> setNetsisPrint(@Path("gibBelgeNo") String gibBelgeNo);
 }

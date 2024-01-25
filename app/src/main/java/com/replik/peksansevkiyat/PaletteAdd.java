@@ -49,7 +49,7 @@ public class PaletteAdd extends AppCompatActivity {
     Context context = PaletteAdd.this;
 
     ImageButton imgLogo, imgSettings;
-    TextView txtUserName, txtBarcode;
+    TextView txtUserName, txtBarcode, lblBoxCount;
     ListView lstData;
     Button btnPalletPrint;
 
@@ -67,6 +67,8 @@ public class PaletteAdd extends AppCompatActivity {
 
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtUserName.setText(GlobalVariable.getUserName());
+
+        lblBoxCount = (TextView) findViewById(R.id.lblBoxCount);
 
         imgSettings = findViewById(R.id.imgSettings);
         imgSettings.setOnClickListener(new View.OnClickListener() {
@@ -191,6 +193,7 @@ public class PaletteAdd extends AppCompatActivity {
     }
 
     void fnSeriControl(String barcode) {
+        lblBoxCount.setText("0");
         txtBarcode.setText("");
         nDialog.show();
         if(barcode.endsWith("PLT"))
@@ -300,6 +303,8 @@ public class PaletteAdd extends AppCompatActivity {
             btnPalletPrint.setVisibility(View.VISIBLE);
             lst.add(p);
         }
+
+        lblBoxCount.setText(String.valueOf(lst.size()));
 
         //paletin barkodunu bul
         apiInterface.getPalletControl(GlobalVariable.getUserId(), palletId).enqueue(new Callback<PalletSingle>() {

@@ -266,13 +266,89 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                         nDialog.dismiss();
 
                         if(response.body().getSuccess()) {
-                            alert = Alert.getAlert(context,getString(R.string.info), response.body().getMessage());
-                            alert.show();
 
-                            Intent ii = new Intent(context, OrderActivity.class);
-                            startActivity(ii);
+                            String IrsNo = response.body().getMessage().replace("|","-").split("-")[0].toString();
+                            String GibIrsNo = response.body().getMessage().replace("|","-").split("-")[1].toString();
 
-                            finish();
+                            //HT: işlemler bölündü o yüzden bu işlemin ardından taslak ve print işlemlerine ayrı ayrı post at
+                            // ----- TASLAK OLUSTUR
+                            nDialog.show();
+                            apiInterface.setNetsisEIrsPacked(IrsNo).enqueue(new Callback<Result>() {
+                                @Override
+                                public void onResponse(Call<Result> call, Response<Result> response) {
+                                    nDialog.dismiss();
+
+                                    if(response.body().getSuccess()) {
+                                        // ---- YAZDIRMA GÖNDER
+                                        nDialog.show();
+                                        apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
+                                            @Override
+                                            public void onResponse(Call<Result> call, Response<Result> response) {
+                                                nDialog.dismiss();
+
+                                                finish();
+
+                                                Intent ii = new Intent(context, OrderActivity.class);
+                                                startActivity(ii);
+
+                                                if(response.body().getSuccess()) {
+                                                    alert = Alert.getAlert(context,getString(R.string.info), response.body().getMessage());
+                                                    alert.show();
+                                                }
+                                                else {
+                                                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                                    alert.show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Result> call, Throwable t) {
+                                                nDialog.dismiss();
+                                                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+                                                alert.show();
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                        alert.show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Result> call, Throwable t) {
+                                    //HT:TimeOut sorunu çözülene kadar geçici olarak timeout yazsa bile sistemi yazdırmaya yönlendir yapıyor
+                                    // ---- YAZDIRMA GÖNDER
+                                    nDialog.show();
+                                    apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
+                                        @Override
+                                        public void onResponse(Call<Result> call, Response<Result> response) {
+                                            nDialog.dismiss();
+
+                                            finish();
+
+                                            Intent ii = new Intent(context, OrderActivity.class);
+                                            startActivity(ii);
+
+                                            if(response.body().getSuccess()) {
+                                                alert = Alert.getAlert(context,getString(R.string.info), response.body().getMessage());
+                                                alert.show();
+                                            }
+                                            else {
+                                                alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                                alert.show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Result> call, Throwable t) {
+                                            nDialog.dismiss();
+                                            alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+                                            alert.show();
+                                        }
+                                    });
+                                }
+                            });
                         }
                         else {
                             alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());

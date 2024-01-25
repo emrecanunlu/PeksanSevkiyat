@@ -84,7 +84,8 @@
                     android:layout_height="@dimen/fifty"
                     android:layout_marginLeft="@dimen/forty"
                     android:layout_marginTop="@dimen/ten"
-                    android:layout_marginRight="@dimen/forty"
+                    android:layout_marginRight="@dimen/twenty"
+                    android:layout_weight="1"
                     android:backgroundTint="@color/white_light"
                     android:ems="10"
                     android:hint="@string/barcode"
@@ -92,6 +93,18 @@
                     android:inputType="textPersonName"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white_light" />
+
+                <TextView
+                    android:id="@+id/lblBoxCount"
+                    android:layout_width="@dimen/forty"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten"
+                    android:layout_marginEnd="@dimen/ten"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
