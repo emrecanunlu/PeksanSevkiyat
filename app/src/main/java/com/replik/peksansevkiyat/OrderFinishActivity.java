@@ -317,7 +317,7 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
 
                                 @Override
                                 public void onFailure(Call<Result> call, Throwable t) {
-                                    //HT:TimeOut sorunu çözülene kadar geçici olarak timeout yazsa bile sistemi yazdırmaya yönlendir yapıyor
+                                    /// HT:TimeOut sorunu çözülene kadar geçici olarak timeout yazsa bile sistemi yazdırmaya yönlendir yapıyor
                                     // ---- YAZDIRMA GÖNDER
                                     nDialog.show();
                                     apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
