@@ -109,7 +109,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                     public void onClick(DialogInterface dialogInterface, int ii) {
                         try {
 
-                            String printData = "SIZE 57 mm,60 mm\nGAP 0 mm,0 mm\nCLS" +
+                            String printData = "SIZE 75 mm,75 mm\nGAP 0 mm,0 mm\nCLS" +
                                     "\nTEXT 20 mm,35 mm,\"2\",0,1.5 mm,1.5 mm,\""+txtSipNo.getText().toString()+"\"";
 
                             String cari = txtSipCari.getText().toString();
