@@ -90,8 +90,9 @@ public class PaletteAdd extends AppCompatActivity {
         lstData = findViewById(R.id.lstData);
 
         txtBarcode = findViewById(R.id.txtSearch);
-        txtBarcode.setShowSoftInputOnFocus(false);
+        //txtBarcode.setShowSoftInputOnFocus(false);
         txtBarcode.setInputType(InputType.TYPE_NULL);
+        txtBarcode.requestFocus();
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(event.getAction() == KeyEvent.ACTION_UP){
@@ -255,11 +256,11 @@ public class PaletteAdd extends AppCompatActivity {
         apiInterface.getSeriControl(GlobalVariable.getUserId(), barcode).enqueue(new Callback<spSeritraSingle>() {
             @Override
             public void onResponse(Call<spSeritraSingle> call, Response<spSeritraSingle> response) {
-                if(response.body().getSuccess())
+                if(response.body().getSuccess() && response.body().getSpSeritra() != null)
                     fnSetPalletDetail(response.body().getSpSeritra());
                 else {
                     nDialog.hide();
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage().toString().equals("") ?"SERİ TANIMLI DEĞİLDİR." : response.body().getMessage());
                     alert.show();
                 }
             }

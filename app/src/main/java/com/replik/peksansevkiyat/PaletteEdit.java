@@ -87,6 +87,7 @@ public class PaletteEdit extends AppCompatActivity {
         txtBarcode = findViewById(R.id.txtSearch);
         //txtBarcode.setShowSoftInputOnFocus(false);
         txtBarcode.setInputType(InputType.TYPE_NULL);
+        txtBarcode.requestFocus();
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(event.getAction() == KeyEvent.ACTION_UP){
