@@ -96,11 +96,11 @@
 
                 <TextView
                     android:id="@+id/lblBoxCount"
-                    android:layout_width="@dimen/forty"
+                    android:layout_width="@dimen/fifty"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ten"
                     android:layout_marginEnd="@dimen/ten"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:text="0"
                     android:textAlignment="textEnd"
                     android:textColor="@color/white"
