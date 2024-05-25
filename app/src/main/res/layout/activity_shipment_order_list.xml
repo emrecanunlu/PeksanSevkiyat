@@ -2,18 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/replik"
-    tools:context="com.replik.peksansevkiyat.MenuActivity">
+    tools:context=".ShipmentCustomerListActivity">
+
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -50,7 +49,7 @@
                     android:id="@+id/txtMenuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu"
+                    android:text="@string/order_list"
                     android:textColor="@color/white_light" />
             </LinearLayout>
 
@@ -67,51 +66,50 @@
 
         </LinearLayout>
 
-        <ScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/fragment_bg">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/forty"
-                android:layout_marginTop="@dimen/thirty"
-                android:layout_marginRight="@dimen/forty"
-                android:orientation="vertical">
+                android:layout_margin="@dimen/ten"
+                app:cardBackgroundColor="@color/purple_500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                >
 
-                <Button
-                    android:id="@+id/btnPaletteAdd"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:text="@string/menu_palette"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five">
 
-                <Button
-                    android:id="@+id/btnPaletteEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_order"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    <TextView
+                        android:id="@+id/customer_fullname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <Button
-                    android:id="@+id/btnShipment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_shipment"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    <TextView
+                        android:id="@+id/customer_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty"
+                        android:textColor="@color/white_light"
+                        app:layout_constraintStart_toStartOf="@+id/customer_fullname"
+                        app:layout_constraintTop_toBottomOf="@+id/customer_fullname" />
 
-            </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </ScrollView>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 
