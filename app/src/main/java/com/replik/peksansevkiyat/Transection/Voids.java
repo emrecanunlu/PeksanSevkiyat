@@ -11,8 +11,11 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class Voids {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+public class Voids {
 
     public static Bitmap generateQr(String code, Integer w, Integer h) {
         if (!code.isEmpty()) {
@@ -22,7 +25,10 @@ public class Voids {
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                 Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
                 return bitmap;
-            }catch (Exception e) {e.printStackTrace(); return null; }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
         return null;
     }
@@ -65,5 +71,22 @@ public class Voids {
         bmp1.recycle();
         bmp2.recycle();
         return bmOverlay;
+    }
+
+    public static String formatDate(String dateString) {
+        // Giriş formatını belirleyin
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        // Çıkış formatını belirleyin
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        try {
+            // Tarihi giriş formatına göre parse edin
+            Date date = inputFormat.parse(dateString);
+            // Tarihi çıkış formatında formatlayın
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Geçersiz Tarih";
+        }
     }
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/txtSevkNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0000000001"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtTarih"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="14/02/2023"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/txtAlici"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alıcı: Emrecan Ünlü"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtSevkNo" />
+
+        <TextView
+            android:id="@+id/txtNakliye"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nakliye Tipi: NAK Kargo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtAlici" />
+
+        <TextView
+            android:id="@+id/txtAdet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 Adet"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtNakliye" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
