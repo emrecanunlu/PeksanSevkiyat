@@ -3,6 +3,7 @@ package com.replik.peksansevkiyat.Interface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.ApkVersion;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Dtos.dtoPalletDetailAndSeritra_data;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Dtos.getStandartLong;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
@@ -126,4 +127,8 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/Shipment/SevkList")
     Call<List<CustomerOrder>> getCustomerOrders(@Query("cariKod") String customerCode);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/Shipment/OrderList")
+    Call<List<CustomerOrderDetail>> getOrderDetail(@Query("sevkNo") String sevkNo);
 }

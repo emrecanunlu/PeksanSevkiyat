@@ -16,7 +16,6 @@ public class MenuActivity extends AppCompatActivity {
     Button btnMenuPalette, btnMenuOrder, btnShipment;
     ImageButton imgLogo, imgSettings;
     TextView txtUserName;
-
     Context context = MenuActivity.this;
 
     @Override

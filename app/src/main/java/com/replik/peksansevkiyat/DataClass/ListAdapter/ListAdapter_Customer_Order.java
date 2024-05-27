@@ -69,7 +69,7 @@ public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter
         holder.sevkNoTextView.setText(customerOrder.getSevkNo());
         holder.receiverTextView.setText("Alıcı: " + customerOrder.getTeslimAdi());
         holder.shippingTextView.setText("Nakliye Tipi: " + customerOrder.getNakliyeTipi());
-        holder.dateTextView.setText(Voids.formatDate(customerOrder.getCreatedAt()));
+        holder.dateTextView.setText(Voids.formatDate(customerOrder.getShipmentDate()));
         holder.productQuantityTextView.setText(customerOrder.getKoliAdet() + " Adet");
     }
 

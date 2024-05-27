@@ -8,7 +8,6 @@
     android:background="@color/replik"
     tools:context=".ShipmentCustomerListActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -66,36 +65,43 @@
 
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/fragment_bg">
+            android:background="@color/fragment_bg"
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/customer_list_recycler_view"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/eight" />
+                android:layout_height="match_parent">
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pnlProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#2AE1E1E1">
-
-                <ProgressBar
-                    style="?android:attr/progressBarStyle"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/customer_list_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/eight" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </RelativeLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pnlProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#2AE1E1E1">
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -39,7 +39,7 @@ public class OrderDtos {
             this.barcode = Barcode;
         }
     }
-    
+
     public static class setOrderStatus {
         @SerializedName("sipNo")
         String sipNo;

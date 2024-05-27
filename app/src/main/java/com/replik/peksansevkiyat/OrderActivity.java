@@ -89,7 +89,7 @@ public class OrderActivity extends AppCompatActivity implements ListenerInterfac
         txtSearch = findViewById(R.id.txtSearch);
         txtSearch.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(event.getAction() == KeyEvent.ACTION_UP){
+                if (event.getAction() == KeyEvent.ACTION_UP) {
                     lst = new ArrayList<>();
                     fnGetData(txtSearch.getText().toString());
                     return true;
@@ -105,10 +105,10 @@ public class OrderActivity extends AppCompatActivity implements ListenerInterfac
             @Override
             public void onResponse(Call<OrderList> call, Response<OrderList> response) {
                 pBar.setVisibility(View.GONE);
-                if(response.body().getSuccess())
+                if (response.body().getSuccess())
                     adapter.setData(response.body().getOrder());
                 else {
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                     alert.show();
                 }
             }

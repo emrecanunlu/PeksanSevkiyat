@@ -76,6 +76,7 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
 
         settingsImageView.setOnClickListener(v -> {
             Intent i = new Intent(context, SettingsActivity.class);
+
             startActivity(i);
         });
 
@@ -104,6 +105,11 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
 
     @Override
     public void onItemClicked(CustomerOrder customerOrder) {
-        Log.i("Info", customerOrder.getSevkNo());
+        Intent i = new Intent(context, ShipmentOrderDetailActivity.class);
+
+        i.putExtra("customer", customer);
+        i.putExtra("order", customerOrder);
+
+        startActivity(i);
     }
 }

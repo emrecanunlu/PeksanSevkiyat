@@ -75,7 +75,7 @@ public class Voids {
 
     public static String formatDate(String dateString) {
         // Giriş formatını belirleyin
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         // Çıkış formatını belirleyin
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
 
