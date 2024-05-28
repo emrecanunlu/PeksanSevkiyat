@@ -278,7 +278,7 @@
                 android:id="@+id/txtBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/forty"
-                android:layout_marginVertical="@dimen/eight"
+                android:layout_marginVertical="@dimen/five"
                 android:layout_marginLeft="@dimen/forty"
                 android:layout_marginRight="@dimen/forty"
                 android:backgroundTint="@color/white_light"

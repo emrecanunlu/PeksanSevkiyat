@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +35,7 @@ public class ShipmentCustomerListActivity extends AppCompatActivity implements L
     RecyclerView customerListRecyclerView;
     ListAdapter_Customer customerListAdapter;
     TextView staffNameTextView;
+    EditText searchEditText;
     List<Customer> customerList = new ArrayList<>();
     ImageView logoImageView, settingsImageView;
     ConstraintLayout circularProgress;
@@ -45,6 +49,7 @@ public class ShipmentCustomerListActivity extends AppCompatActivity implements L
 
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
 
+        searchEditText = (EditText) findViewById(R.id.txtSearch);
         customerListRecyclerView = (RecyclerView) findViewById(R.id.customer_list_recycler_view);
         settingsImageView = (ImageView) findViewById(R.id.imgSettings);
         logoImageView = (ImageView) findViewById(R.id.imgLogo);
@@ -59,6 +64,17 @@ public class ShipmentCustomerListActivity extends AppCompatActivity implements L
         customerListRecyclerView.setAdapter(customerListAdapter);
         customerListRecyclerView.setLayoutManager(linearLayoutManager);
 
+        searchEditText.setOnKeyListener(
+                (v, keyCode, event) -> {
+
+                    if (event.getAction() == KeyEvent.ACTION_UP) {
+                        customerListAdapter.search(searchEditText.getText().toString().trim());
+                        return true;
+                    }
+
+                    return false;
+                }
+        );
 
         logoImageView.setOnClickListener(v -> {
             finish();
@@ -78,7 +94,9 @@ public class ShipmentCustomerListActivity extends AppCompatActivity implements L
                     @Override
                     public void onResponse(Call<List<Customer>> call, Response<List<Customer>> response) {
                         if (response.isSuccessful()) {
-                            customerListAdapter.setList(response.body());
+                            customerList = response.body();
+
+                            customerListAdapter.setList(customerList);
                         }
 
                         circularProgress.setVisibility(View.GONE);

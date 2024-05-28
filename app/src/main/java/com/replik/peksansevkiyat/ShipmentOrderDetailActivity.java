@@ -158,7 +158,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
                         } else {
                             alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-
                             alert.show();
                         }
 
