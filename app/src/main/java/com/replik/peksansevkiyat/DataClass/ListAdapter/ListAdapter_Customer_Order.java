@@ -1,5 +1,6 @@
 package com.replik.peksansevkiyat.DataClass.ListAdapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,14 @@ import org.w3c.dom.Text;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter_Customer_Order.ViewHolder> {
 
     private List<CustomerOrder> customerOrderList;
+    private List<CustomerOrder> searchList = new ArrayList<>();
     private ListenerInterface.ShipmentCustomerOrderListener shipmentCustomerOrderListener;
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -42,7 +45,7 @@ public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter
                     int pos = getAdapterPosition();
 
                     if (pos != RecyclerView.NO_POSITION) {
-                        shipmentCustomerOrderListener.onItemClicked(customerOrderList.get(pos));
+                        shipmentCustomerOrderListener.onItemClicked(searchList.get(pos));
                     }
                 }
             });
@@ -51,6 +54,7 @@ public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter
 
     public ListAdapter_Customer_Order(List<CustomerOrder> customerOrderList, ListenerInterface.ShipmentCustomerOrderListener shipmentCustomerOrderListener) {
         this.customerOrderList = customerOrderList;
+        this.searchList = new ArrayList<>(customerOrderList);
         this.shipmentCustomerOrderListener = shipmentCustomerOrderListener;
     }
 
@@ -64,7 +68,7 @@ public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CustomerOrder customerOrder = customerOrderList.get(position);
+        CustomerOrder customerOrder = searchList.get(position);
 
         holder.sevkNoTextView.setText(customerOrder.getSevkNo());
         holder.receiverTextView.setText("Alıcı: " + customerOrder.getTeslimAdi());
@@ -75,12 +79,32 @@ public class ListAdapter_Customer_Order extends RecyclerView.Adapter<ListAdapter
 
     @Override
     public int getItemCount() {
-        return this.customerOrderList.size();
+        return this.searchList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setList(List<CustomerOrder> customerOrderList) {
         this.customerOrderList.clear();
+        this.searchList.clear();
+
+        this.searchList = new ArrayList<>(customerOrderList);
         this.customerOrderList = customerOrderList;
+
+        notifyDataSetChanged();
+    }
+
+    public void search(String term) {
+        searchList.clear();
+
+        if (term.isEmpty()) {
+            searchList.addAll(customerOrderList);
+        } else {
+            for (CustomerOrder customerOrder : customerOrderList) {
+                if (customerOrder.getSevkNo().toString().contains(term)) {
+                    searchList.add(customerOrder);
+                }
+            }
+        }
 
         notifyDataSetChanged();
     }

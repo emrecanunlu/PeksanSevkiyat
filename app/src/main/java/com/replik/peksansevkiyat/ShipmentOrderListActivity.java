@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +35,7 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
 
     Customer customer;
     RecyclerView customerOrderListRecyclerView;
+    EditText searchEditText;
     List<CustomerOrder> orderList = new ArrayList<>();
     TextView staffNameTextView, customerNameTextView, customerCodeTextView;
     ImageView logoImageView, settingsImageView;
@@ -51,6 +54,7 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
 
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
 
+        searchEditText = (EditText) findViewById(R.id.txtSearch);
         customerOrderListRecyclerView = (RecyclerView) findViewById(R.id.customer_order_list_recycler_view);
         settingsImageView = (ImageView) findViewById(R.id.imgSettings);
         logoImageView = (ImageView) findViewById(R.id.imgLogo);
@@ -69,6 +73,18 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
         listAdapterCustomerOrder = new ListAdapter_Customer_Order(orderList, this);
         customerOrderListRecyclerView.setAdapter(listAdapterCustomerOrder);
         customerOrderListRecyclerView.setLayoutManager(linearLayoutManager);
+
+        searchEditText.setOnKeyListener(
+                (v, keyCode, event) -> {
+                    if (event.getAction() == KeyEvent.ACTION_UP) {
+                        final String term = searchEditText.getText().toString().toLowerCase().trim();
+
+                        listAdapterCustomerOrder.search(term);
+                    }
+
+                    return  false;
+                }
+        );
 
         logoImageView.setOnClickListener(v -> {
             finish();
