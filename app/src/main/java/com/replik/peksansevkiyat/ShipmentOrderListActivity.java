@@ -82,7 +82,7 @@ public class ShipmentOrderListActivity extends AppCompatActivity implements List
                         listAdapterCustomerOrder.search(term);
                     }
 
-                    return  false;
+                    return false;
                 }
         );
 

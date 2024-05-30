@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,8 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderProduct;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.Interface.APIClient;
 import com.replik.peksansevkiyat.Interface.APIInterface;
@@ -33,6 +36,7 @@ import com.replik.peksansevkiyat.Transection.Voids;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +49,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
     ProgressDialog loader;
     AlertDialog alert;
     APIInterface apiInterface;
+    ConstraintLayout progressBar;
     TextView staffNameTextView, sipNoTextView, customerTextView, shippingNameTextView, deliveryNameTextView, deliveryAddressTextView, deliveryDate;
     ListAdapter_Customer_Order_Detail listAdapter;
     RecyclerView recyclerView;
@@ -66,6 +71,8 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
 
         loader = Dialog.getDialog(context, getString(R.string.loading));
+
+        progressBar = (ConstraintLayout) findViewById(R.id.pnlProgressBar);
         barcodeEditText = (EditText) findViewById(R.id.txtBarcode);
         recyclerView = (RecyclerView) findViewById(R.id.customer_order_detail_list_recycler_view);
         logoImageView = (ImageView) findViewById(R.id.imgLogo);
@@ -120,6 +127,8 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
     }
 
     void fetchOrderDetailList() {
+        progressBar.setVisibility(View.VISIBLE);
+
         apiInterface.getOrderDetail(order.getSevkNo()).enqueue(
                 new Callback<List<CustomerOrderDetail>>() {
                     @Override
@@ -128,48 +137,122 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                             customerOrderDetailList = response.body();
                             listAdapter.setList(customerOrderDetailList);
                         }
+
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onFailure(Call<List<CustomerOrderDetail>> call, Throwable t) {
-
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
         );
     }
 
     void barcodeEntry(String barcode) {
-        loader.show();
         barcodeEditText.setText("");
 
-        final OrderDtos.setPickingItem setPickingItem = new OrderDtos.setPickingItem(
-                order.getSevkNo(),
-                GlobalVariable.getUserId(),
-                barcode,
-                1.0,
-                false
-        );
+        if (barcode.toUpperCase().contains("PLT")) {
+            loader.show();
 
-        apiInterface.setOrderCollectedByBarcode(setPickingItem).enqueue(
-                new Callback<Result>() {
-                    @Override
-                    public void onResponse(Call<Result> call, Response<Result> response) {
-                        if (response.isSuccessful() && response.body().getSuccess()) {
+            apiInterface.getPalletDetail(barcode.trim()).enqueue(
+                    new Callback<List<PalletDetail>>() {
+                        @Override
+                        public void onResponse(Call<List<PalletDetail>> call, Response<List<PalletDetail>> response) {
+                            if (response.isSuccessful()) {
 
-                        } else {
-                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                            alert.show();
+                                if (response.body().stream().anyMatch(x -> x.getProducts().isEmpty())) {
+                                    alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
+
+                                    loader.dismiss();
+                                    alert.show();
+                                    return;
+                                }
+
+                                if (response.body().size() != customerOrderDetailList.size()) {
+                                    alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
+
+                                    loader.dismiss();
+                                    alert.show();
+                                    return;
+                                }
+
+                                boolean hasEquals = true;
+
+                                for (CustomerOrderDetail order : customerOrderDetailList) {
+                                    if (!response.body().stream().allMatch(x -> x.getStokKod().equals(order.getStokKodu()) && x.getYapkod().equals(order.getUrunYapkod()))) {
+                                        hasEquals = false;
+                                        break;
+                                    }
+                                }
+
+                                if (!hasEquals) {
+                                    alert = Alert.getAlert(context, getString(R.string.error), "Yapı Kodu veya Stok Kodu Uyuşmuyor!");
+
+                                    loader.dismiss();
+                                    alert.show();
+                                    return;
+                                }
+
+                                loader.dismiss();
+
+                                for (int i = 0; i < customerOrderDetailList.size(); i++) {
+                                    loader.show();
+
+                                    final CustomerOrderDetail customerOrderDetail = customerOrderDetailList.get(i);
+                                    final PalletDetail palletDetail = response.body().get(i);
+
+                                    final OrderDtos.createOrderByProductsDto orderByProductsDto =
+                                            new OrderDtos.createOrderByProductsDto(
+                                                    customerOrderDetail.getSipNo(),
+                                                    customer.getCode(),
+                                                    GlobalVariable.getUserId(),
+                                                    palletDetail.getProducts().stream().map(x -> new OrderProduct(x, palletDetail.getStokKod(), palletDetail.getYapkod())).collect(Collectors.toList())
+                                            );
+
+                                    apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
+                                            new Callback<Result>() {
+                                                @Override
+                                                public void onResponse(Call<Result> call, Response<Result> response) {
+                                                    if (response.body() != null) {
+                                                        if (response.body().getSuccess()) {
+                                                            fetchOrderDetailList();
+                                                        } else {
+                                                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+
+                                                            alert.show();
+                                                        }
+                                                    }
+
+                                                    loader.dismiss();
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Result> call, Throwable t) {
+                                                    alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+
+                                                    loader.dismiss();
+                                                    alert.show();
+                                                }
+                                            }
+                                    );
+                                }
+                            }
+
+                            loader.dismiss();
                         }
 
-                        loader.dismiss();
+                        @Override
+                        public void onFailure(Call<List<PalletDetail>> call, Throwable t) {
+                            loader.dismiss();
+                        }
                     }
+            );
+        } else {
+            alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Seri");
 
-                    @Override
-                    public void onFailure(Call<Result> call, Throwable t) {
-                        loader.dismiss();
-                    }
-                }
-        );
+            alert.show();
+        }
     }
 
     void print() {

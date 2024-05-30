@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
@@ -25,6 +26,8 @@ public class ListAdapter_Customer_Order_Detail extends RecyclerView.Adapter<List
 
         TextView stockNameTextView, stockCodeTextView, colorTextView, totalAmountTextView, amountTextView;
 
+        CardView cardView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -33,6 +36,7 @@ public class ListAdapter_Customer_Order_Detail extends RecyclerView.Adapter<List
             colorTextView = (TextView) itemView.findViewById(R.id.txtRenk);
             totalAmountTextView = (TextView) itemView.findViewById(R.id.txtToplamMiktar);
             amountTextView = (TextView) itemView.findViewById(R.id.txtMiktar);
+            cardView = (CardView) itemView.findViewById(R.id.cardView);
         }
     }
 

@@ -10,6 +10,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderDetail.OrderDetailList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingList;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletSingle;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.dtoPalletPrint;
 import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailDtos;
@@ -131,4 +132,12 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/Shipment/OrderList")
     Call<List<CustomerOrderDetail>> getOrderDetail(@Query("sevkNo") String sevkNo);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/Shipment/PalletDetailList")
+    Call<List<PalletDetail>> getPalletDetail(@Query("barkod") String barcode);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/Mobile/CreateOrderByProducts")
+    Call<Result> createOrderByProducts(@Body OrderDtos.createOrderByProductsDto createOrderByProductsDto);
 }
