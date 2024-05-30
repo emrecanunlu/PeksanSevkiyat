@@ -48,7 +48,7 @@ public class ListAdapter_Order extends RecyclerView.Adapter<ListAdapter_Order.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_adapter_order,parent, false);
+                .inflate(R.layout.list_adapter_order, parent, false);
         return new ViewHolder(view);
     }
 
@@ -60,7 +60,7 @@ public class ListAdapter_Order extends RecyclerView.Adapter<ListAdapter_Order.Vi
         holder.txtNumuneMi.setText(orderList.get(position).getNumuneSip() ? "NUMUNE SİPARİŞİ" : "");
         holder.txtSipHemenSevk.setText(orderList.get(position).getHemenSevk() ? "HEMEN TESLİM" : "");
 
-        if(orderList.get(position).getNumuneSip()) {
+        if (orderList.get(position).getNumuneSip()) {
             holder.cardView.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(30, 120, 30)));
             holder.txtSipNo.setTextColor(Color.WHITE);
             holder.txtCari.setTextColor(Color.WHITE);
@@ -69,7 +69,7 @@ public class ListAdapter_Order extends RecyclerView.Adapter<ListAdapter_Order.Vi
             holder.txtSipHemenSevk.setTextColor(Color.WHITE);
         }
 
-        if(orderList.get(position).getHemenSevk()) {
+        if (orderList.get(position).getHemenSevk()) {
             holder.cardView.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(190, 50, 50)));
             holder.txtSipNo.setTextColor(Color.WHITE);
             holder.txtCari.setTextColor(Color.WHITE);

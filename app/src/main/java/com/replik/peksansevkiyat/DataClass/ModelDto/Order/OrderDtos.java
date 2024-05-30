@@ -3,7 +3,25 @@ package com.replik.peksansevkiyat.DataClass.ModelDto.Order;
 import com.google.gson.annotations.SerializedName;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class OrderDtos {
+
+    public static class createOrderByProductsDto {
+        String sipno;
+        String carikod;
+        int staffId;
+        List<OrderProduct> products;
+
+        public createOrderByProductsDto(String sipno, String carikod, int staffId, List<OrderProduct> orderProducts) {
+            this.sipno = sipno;
+            this.carikod = carikod;
+            this.staffId = staffId;
+            this.products = orderProducts;
+        }
+    }
+
     public static class setPickingItem {
         @SerializedName("sipNo")
         String sipNo;
@@ -39,7 +57,7 @@ public class OrderDtos {
             this.barcode = Barcode;
         }
     }
-    
+
     public static class setOrderStatus {
         @SerializedName("sipNo")
         String sipNo;

@@ -13,10 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
 public class MenuActivity extends AppCompatActivity {
-    Button btnMenuPalette, btnMenuOrder;
+    Button btnMenuPalette, btnMenuOrder, btnShipment;
     ImageButton imgLogo, imgSettings;
     TextView txtUserName;
-
     Context context = MenuActivity.this;
 
     @Override
@@ -50,6 +49,12 @@ public class MenuActivity extends AppCompatActivity {
                 Intent i = new Intent(context, OrderActivity.class);
                 startActivity(i);
             }
+        });
+
+        btnShipment = (Button) findViewById(R.id.btnShipment);
+        btnShipment.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
+            startActivity(intent);
         });
 
         imgLogo = (ImageButton) findViewById(R.id.imgLogo);

@@ -2,18 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/replik"
-    tools:context="com.replik.peksansevkiyat.MenuActivity">
+    tools:context=".ShipmentCustomerListActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -50,7 +48,7 @@
                     android:id="@+id/txtMenuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu"
+                    android:text="@string/customer_list"
                     android:textColor="@color/white_light" />
             </LinearLayout>
 
@@ -67,51 +65,61 @@
 
         </LinearLayout>
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/fragment_bg">
+            android:background="@color/fragment_bg"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/txtSearch"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/fifty"
                 android:layout_marginLeft="@dimen/forty"
-                android:layout_marginTop="@dimen/thirty"
                 android:layout_marginRight="@dimen/forty"
-                android:orientation="vertical">
+                android:backgroundTint="@color/white_light"
+                android:ems="10"
+                android:hint="@string/search"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white_light" />
 
-                <Button
-                    android:id="@+id/btnPaletteAdd"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/customer_list_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:text="@string/menu_palette"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/eight">
 
-                <Button
-                    android:id="@+id/btnPaletteEdit"
+                    <requestFocus />
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pnlProgressBar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_order"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    android:layout_height="match_parent"
+                    android:background="#2AE1E1E1">
 
-                <Button
-                    android:id="@+id/btnShipment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_shipment"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+                    <ProgressBar
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </ScrollView>
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -27,9 +27,12 @@
     <string name="menu_palette_print">PALET ETİKET YAZDIRMA</string>
     <string name="menu_order">SİPARİŞ İŞLEMLERİ</string>
     <string name="menu_order_send">SİPARİŞ SEVK</string>
+    <string name="menu_shipment">SEVK İŞLEMLERİ</string>
     <string name="menu_settings">AYARLAR</string>
     <string name="palette_add">PALET OLUŞTUR</string>
     <string name="palette_edit">PALET DÜZENLE</string>
+    <string name="customer_list">CARİ LİSTESİ</string>
+    <string name="order_list">SİPARİŞ LİSTESİ</string>
     <string name="test_user">HALİL</string>
     <string name="search">Arama</string>
     <string name="barcode">Barkod</string>
