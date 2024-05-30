@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ import retrofit2.Response;
 public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
     ImageView logoImageView, printImageView;
+    Button finishOrderButton;
     EditText barcodeEditText;
     ProgressDialog loader;
     AlertDialog alert;
@@ -108,6 +110,19 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
             finish();
         });
 
+        finishOrderButton = (Button) findViewById(R.id.btnFinishOrder);
+        finishOrderButton.setVisibility(View.GONE);
+        finishOrderButton.setOnClickListener(v -> {
+            Intent i = new Intent(this, ShipmentOrderFinish.class);
+
+            i.putExtra("customer", customer);
+            i.putExtra("order", order);
+
+            GlobalVariable.setCustomerOrderDetails(customerOrderDetailList);
+
+            startActivity(i);
+        });
+
         barcodeEditText.setInputType(InputType.TYPE_NULL);
         barcodeEditText.requestFocus();
         barcodeEditText.setOnKeyListener(
@@ -133,9 +148,13 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                 new Callback<List<CustomerOrderDetail>>() {
                     @Override
                     public void onResponse(Call<List<CustomerOrderDetail>> call, Response<List<CustomerOrderDetail>> response) {
-                        if (response.isSuccessful()) {
+                        if (response.isSuccessful() && response.body() != null) {
                             customerOrderDetailList = response.body();
                             listAdapter.setList(customerOrderDetailList);
+
+                            if (response.body().stream().allMatch(x -> x.getSevkMiktar() == x.getGonderilenMiktar())) {
+                                finishOrderButton.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         progressBar.setVisibility(View.GONE);
@@ -200,7 +219,10 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                                     loader.show();
 
                                     final CustomerOrderDetail customerOrderDetail = customerOrderDetailList.get(i);
+
+                                    /**/
                                     final PalletDetail palletDetail = response.body().get(i);
+                                    /**/
 
                                     final OrderDtos.createOrderByProductsDto orderByProductsDto =
                                             new OrderDtos.createOrderByProductsDto(

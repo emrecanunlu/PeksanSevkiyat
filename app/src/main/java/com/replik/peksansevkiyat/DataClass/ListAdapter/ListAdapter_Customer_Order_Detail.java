@@ -70,13 +70,6 @@ public class ListAdapter_Customer_Order_Detail extends RecyclerView.Adapter<List
             holder.amountTextView.setTextColor(Color.WHITE);
             holder.slashTextView.setTextColor(Color.WHITE);
         }
-
-        /*holder.cardView.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(30, 120, 30)));
-        holder.txtSipNo.setTextColor(Color.WHITE);
-        holder.txtCari.setTextColor(Color.WHITE);
-        holder.txtTarih.setTextColor(Color.WHITE);
-        holder.txtNumuneMi.setTextColor(Color.WHITE);
-        holder.txtSipHemenSevk.setTextColor(Color.WHITE);*/
     }
 
     @Override
