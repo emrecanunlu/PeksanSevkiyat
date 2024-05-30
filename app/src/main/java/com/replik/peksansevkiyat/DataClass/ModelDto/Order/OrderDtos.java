@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 public class OrderDtos {
 
     public static class createOrderByProductsDto {
+        String sevkNo;
         String sipno;
         String carikod;
         int staffId;
         List<OrderProduct> products;
 
-        public createOrderByProductsDto(String sipno, String carikod, int staffId, List<OrderProduct> orderProducts) {
+        public createOrderByProductsDto(String sevkNo, String sipno, String carikod, int staffId, List<OrderProduct> orderProducts) {
+            this.sevkNo = sevkNo;
             this.sipno = sipno;
             this.carikod = carikod;
             this.staffId = staffId;

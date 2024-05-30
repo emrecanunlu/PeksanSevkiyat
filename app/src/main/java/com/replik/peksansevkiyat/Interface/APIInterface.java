@@ -138,6 +138,6 @@ public interface APIInterface {
     Call<List<PalletDetail>> getPalletDetail(@Query("barkod") String barcode);
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
-    @POST("api/Mobile/CreateOrderByProducts")
+    @POST("api/Shipment/CreateOrderProducts")
     Call<Result> createOrderByProducts(@Body OrderDtos.createOrderByProductsDto createOrderByProductsDto);
 }

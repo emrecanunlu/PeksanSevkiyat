@@ -204,6 +204,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
                                     final OrderDtos.createOrderByProductsDto orderByProductsDto =
                                             new OrderDtos.createOrderByProductsDto(
+                                                    order.getSevkNo(),
                                                     customerOrderDetail.getSipNo(),
                                                     customer.getCode(),
                                                     GlobalVariable.getUserId(),
