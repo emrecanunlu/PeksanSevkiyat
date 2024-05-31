@@ -1,5 +1,7 @@
 package com.replik.peksansevkiyat.DataClass.ModelDto.Order;
 
+import android.hardware.camera2.CameraExtensionSession;
+
 import com.google.gson.annotations.SerializedName;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
 
@@ -69,6 +71,20 @@ public class OrderDtos {
         public setOrderStatus(String sipNo, OrderShipping orderShipping) {
             this.sipNo = sipNo;
             this.orderShipping = orderShipping;
+        }
+    }
+
+    public static class setNetsisShipment {
+        String sevkno;
+        String carikod;
+        int staffId;
+        List<OrderShipment> orders;
+
+        public setNetsisShipment(String sevkno, String carikod, int staffId, List<OrderShipment> orders) {
+            this.sevkno = sevkno;
+            this.carikod = carikod;
+            this.staffId = staffId;
+            this.orders = orders;
         }
     }
 }

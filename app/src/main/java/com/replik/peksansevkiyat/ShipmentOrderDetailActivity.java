@@ -175,13 +175,14 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                 new Callback<List<PalletDetail>>() {
                     @Override
                     public void onResponse(Call<List<PalletDetail>> call, Response<List<PalletDetail>> response) {
+                        loader.dismiss();
+
                         if (response.isSuccessful()) {
                             List<CustomerOrderDetail> list = customerOrderDetailList.stream().filter(x -> x.getSevkMiktar() != x.getGonderilenMiktar()).collect(Collectors.toList());
 
                             if (response.body().stream().anyMatch(x -> x.getProducts().isEmpty())) {
                                 alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
 
-                                loader.dismiss();
                                 alert.show();
                                 return;
                             }
@@ -189,7 +190,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                             if (response.body().size() != list.size()) {
                                 alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
 
-                                loader.dismiss();
                                 alert.show();
                                 return;
                             }
@@ -206,16 +206,11 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                             if (!hasEquals) {
                                 alert = Alert.getAlert(context, getString(R.string.error), "Yapı Kodu veya Stok Kodu Uyuşmuyor!");
 
-                                loader.dismiss();
                                 alert.show();
                                 return;
                             }
 
-                            loader.dismiss();
-
                             for (int i = 0; i < list.size(); i++) {
-                                loader.show();
-
                                 final CustomerOrderDetail customerOrderDetail = list.get(i);
 
                                 /**/
@@ -234,10 +229,13 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                                 /* TO DO */
                                 // Her product için isteği sıraya al.
 
+                                loader.show();
                                 apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
                                         new Callback<Result>() {
                                             @Override
                                             public void onResponse(Call<Result> call, Response<Result> response) {
+                                                loader.dismiss();
+
                                                 if (response.body() != null) {
                                                     if (response.body().getSuccess()) {
                                                         fetchOrderDetailList();
@@ -246,16 +244,18 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
                                                         alert.show();
                                                     }
-                                                }
+                                                } else {
+                                                    alert = Alert.getAlert(context, getString(R.string.error), response.message());
 
-                                                loader.dismiss();
+                                                    alert.show();
+                                                }
                                             }
 
                                             @Override
                                             public void onFailure(Call<Result> call, Throwable t) {
-                                                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-
                                                 loader.dismiss();
+
+                                                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                                                 alert.show();
                                             }
                                         }

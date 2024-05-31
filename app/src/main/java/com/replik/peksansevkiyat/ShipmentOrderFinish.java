@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -25,6 +26,7 @@ import com.replik.peksansevkiyat.DataClass.ListAdapter.ListenerInterface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderShipment;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
@@ -37,6 +39,7 @@ import com.replik.peksansevkiyat.Transection.Voids;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -128,7 +131,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         });
 
         imgLogo = findViewById(R.id.imgLogo);
-        imgLogo.setOnClickListener(v-> {
+        imgLogo.setOnClickListener(v -> {
             GlobalVariable.setCustomerOrderDetails(null);
             finish();
         });
@@ -249,7 +252,13 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                             txtOrderAciklama.getText().toString(),
                             txtOrderSoforTc.getText().toString(),
                             txtOrderDorse.getText().toString());
-                    // fnOrderFinish(new OrderDtos.setOrderStatus(GlobalVariable.getSelectedOrder().getSipNo(), os));
+
+                    final List<OrderShipment> orderShipments = GlobalVariable.getCustomerOrderDetails().stream().map(x -> new OrderShipment(
+                            x.getSipNo(),
+                            os
+                    )).collect(Collectors.toList());
+
+                    postOrderFinish(new OrderDtos.setNetsisShipment(order.getSevkNo(), customer.getCode(), GlobalVariable.getUserId(), orderShipments));
                 } else {
                     alert = Alert.getAlert(context, getString(R.string.error), ErrorMessage + "\n" + getString(R.string.not_empty));
                     alert.show();
@@ -258,56 +267,70 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         });
     }
 
-    /*void fnOrderFinish(OrderDtos.setOrderStatus data) {
+    void postOrderFinish(OrderDtos.setNetsisShipment data) {
         nDialog.show();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(getString(R.string.sure));
-        builder.setMessage(getString(R.string.question_order_finish));
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                nDialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                apiInterface.setOrderStatus(data).enqueue(new Callback<Result>() {
+
+        apiInterface.createNetsisShipment(data).enqueue(
+                new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
                         nDialog.dismiss();
 
-                        if (response.body().getSuccess()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            if (response.body().getSuccess()) {
+                                // success result
+                                String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0];
+                                String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1];
 
-                            String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0].toString();
-                            String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1].toString();
-
-                            //HT: işlemler bölündü o yüzden bu işlemin ardından taslak ve print işlemlerine ayrı ayrı post at
-                            // ----- TASLAK OLUSTUR
-                            nDialog.show();
-                            apiInterface.setNetsisEIrsPacked(IrsNo).enqueue(new Callback<Result>() {
-                                @Override
-                                public void onResponse(Call<Result> call, Response<Result> response) {
-                                    nDialog.dismiss();
-
-                                    if (response.body().getSuccess()) {
-                                        // ---- YAZDIRMA GÖNDER
-                                        nDialog.show();
-                                        apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
+                                nDialog.show();
+                                apiInterface.setNetsisEIrsPacked(IrsNo).enqueue(
+                                        new Callback<Result>() {
                                             @Override
                                             public void onResponse(Call<Result> call, Response<Result> response) {
                                                 nDialog.dismiss();
 
-                                                finish();
+                                                if (response.isSuccessful() && response.body() != null) {
 
-                                                Intent ii = new Intent(context, OrderActivity.class);
-                                                startActivity(ii);
+                                                    if (response.body().getSuccess()) {
 
-                                                if (response.body().getSuccess()) {
-                                                    alert = Alert.getAlert(context, getString(R.string.info), response.body().getMessage());
-                                                    alert.show();
+                                                        nDialog.show();
+                                                        apiInterface.setNetsisPrint(GibIrsNo).enqueue(
+                                                                new Callback<Result>() {
+                                                                    @Override
+                                                                    public void onResponse(Call<Result> call, Response<Result> response) {
+                                                                        nDialog.dismiss();
+
+                                                                        Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
+
+                                                                        finish();
+
+                                                                        Intent ii = new Intent(context, ShipmentCustomerListActivity.class);
+                                                                        startActivity(ii);
+
+                                                                        if (response.isSuccessful() && response.body() != null) {
+                                                                            if (response.body().getSuccess()) {
+                                                                                alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                                                                alert.show();
+                                                                            }
+                                                                        } else {
+                                                                            alert = Alert.getAlert(context, getString(R.string.error), response.message());
+                                                                            alert.show();
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onFailure(Call<Result> call, Throwable t) {
+                                                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                                                        alert.show();
+                                                                    }
+                                                                }
+                                                        );
+                                                    } else {
+                                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                                        alert.show();
+                                                    }
                                                 } else {
-                                                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                                    alert = Alert.getAlert(context, getString(R.string.error), response.message());
                                                     alert.show();
                                                 }
                                             }
@@ -315,51 +338,18 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                                             @Override
                                             public void onFailure(Call<Result> call, Throwable t) {
                                                 nDialog.dismiss();
-                                                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                                                alert.show();
-                                            }
-                                        });
-                                    } else {
-                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                                        alert.show();
-                                    }
-                                }
 
-                                @Override
-                                public void onFailure(Call<Result> call, Throwable t) {
-                                    /// HT:TimeOut sorunu çözülene kadar geçici olarak timeout yazsa bile sistemi yazdırmaya yönlendir yapıyor
-                                    // ---- YAZDIRMA GÖNDER
-                                    nDialog.show();
-                                    apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
-                                        @Override
-                                        public void onResponse(Call<Result> call, Response<Result> response) {
-                                            nDialog.dismiss();
-
-                                            finish();
-
-                                            Intent ii = new Intent(context, OrderActivity.class);
-                                            startActivity(ii);
-
-                                            if (response.body().getSuccess()) {
-                                                alert = Alert.getAlert(context, getString(R.string.info), response.body().getMessage());
-                                                alert.show();
-                                            } else {
                                                 alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                                 alert.show();
                                             }
                                         }
-
-                                        @Override
-                                        public void onFailure(Call<Result> call, Throwable t) {
-                                            nDialog.dismiss();
-                                            alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                                            alert.show();
-                                        }
-                                    });
-                                }
-                            });
+                                );
+                            } else {
+                                alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                alert.show();
+                            }
                         } else {
-                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                            alert = Alert.getAlert(context, getString(R.string.error), response.message());
                             alert.show();
                         }
                     }
@@ -367,15 +357,13 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                     @Override
                     public void onFailure(Call<Result> call, Throwable t) {
                         nDialog.dismiss();
+
                         alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                         alert.show();
                     }
-                });
-            }
-        });
-        builder.show();
-    }*/
-
+                }
+        );
+    }
     private void fnGetShippingList(String search) {
         pBar.setVisibility(View.VISIBLE);
         apiInterface.getOrderShippingList(GlobalVariable.getUserId(), search).enqueue(new Callback<OrderShippingList>() {
@@ -405,35 +393,25 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
     }
 
     @Override
-    public void onBackPressed() {
-        fnBackDetail();
-    }
-
-    void fnBackDetail() {
-        nDialog.show();
+    public void onItemCliked(OrderShipping orderShipping) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(getString(R.string.sure));
-        builder.setMessage(getString(R.string.question_order_detail_back));
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                nDialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent ii = new Intent(context, OrderDetailActivity.class);
-                startActivity(ii);
-                finish();
-                nDialog.dismiss();
-            }
-        });
-        builder.show();
-    }
+        builder.setMessage(getString(R.string.question_order_finish));
 
-    @Override
-    public void onItemCliked(OrderShipping orderShipping) {
-        /*fnOrderFinish(new OrderDtos.setOrderStatus(GlobalVariable.getSelectedOrder().getSipNo(), orderShipping));*/
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
+        });
+
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+
+            final List<OrderShipment> orderShipments = GlobalVariable.getCustomerOrderDetails().stream().map(x -> new OrderShipment(
+                    x.getSipNo(),
+                    orderShipping
+            )).collect(Collectors.toList());
+
+            postOrderFinish(new OrderDtos.setNetsisShipment(order.getSevkNo(), customer.getCode(), GlobalVariable.getUserId(), orderShipments));
+        });
+
+        builder.show();
     }
 }

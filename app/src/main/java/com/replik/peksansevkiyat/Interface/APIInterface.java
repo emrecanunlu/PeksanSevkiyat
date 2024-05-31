@@ -140,4 +140,8 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Shipment/CreateOrderProducts")
     Call<Result> createOrderByProducts(@Body OrderDtos.createOrderByProductsDto createOrderByProductsDto);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/Shipment/CreateNetsisShipment")
+    Call<Result> createNetsisShipment(@Body OrderDtos.setNetsisShipment setNetsisShipmentDto);
 }
