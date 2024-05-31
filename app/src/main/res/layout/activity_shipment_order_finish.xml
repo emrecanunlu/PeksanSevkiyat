@@ -85,7 +85,7 @@
                     android:layout_margin="@dimen/five">
 
                     <TextView
-                        android:id="@+id/txtSevkNo"
+                        android:id="@+id/txtSipNo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/empty"
@@ -95,16 +95,16 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/txtCari"
+                        android:id="@+id/txtSipCari"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/empty"
                         android:textColor="@color/white_light"
-                        app:layout_constraintStart_toStartOf="@+id/txtSevkNo"
-                        app:layout_constraintTop_toBottomOf="@+id/txtSevkNo" />
+                        app:layout_constraintStart_toStartOf="@+id/txtSipNo"
+                        app:layout_constraintTop_toBottomOf="@+id/txtSipNo" />
 
                     <TextView
-                        android:id="@+id/txtSevkTarih"
+                        android:id="@+id/txtSipTarih"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/empty"
@@ -188,6 +188,29 @@
                         style="?android:attr/progressBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pnlAddShipping"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/sixty"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <Button
+                        android:id="@+id/btnAddShipping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/sixty"
+                        android:layout_margin="@dimen/ten"
+                        android:text="@string/add_order_shipping"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

@@ -44,7 +44,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ShipmentOrderDetailActivity extends AppCompatActivity {
-
     ImageView logoImageView, printImageView;
     Button finishOrderButton;
     EditText barcodeEditText;
@@ -170,113 +169,111 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
     void barcodeEntry(String barcode) {
         barcodeEditText.setText("");
+        loader.show();
 
-        if (barcode.toUpperCase().contains("PLT")) {
-            loader.show();
+        apiInterface.getPalletDetail(barcode.trim()).enqueue(
+                new Callback<List<PalletDetail>>() {
+                    @Override
+                    public void onResponse(Call<List<PalletDetail>> call, Response<List<PalletDetail>> response) {
+                        if (response.isSuccessful()) {
+                            List<CustomerOrderDetail> list = customerOrderDetailList.stream().filter(x -> x.getSevkMiktar() != x.getGonderilenMiktar()).collect(Collectors.toList());
 
-            apiInterface.getPalletDetail(barcode.trim()).enqueue(
-                    new Callback<List<PalletDetail>>() {
-                        @Override
-                        public void onResponse(Call<List<PalletDetail>> call, Response<List<PalletDetail>> response) {
-                            if (response.isSuccessful()) {
-
-                                if (response.body().stream().anyMatch(x -> x.getProducts().isEmpty())) {
-                                    alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
-
-                                    loader.dismiss();
-                                    alert.show();
-                                    return;
-                                }
-
-                                if (response.body().size() != customerOrderDetailList.size()) {
-                                    alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
-
-                                    loader.dismiss();
-                                    alert.show();
-                                    return;
-                                }
-
-                                boolean hasEquals = true;
-
-                                for (CustomerOrderDetail order : customerOrderDetailList) {
-                                    if (!response.body().stream().allMatch(x -> x.getStokKod().equals(order.getStokKodu()) && x.getYapkod().equals(order.getUrunYapkod()))) {
-                                        hasEquals = false;
-                                        break;
-                                    }
-                                }
-
-                                if (!hasEquals) {
-                                    alert = Alert.getAlert(context, getString(R.string.error), "Yapı Kodu veya Stok Kodu Uyuşmuyor!");
-
-                                    loader.dismiss();
-                                    alert.show();
-                                    return;
-                                }
+                            if (response.body().stream().anyMatch(x -> x.getProducts().isEmpty())) {
+                                alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
 
                                 loader.dismiss();
+                                alert.show();
+                                return;
+                            }
 
-                                for (int i = 0; i < customerOrderDetailList.size(); i++) {
-                                    loader.show();
+                            if (response.body().size() != list.size()) {
+                                alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
 
-                                    final CustomerOrderDetail customerOrderDetail = customerOrderDetailList.get(i);
+                                loader.dismiss();
+                                alert.show();
+                                return;
+                            }
 
-                                    /**/
-                                    final PalletDetail palletDetail = response.body().get(i);
-                                    /**/
+                            boolean hasEquals = true;
 
-                                    final OrderDtos.createOrderByProductsDto orderByProductsDto =
-                                            new OrderDtos.createOrderByProductsDto(
-                                                    order.getSevkNo(),
-                                                    customerOrderDetail.getSipNo(),
-                                                    customer.getCode(),
-                                                    GlobalVariable.getUserId(),
-                                                    palletDetail.getProducts().stream().map(x -> new OrderProduct(x, palletDetail.getStokKod(), palletDetail.getYapkod())).collect(Collectors.toList())
-                                            );
-
-                                    apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
-                                            new Callback<Result>() {
-                                                @Override
-                                                public void onResponse(Call<Result> call, Response<Result> response) {
-                                                    if (response.body() != null) {
-                                                        if (response.body().getSuccess()) {
-                                                            fetchOrderDetailList();
-                                                        } else {
-                                                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-
-                                                            alert.show();
-                                                        }
-                                                    }
-
-                                                    loader.dismiss();
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<Result> call, Throwable t) {
-                                                    alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-
-                                                    loader.dismiss();
-                                                    alert.show();
-                                                }
-                                            }
-                                    );
+                            for (CustomerOrderDetail order : list) {
+                                if (!response.body().stream().allMatch(x -> x.getStokKod().equals(order.getStokKodu()) && x.getYapkod().equals(order.getUrunYapkod()))) {
+                                    hasEquals = false;
+                                    break;
                                 }
                             }
 
+                            if (!hasEquals) {
+                                alert = Alert.getAlert(context, getString(R.string.error), "Yapı Kodu veya Stok Kodu Uyuşmuyor!");
+
+                                loader.dismiss();
+                                alert.show();
+                                return;
+                            }
+
                             loader.dismiss();
+
+                            for (int i = 0; i < list.size(); i++) {
+                                loader.show();
+
+                                final CustomerOrderDetail customerOrderDetail = list.get(i);
+
+                                /**/
+                                final PalletDetail palletDetail = response.body().get(i);
+                                /**/
+
+                                final OrderDtos.createOrderByProductsDto orderByProductsDto =
+                                        new OrderDtos.createOrderByProductsDto(
+                                                order.getSevkNo(),
+                                                customerOrderDetail.getSipNo(),
+                                                customer.getCode(),
+                                                GlobalVariable.getUserId(),
+                                                palletDetail.getProducts().stream().map(x -> new OrderProduct(x, palletDetail.getStokKod(), palletDetail.getYapkod())).collect(Collectors.toList())
+                                        );
+
+                                /* TO DO */
+                                // Her product için isteği sıraya al.
+
+                                apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
+                                        new Callback<Result>() {
+                                            @Override
+                                            public void onResponse(Call<Result> call, Response<Result> response) {
+                                                if (response.body() != null) {
+                                                    if (response.body().getSuccess()) {
+                                                        fetchOrderDetailList();
+                                                    } else {
+                                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+
+                                                        alert.show();
+                                                    }
+                                                }
+
+                                                loader.dismiss();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Result> call, Throwable t) {
+                                                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+
+                                                loader.dismiss();
+                                                alert.show();
+                                            }
+                                        }
+                                );
+                            }
                         }
 
-                        @Override
-                        public void onFailure(Call<List<PalletDetail>> call, Throwable t) {
-                            loader.dismiss();
-                        }
+                        loader.dismiss();
                     }
-            );
-        } else {
-            alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Seri");
 
-            alert.show();
-        }
+                    @Override
+                    public void onFailure(Call<List<PalletDetail>> call, Throwable t) {
+                        loader.dismiss();
+                    }
+                }
+        );
     }
+
 
     void print() {
         Toast.makeText(context, "Print Callback", Toast.LENGTH_SHORT).show();
