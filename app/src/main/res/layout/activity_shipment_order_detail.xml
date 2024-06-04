@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/replik"
+    tools:context="com.replik.peksansevkiyat.OrderDetailActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sixty"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/imgLogo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:backgroundTint="@color/replik"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/replik_logo" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ten"
+                    android:text="@string/test_user"
+                    android:textColor="@color/white_light" />
+
+                <TextView
+                    android:id="@+id/txtMenuName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_order_send"
+                    android:textColor="@color/white_light" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/imgPrint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/four"
+                android:layout_weight="0"
+                android:backgroundTint="@color/replik"
+                android:contentDescription="@string/empty"
+                app:srcCompat="@drawable/ic_icon_printer"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/fragment_bg"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/eight"
+                android:layout_marginVertical="@dimen/five"
+                app:cardBackgroundColor="@color/purple_500">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/sipIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/circle_shape"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="@dimen/twenty"
+                            android:layout_height="@dimen/twenty"
+                            android:background="@drawable/ic_icon_person"
+                            android:backgroundTint="@color/purple_500"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/txtSipNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/five"
+                        android:text="000000000000028"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/sipIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtCari"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Replik Yazilim"
+                        android:textColor="@color/white_light"
+                        app:layout_constraintStart_toStartOf="@id/txtSipNo"
+                        app:layout_constraintTop_toBottomOf="@id/txtSipNo" />
+
+                    <TextView
+                        android:id="@+id/txtSevkTarih"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/five"
+                        android:text="01/02/2020"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/eight"
+                android:layout_marginVertical="@dimen/five"
+                app:cardBackgroundColor="@color/purple_500">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/nakliyeIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/circle_shape"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="@dimen/twenty"
+                            android:layout_height="@dimen/twenty"
+                            android:background="@drawable/ic_icon_shipping"
+                            android:backgroundTint="@color/purple_500"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/txtNakliyeAdi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/five"
+                        android:text="Nakliye Adı"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/nakliyeIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtNakliye"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="NAK Kargo"
+                        android:textColor="@color/white_light"
+                        app:layout_constraintStart_toStartOf="@id/txtNakliyeAdi"
+                        app:layout_constraintTop_toBottomOf="@id/txtNakliyeAdi" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/eight"
+                android:layout_marginVertical="@dimen/five"
+                app:cardBackgroundColor="@color/purple_500">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/teslimIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/circle_shape"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="@dimen/twenty"
+                            android:layout_height="@dimen/twenty"
+                            android:background="@drawable/ic_icon_delivery"
+                            android:backgroundTint="@color/purple_500"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/txtTeslimAdi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/five"
+                        android:text="-"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/teslimIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtTeslimAdresi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Fatura Adresi ile Ayni"
+                        android:textColor="@color/white_light"
+                        app:layout_constraintStart_toStartOf="@id/txtTeslimAdi"
+                        app:layout_constraintTop_toBottomOf="@id/txtTeslimAdi" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <EditText
+                android:id="@+id/txtBarcode"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/forty"
+                android:layout_marginVertical="@dimen/five"
+                android:layout_marginLeft="@dimen/forty"
+                android:layout_marginRight="@dimen/forty"
+                android:backgroundTint="@color/white_light"
+                android:ems="10"
+                android:hint="@string/barcode"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white_light"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/customer_order_detail_list_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pnlProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#2AE1E1E1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

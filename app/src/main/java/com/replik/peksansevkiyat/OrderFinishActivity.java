@@ -47,7 +47,7 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
     Context context = OrderFinishActivity.this;
 
     View pBar;
-    ConstraintLayout pnlSearch,pnlAddShipping;
+    ConstraintLayout pnlSearch, pnlAddShipping;
     ScrollView pnlManualEntry;
 
     ImageButton imgLogo, imgSettings;
@@ -117,13 +117,15 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
         imgLogo = findViewById(R.id.imgLogo);
         imgLogo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { fnBackDetail(); }
+            public void onClick(View view) {
+                fnBackDetail();
+            }
         });
 
         txtSearch = findViewById(R.id.txtSearch);
         txtSearch.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(event.getAction() == KeyEvent.ACTION_UP){
+                if (event.getAction() == KeyEvent.ACTION_UP) {
                     lst = new ArrayList<>();
                     fnGetShippingList(txtSearch.getText().toString());
                     return true;
@@ -150,7 +152,7 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         nDialog.dismiss();
-                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                         pnlManualEntry.setVisibility(View.VISIBLE);
                         pnlSearch.setVisibility(View.GONE);
@@ -166,62 +168,62 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
             public void onClick(View view) {
                 String ErrorMessage = "";
                 int renkE = Color.rgb(240, 80, 80);
-                if(txtOrderPlaka.getText().toString().isEmpty()) {
+                if (txtOrderPlaka.getText().toString().isEmpty()) {
                     txtOrderPlaka.setHintTextColor(renkE);
                     ErrorMessage += getString(R.string.order_plaka);
                 }
 
-                if(txtOrderVergiNo.getText().toString().isEmpty()) {
+                if (txtOrderVergiNo.getText().toString().isEmpty()) {
                     txtOrderVergiNo.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_vergino);
                 }
 
-                if(txtOrderIsim.getText().toString().isEmpty()) {
+                if (txtOrderIsim.getText().toString().isEmpty()) {
                     txtOrderIsim.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_isim);
                 }
 
-                if(txtOrderIlce.getText().toString().isEmpty()) {
+                if (txtOrderIlce.getText().toString().isEmpty()) {
                     txtOrderIlce.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ilce);
                 }
 
-                if(txtOrderIl.getText().toString().isEmpty()) {
+                if (txtOrderIl.getText().toString().isEmpty()) {
                     txtOrderIl.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
                 }
 
-                if(txtOrderIl.getText().toString().isEmpty()) {
+                if (txtOrderIl.getText().toString().isEmpty()) {
                     txtOrderIl.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
                 }
 
-                if(txtOrderUlke.getText().toString().isEmpty()) {
+                if (txtOrderUlke.getText().toString().isEmpty()) {
                     txtOrderUlke.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ulke);
                 }
 
-                if(txtOrderPosta.getText().toString().isEmpty()) {
+                if (txtOrderPosta.getText().toString().isEmpty()) {
                     txtOrderPosta.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_posta);
                 }
 
-                if(txtOrderSoforAd.getText().toString().isEmpty()) {
+                if (txtOrderSoforAd.getText().toString().isEmpty()) {
                     txtOrderSoforAd.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_ad);
                 }
 
-                if(txtOrderSoforSoyad.getText().toString().isEmpty()) {
+                if (txtOrderSoforSoyad.getText().toString().isEmpty()) {
                     txtOrderSoforSoyad.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_soyad);
                 }
 
-                if(txtOrderSoforTc.getText().toString().isEmpty()) {
+                if (txtOrderSoforTc.getText().toString().isEmpty()) {
                     txtOrderSoforTc.setHintTextColor(renkE);
                     ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_tc);
                 }
 
-                if(ErrorMessage.isEmpty()) {
+                if (ErrorMessage.isEmpty()) {
                     OrderShipping os = new OrderShipping();
                     os.setOrderShipping(
                             txtOrderPlaka.getText().toString(),
@@ -237,9 +239,8 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                             txtOrderSoforTc.getText().toString(),
                             txtOrderDorse.getText().toString());
                     fnOrderFinish(new OrderDtos.setOrderStatus(GlobalVariable.getSelectedOrder().getSipNo(), os));
-                }
-                else {
-                    alert = Alert.getAlert(context,getString(R.string.error), ErrorMessage + "\n" + getString(R.string.not_empty));
+                } else {
+                    alert = Alert.getAlert(context, getString(R.string.error), ErrorMessage + "\n" + getString(R.string.not_empty));
                     alert.show();
                 }
             }
@@ -265,10 +266,10 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                     public void onResponse(Call<Result> call, Response<Result> response) {
                         nDialog.dismiss();
 
-                        if(response.body().getSuccess()) {
+                        if (response.body().getSuccess()) {
 
-                            String IrsNo = response.body().getMessage().replace("|","-").split("-")[0].toString();
-                            String GibIrsNo = response.body().getMessage().replace("|","-").split("-")[1].toString();
+                            String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0].toString();
+                            String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1].toString();
 
                             //HT: işlemler bölündü o yüzden bu işlemin ardından taslak ve print işlemlerine ayrı ayrı post at
                             // ----- TASLAK OLUSTUR
@@ -278,7 +279,7 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                                 public void onResponse(Call<Result> call, Response<Result> response) {
                                     nDialog.dismiss();
 
-                                    if(response.body().getSuccess()) {
+                                    if (response.body().getSuccess()) {
                                         // ---- YAZDIRMA GÖNDER
                                         nDialog.show();
                                         apiInterface.setNetsisPrint(GibIrsNo).enqueue(new Callback<Result>() {
@@ -291,12 +292,11 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                                                 Intent ii = new Intent(context, OrderActivity.class);
                                                 startActivity(ii);
 
-                                                if(response.body().getSuccess()) {
-                                                    alert = Alert.getAlert(context,getString(R.string.info), response.body().getMessage());
+                                                if (response.body().getSuccess()) {
+                                                    alert = Alert.getAlert(context, getString(R.string.info), response.body().getMessage());
                                                     alert.show();
-                                                }
-                                                else {
-                                                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                                } else {
+                                                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                                     alert.show();
                                                 }
                                             }
@@ -308,9 +308,8 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                                                 alert.show();
                                             }
                                         });
-                                    }
-                                    else {
-                                        alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                    } else {
+                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                         alert.show();
                                     }
                                 }
@@ -330,12 +329,11 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                                             Intent ii = new Intent(context, OrderActivity.class);
                                             startActivity(ii);
 
-                                            if(response.body().getSuccess()) {
-                                                alert = Alert.getAlert(context,getString(R.string.info), response.body().getMessage());
+                                            if (response.body().getSuccess()) {
+                                                alert = Alert.getAlert(context, getString(R.string.info), response.body().getMessage());
                                                 alert.show();
-                                            }
-                                            else {
-                                                alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                                            } else {
+                                                alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                                 alert.show();
                                             }
                                         }
@@ -349,9 +347,8 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
                                     });
                                 }
                             });
-                        }
-                        else {
-                            alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                        } else {
+                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                             alert.show();
                         }
                     }
@@ -374,16 +371,15 @@ public class OrderFinishActivity extends AppCompatActivity implements ListenerIn
             @Override
             public void onResponse(Call<OrderShippingList> call, Response<OrderShippingList> response) {
                 pBar.setVisibility(View.GONE);
-                if(response.body().getSuccess()) {
+                if (response.body().getSuccess()) {
                     adapter.setData(response.body().getOrderShipping());
 
-                    if(response.body().getOrderShipping().size() == 0)
+                    if (response.body().getOrderShipping().size() == 0)
                         pnlAddShipping.setVisibility(View.VISIBLE);
                     else
                         pnlAddShipping.setVisibility(View.GONE);
-                }
-                else {
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                } else {
+                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                     alert.show();
                 }
             }

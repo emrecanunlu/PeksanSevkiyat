@@ -67,7 +67,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
         setContentView(R.layout.activity_order_detail);
 
         //seçili sipariş yok ise listeye yönlendir ki sorun olmasın
-        if(GlobalVariable.getSelectedOrder()==null) {
+        if (GlobalVariable.getSelectedOrder() == null) {
             Intent ii = new Intent(context, OrderActivity.class);
             startActivity(ii);
             finish();
@@ -110,7 +110,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                         try {
 
                             String printData = "SIZE 75 mm,75 mm\nGAP 0 mm,0 mm\nCLS" +
-                                    "\nTEXT 20 mm,35 mm,\"2\",0,1.5 mm,1.5 mm,\""+txtSipNo.getText().toString()+"\"";
+                                    "\nTEXT 20 mm,35 mm,\"2\",0,1.5 mm,1.5 mm,\"" + txtSipNo.getText().toString() + "\"";
 
                             String cari = txtSipCari.getText().toString();
                             int o = 22;
@@ -119,20 +119,20 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                                 printData += "\nTEXT 20 mm," + (l + (i * 40)) + " mm,\"2\",0,1.5 mm,1.4 mm,\"" + cari.substring((i * o), (((cari.length() - 1) - (i * o)) > o ? o : (cari.length() - 1))) + "\"";
                             }
 
-                            printData += "\nTEXT 20 mm,360 mm,\"2\",0,1.8 mm,1.7 mm,\""+"-"+"\"" +
-                                    "\nTEXT 20 mm,410 mm,\"2\",0,1.8 mm,1.7 mm,\""+txtUserName.getText().toString()+"\"" +
+                            printData += "\nTEXT 20 mm,360 mm,\"2\",0,1.8 mm,1.7 mm,\"" + "-" + "\"" +
+                                    "\nTEXT 20 mm,410 mm,\"2\",0,1.8 mm,1.7 mm,\"" + txtUserName.getText().toString() + "\"" +
                                     "\nPRINT 1\nEND\n";
 
-                            printData = printData.replace("İ","I");
-                            printData = printData.replace("ı","i");
-                            printData = printData.replace("Ö","O");
-                            printData = printData.replace("ö","o");
-                            printData = printData.replace("Ü","U");
-                            printData = printData.replace("ü","u");
-                            printData = printData.replace("Ş","S");
-                            printData = printData.replace("ş","s");
-                            printData = printData.replace("Ç","C");
-                            printData = printData.replace("ç","c");
+                            printData = printData.replace("İ", "I");
+                            printData = printData.replace("ı", "i");
+                            printData = printData.replace("Ö", "O");
+                            printData = printData.replace("ö", "o");
+                            printData = printData.replace("Ü", "U");
+                            printData = printData.replace("ü", "u");
+                            printData = printData.replace("Ş", "S");
+                            printData = printData.replace("ş", "s");
+                            printData = printData.replace("Ç", "C");
+                            printData = printData.replace("ç", "c");
 
                             PrintBluetooth.printer_id = GlobalVariable.printerName;
                             // YAZMA BAŞLAR
@@ -141,9 +141,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                             printBT.printOrderLabel(printData);
                             printBT.closeBT();
                             // YAZMA BİTER
-                        }
-                        catch (IOException e)
-                        {
+                        } catch (IOException e) {
                             String error = e.getMessage();
                             e.printStackTrace();
                         }
@@ -156,7 +154,9 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
         imgLogo = findViewById(R.id.imgLogo);
         imgLogo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { fnBackList(); }
+            public void onClick(View view) {
+                fnBackList();
+            }
         });
 
         txtBarcode = findViewById(R.id.txtSearch);
@@ -165,7 +165,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
         txtBarcode.requestFocus();
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(event.getAction() == KeyEvent.ACTION_UP){
+                if (event.getAction() == KeyEvent.ACTION_UP) {
                     /*if (event.getAction() == KeyEvent.KEYCODE_ENTER) {
                         Toast.makeText(context, "The text is: " + txtBarcode.getText() , Toast.LENGTH_LONG).show();
                         fnSeriControl(txtBarcode.getText().toString());
@@ -173,7 +173,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                     }*/
 
                     if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        if(GlobalVariable.getSelectedOrder().getNumuneSip())
+                        if (GlobalVariable.getSelectedOrder().getNumuneSip())
                             fnShowManuelQuantity(txtBarcode.getText().toString());
                         else
                             fnOrderPicking(txtBarcode.getText().toString(), 1.0);
@@ -221,14 +221,13 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
             @Override
             public void onResponse(Call<spSeritraSingle> call, Response<spSeritraSingle> response) {
                 nDialog.hide();
-                if(response.body().getSuccess()) {
+                if (response.body().getSuccess()) {
                     GlobalVariable.setManuelQuantityVal(response.body().getSpSeritra().getMiktar().doubleValue());
                     OrderManualQuantityFragment of = new OrderManualQuantityFragment();
                     of.show(getFragmentManager(), "modalX");
-                }
-                else {
+                } else {
                     nDialog.hide();
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                     alert.show();
                 }
             }
@@ -244,7 +243,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
 
     @Override
     public void modalTick(Boolean statu, Double value) {
-        if(statu)
+        if (statu)
             fnOrderPicking(txtBarcode.getText().toString(), value);
         else
             txtBarcode.setText("");
@@ -263,16 +262,15 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
                 nDialog.hide();
-                if(response.body().getSuccess())
+                if (response.body().getSuccess())
                     fnGetOrderDetailList(GlobalVariable.getSelectedOrder().getSipNo());
                 else {
                     nDialog.hide();
-                    if(response.body().getMessage().equals("DEL_PICKING")) {
+                    if (response.body().getMessage().equals("DEL_PICKING")) {
                         //silme onayı
                         fnOrderPickingDelete(barcode);
-                    }
-                    else {
-                        alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                    } else {
+                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                         alert.show();
                     }
                 }
@@ -314,11 +312,10 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
                 .enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
-                        if(response.body().getSuccess()) {
+                        if (response.body().getSuccess()) {
                             Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
                             fnGetOrderDetailList(GlobalVariable.getSelectedOrder().getSipNo());
-                        }
-                        else {
+                        } else {
                             nDialog.hide();
                             alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                             alert.show();
@@ -340,23 +337,20 @@ public class OrderDetailActivity extends AppCompatActivity implements Interfaces
             @Override
             public void onResponse(Call<OrderDetailList> call, Response<OrderDetailList> response) {
                 pBar.setVisibility(View.GONE);
-                if(response.body().getSuccess())
-                {
-                    if(response.body().getSuccess()) {
-                        if(response.body().getOrderDetail().stream().filter(orderDetail -> orderDetail.getToplananMiktar().floatValue() > 0).count() > 0)
+                if (response.body().getSuccess()) {
+                    if (response.body().getSuccess()) {
+                        if (response.body().getOrderDetail().stream().filter(orderDetail -> orderDetail.getToplananMiktar().floatValue() > 0).count() > 0)
                             btnFinishOrder.setVisibility(View.VISIBLE);
                         else
                             btnFinishOrder.setVisibility(View.GONE);
 
                         adapter.setData(response.body().getOrderDetail());
-                    }
-                    else {
-                        alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                    } else {
+                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                         alert.show();
                     }
-                }
-                else {
-                    alert = Alert.getAlert(context,getString(R.string.error),response.body().getMessage());
+                } else {
+                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                     alert.show();
                 }
             }

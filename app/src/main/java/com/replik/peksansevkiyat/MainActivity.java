@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager();
 
-        if(!checkPermission())
+        if (!checkPermission())
             requestPer();
 
         lblVersion = findViewById(R.id.lblVersion);
@@ -89,13 +89,12 @@ public class MainActivity extends AppCompatActivity {
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!GlobalVariable.apiUrl.isEmpty()) {
+                if (!GlobalVariable.apiUrl.isEmpty()) {
                     apiInterface = APIClient.getRetrofit().create(APIInterface.class);
                     getPersonelList();
                     imgRefresh.setVisibility(View.GONE);
-                }
-                else {
-                    alert = Alert.getAlert(context,getString(R.string.error), getString(R.string.url_error));
+                } else {
+                    alert = Alert.getAlert(context, getString(R.string.error), getString(R.string.url_error));
                     alert.show();
                 }
             }
@@ -113,13 +112,12 @@ public class MainActivity extends AppCompatActivity {
 
         ///Check Global Variable
         boolean a = checkDatabase();// fileExist();
-        if(!a) {
+        if (!a) {
             Intent i = new Intent(context, SettingsActivity.class);
             startActivity(i);
 
             imgRefresh.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             readDatabase();
             //fnReadText();
 
@@ -133,11 +131,12 @@ public class MainActivity extends AppCompatActivity {
         ddlUser.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i != 0)
+                if (i != 0)
                     SelectedPersonelId = personels.getPersonels().get(i - 1).getId();
                 else
                     SelectedPersonelId = -1;
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -147,17 +146,14 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (SelectedPersonelId != -1)
-                {
+                if (SelectedPersonelId != -1) {
                     Intent i = new Intent(context, MenuActivity.class);
                     String userName = ddlUser.getSelectedItem().toString();
                     GlobalVariable.setUserName(userName);
                     GlobalVariable.setUserId(SelectedPersonelId);
                     //i.putExtra("userName", userName);
                     startActivity(i);
-                }
-                else
-                {
+                } else {
                     Toast.makeText(context, getString(R.string.please_select_user), Toast.LENGTH_LONG).show();
                 }
             }
@@ -171,13 +167,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
                 nDialog.hide();
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     if (!response.body().getVersion().equals(GlobalVariable.apiVersion)) {
-                         fnNewVersionDownload(response.body().getUrl(), response.body().getDetail());
+                        fnNewVersionDownload(response.body().getUrl(), response.body().getDetail());
                     }
-                }
-                else{
-                    alert = Alert.getAlert(context,getString(R.string.error), response.message());
+                } else {
+                    alert = Alert.getAlert(context, getString(R.string.error), response.message());
                     alert.show();
                 }
             }
@@ -219,22 +214,22 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) +
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) +
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES)  == PackageManager.PERMISSION_GRANTED;
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_GRANTED;
     }
 
     void requestPer() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        requestPermissions(new String[] {
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.REQUEST_INSTALL_PACKAGES
-        }, 200);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions(new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.REQUEST_INSTALL_PACKAGES
+            }, 200);
 /*
         int permissionExternalMemory = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionExternalMemory != PackageManager.PERMISSION_GRANTED)
@@ -247,11 +242,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 200 ) {
+        if (requestCode == 200) {
 
-        }
-        else {
-            alert = Alert.getAlert(context,getString(R.string.error), "Yetkiler Tanımlı Değil !");
+        } else {
+            alert = Alert.getAlert(context, getString(R.string.error), "Yetkiler Tanımlı Değil !");
             alert.show();
         }
     }
@@ -262,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PersonelList> call, Response<PersonelList> response) {
                 nDialog.hide();
-                if(response != null) {
+                if (response != null) {
                     if (response.body().getSuccess()) {
                         personels = response.body();
                         personelList = new ArrayList<>();
@@ -303,10 +297,10 @@ public class MainActivity extends AppCompatActivity {
                 //stringBuffer.append(lines);
                 switch (line.substring(0, 3)) {
                     case "URL":
-                        GlobalVariable.setApiUrl(line.replace("URL|",""));
+                        GlobalVariable.setApiUrl(line.replace("URL|", ""));
                         break;
                     case "PRN":
-                        GlobalVariable.setPrinter(line.replace("PRN|",""));
+                        GlobalVariable.setPrinter(line.replace("PRN|", ""));
                         break;
                 }
         } catch (FileNotFoundException e) {
@@ -342,9 +336,9 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    public boolean fileExist(){
-        File dir = new File(Environment.getExternalStorageDirectory().getPath() + GlobalVariable.FileName.replace("/Replik.txt",""));
-        if(!dir.exists()){
+    public boolean fileExist() {
+        File dir = new File(Environment.getExternalStorageDirectory().getPath() + GlobalVariable.FileName.replace("/Replik.txt", ""));
+        if (!dir.exists()) {
         }
         File filepath = Environment.getExternalStorageDirectory();
         //File path = new File(dir, GlobalVariable.FileName);
@@ -359,23 +353,21 @@ public class MainActivity extends AppCompatActivity {
     boolean checkDatabase() {
         database = this.openOrCreateDatabase("PeksanSevkiyat", MODE_PRIVATE, null);
         database.execSQL("CREATE TABLE IF NOT EXISTS Parameter (id INT, apiUrl VARCHAR, printerName VARCHAR)");
-        Cursor cursor = database.rawQuery("SELECT * FROM Parameter",null);
+        Cursor cursor = database.rawQuery("SELECT * FROM Parameter", null);
 
         boolean hasValue = false;
 
         hasValue = cursor.getCount() > 0 ? true : false;
 
-        if(hasValue) {
+        if (hasValue) {
             int apiUrlIndex = cursor.getColumnIndex("apiUrl");
             int printerNameNoIndex = cursor.getColumnIndex("printerName");
 
             while (cursor.moveToNext())
-                if(cursor.getString(apiUrlIndex).toString().equals(""))
+                if (cursor.getString(apiUrlIndex).toString().equals(""))
                     return false;
             return true;
-        }
-        else
-        {
+        } else {
             database.execSQL("INSERT INTO Parameter (id, apiUrl, printerName) VALUES(1, '', '')");
             return false;
         }
@@ -384,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
     void readDatabase() {
         database = this.openOrCreateDatabase("PeksanSevkiyat", MODE_PRIVATE, null);
 
-        Cursor cursor = database.rawQuery("SELECT * FROM Parameter",null);
+        Cursor cursor = database.rawQuery("SELECT * FROM Parameter", null);
 
         int apiUrlIndex = cursor.getColumnIndex("apiUrl");
         int printerNameNoIndex = cursor.getColumnIndex("printerName");

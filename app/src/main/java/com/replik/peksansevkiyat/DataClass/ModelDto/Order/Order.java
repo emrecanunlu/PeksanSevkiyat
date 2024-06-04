@@ -18,18 +18,35 @@ public class Order {
     @SerializedName("hemenSevk")
     Boolean hemenSevk;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getSipNo() { return sipNo; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getCari() { return cari; }
+    public String getSipNo() {
+        return sipNo;
+    }
 
-    public String getCariKodu() { return cariKodu; }
+    public String getCari() {
+        return cari;
+    }
 
-    public String getTarih() { return tarih; }
+    public String getCariKodu() {
+        return cariKodu;
+    }
 
-    public Boolean getNumuneSip() { return numuneSip; }
+    public String getTarih() {
+        return tarih;
+    }
 
-    public Boolean getHemenSevk() { return hemenSevk; }
+    public Boolean getNumuneSip() {
+        return numuneSip;
+    }
+
+    public Boolean getHemenSevk() {
+        return hemenSevk;
+    }
 }
