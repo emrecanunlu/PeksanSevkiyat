@@ -16,16 +16,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.replik.peksansevkiyat.DataClass.ListAdapter.ListAdapter_Customer_Order_Detail;
+import com.replik.peksansevkiyat.DataClass.ListAdapter.ListenerInterface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderProduct;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingTransport;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateOrderShippingTransportDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.Interface.APIClient;
@@ -43,12 +48,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShipmentOrderDetailActivity extends AppCompatActivity {
+public class ShipmentOrderDetailActivity extends AppCompatActivity implements ListenerInterface.UpdateTransportDialogListener {
     ImageView logoImageView, printImageView;
     Button finishOrderButton;
     EditText barcodeEditText;
     ProgressDialog loader;
     AlertDialog alert;
+    CardView transportCard;
     APIInterface apiInterface;
     ConstraintLayout progressBar;
     TextView staffNameTextView, sipNoTextView, customerTextView, shippingNameTextView, deliveryNameTextView, deliveryAddressTextView, deliveryDate;
@@ -85,6 +91,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
         deliveryNameTextView = (TextView) findViewById(R.id.txtTeslimAdi);
         deliveryAddressTextView = (TextView) findViewById(R.id.txtTeslimAdresi);
         deliveryDate = (TextView) findViewById(R.id.txtSevkTarih);
+        transportCard = (CardView) findViewById(R.id.transportCard);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -107,6 +114,11 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
         logoImageView.setOnClickListener(v -> {
             finish();
+        });
+
+        transportCard.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            new UpdateTransportDialogFragment(order.getNakliyeId(), this).show(fragmentManager, "UPDATE_TRANSPORT_DIALOG");
         });
 
         finishOrderButton = (Button) findViewById(R.id.btnFinishOrder);
@@ -241,12 +253,10 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                                                         fetchOrderDetailList();
                                                     } else {
                                                         alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-
                                                         alert.show();
                                                     }
                                                 } else {
                                                     alert = Alert.getAlert(context, getString(R.string.error), response.message());
-
                                                     alert.show();
                                                 }
                                             }
@@ -261,6 +271,9 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
                                         }
                                 );
                             }
+                        } else {
+                            alert = Alert.getAlert(context, getString(R.string.error), getString(R.string.danger));
+                            alert.show();
                         }
 
                         loader.dismiss();
@@ -277,5 +290,37 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity {
 
     void print() {
         Toast.makeText(context, "Print Callback", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onTransportSelected(OrderShippingTransport transport) {
+        loader.show();
+        apiInterface.updateTransportType(new UpdateOrderShippingTransportDto(order.getSevkNo(), transport.getId())).enqueue(
+                new Callback<Result>() {
+                    @Override
+                    public void onResponse(Call<Result> call, Response<Result> response) {
+                        loader.dismiss();
+                        if (response.isSuccessful() && response.body() != null) {
+                            if (response.body().getSuccess()) {
+                                order.setNakliyeId(transport.getId());
+                                order.setNakliyeTipi(transport.getDesc());
+
+                                shippingNameTextView.setText(transport.getDesc());
+                            } else {
+                                alert = Alert.getAlert(context, getString(R.string.error), getString(R.string.error));
+                                alert.show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Result> call, Throwable t) {
+                        loader.dismiss();
+
+                        alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+                        alert.show();
+                    }
+                }
+        );
     }
 }

@@ -10,6 +10,8 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderDetail.OrderDetailList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingList;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingTransport;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateOrderShippingTransportDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletSingle;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.dtoPalletPrint;
@@ -144,4 +146,12 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Shipment/CreateNetsisShipment")
     Call<Result> createNetsisShipment(@Body OrderDtos.setNetsisShipment setNetsisShipmentDto);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/Shipment/TransportList")
+    Call<List<OrderShippingTransport>> getTransportList();
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/Shipment/UpdateTransportType")
+    Call<Result> updateTransportType(@Body UpdateOrderShippingTransportDto updateOrderShippingTransportDto);
 }

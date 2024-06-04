@@ -6,6 +6,7 @@ public class CustomerOrder implements Serializable {
     private int id;
     private String sevkNo;
     private String nakliyeTipi;
+    private int nakliyeId;
     private String cariIsim;
     private String cariKod;
     private String teslimAdi;
@@ -92,5 +93,13 @@ public class CustomerOrder implements Serializable {
 
     public void setShipmentDate(String shipmentDate) {
         this.shipmentDate = shipmentDate;
+    }
+
+    public int getNakliyeId() {
+        return nakliyeId;
+    }
+
+    public void setNakliyeId(int nakliyeId) {
+        this.nakliyeId = nakliyeId;
     }
 }

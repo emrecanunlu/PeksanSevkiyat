@@ -278,11 +278,19 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
 
                         if (response.isSuccessful() && response.body() != null) {
                             if (response.body().getSuccess()) {
-                                // success result
-                                String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0];
-                                String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1];
+                                Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                                nDialog.show();
+                                Intent i = new Intent(context, MenuActivity.class);
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(i);
+
+                                finish();
+
+                                // success result
+                                /*String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0];
+                                String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1];*/
+
+                                /*nDialog.show();
                                 apiInterface.setNetsisEIrsPacked(IrsNo).enqueue(
                                         new Callback<Result>() {
                                             @Override
@@ -343,7 +351,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                                                 alert.show();
                                             }
                                         }
-                                );
+                                );*/
                             } else {
                                 alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                 alert.show();
@@ -364,6 +372,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                 }
         );
     }
+
     private void fnGetShippingList(String search) {
         pBar.setVisibility(View.VISIBLE);
         apiInterface.getOrderShippingList(GlobalVariable.getUserId(), search).enqueue(new Callback<OrderShippingList>() {

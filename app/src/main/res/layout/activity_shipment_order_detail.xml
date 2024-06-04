@@ -62,7 +62,7 @@
                 android:layout_weight="0"
                 android:backgroundTint="@color/replik"
                 android:contentDescription="@string/empty"
-                app:srcCompat="@drawable/ic_icon_printer"
+                app:srcCompat="@drawable/ic_icon_settings"
                 tools:ignore="SpeakableTextPresentCheck" />
 
         </LinearLayout>
@@ -148,6 +148,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/transportCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/eight"
@@ -205,6 +206,14 @@
                         android:textColor="@color/white_light"
                         app:layout_constraintStart_toStartOf="@id/txtNakliyeAdi"
                         app:layout_constraintTop_toBottomOf="@id/txtNakliyeAdi" />
+
+                    <!--<ImageButton
+                        android:layout_width="@dimen/fragment_horizontal_margin"
+                        android:layout_height="@dimen/o"
+                        android:background="@drawable/ic_icon_edit"
+                        android:contentDescription="Edit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />-->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
