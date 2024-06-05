@@ -16,7 +16,7 @@ public class CustomerOrder implements Serializable {
     private String koliAdet;
     private String createdAt;
     private String shipmentDate;
-    private KoliPalet koliPalet;
+    private int koliPalet;
 
     public int getId() {
         return id;
@@ -106,11 +106,20 @@ public class CustomerOrder implements Serializable {
         this.nakliyeId = nakliyeId;
     }
 
-    public KoliPalet getKoliPalet() {
-        return koliPalet;
+    public String getKoliPalet() {
+        switch (this.koliPalet) {
+            case 0:
+                return "Koli";
+            case 1:
+                return "Palet";
+            case 3:
+                return "Dökme";
+        }
+
+        return "";
     }
 
-    public void setKoliPalet(KoliPalet koliPalet) {
+    public void setKoliPalet(int koliPalet) {
         this.koliPalet = koliPalet;
     }
 }

@@ -143,14 +143,76 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/eight"
+                android:layout_marginVertical="@dimen/five"
+                app:cardBackgroundColor="@color/purple_500">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/koliPaletIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/circle_shape"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="@dimen/fragment_horizontal_margin"
+                            android:layout_height="@dimen/fragment_horizontal_margin"
+                            android:background="@drawable/ic_icon_pallet"
+                            android:backgroundTint="@color/purple_500"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/txtKoliPaletTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/five"
+                        android:text="Koli Palet"
+                        android:textColor="@color/white_light"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/koliPaletIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
                         android:id="@+id/txtKoliPalet"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DÖKME"
+                        android:layout_height="match_parent"
+                        android:text="Dökme"
                         android:textColor="@color/white_light"
+                        app:layout_constraintStart_toStartOf="@id/txtKoliPaletTitle"
+                        app:layout_constraintTop_toBottomOf="@id/txtKoliPaletTitle" />
+
+                    <!--<ImageButton
+                        android:layout_width="@dimen/fragment_horizontal_margin"
+                        android:layout_height="@dimen/o"
+                        android:background="@drawable/ic_icon_edit"
+                        android:contentDescription="Edit"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtSevkTarih" />
+                        app:layout_constraintTop_toTopOf="parent" />-->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

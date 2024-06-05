@@ -109,6 +109,8 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
 
         shippingNameTextView.setText(order.getNakliyeTipi());
 
+        txtKoliPalet.setText(order.getKoliPalet());
+
         deliveryDate.setText(Voids.formatDate(order.getShipmentDate()));
         deliveryNameTextView.setText(order.getTeslimAdi());
         deliveryAddressTextView.setText(order.getTeslimAdresi());
@@ -289,7 +291,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                 }
         );
     }
-
 
     void print() {
         Toast.makeText(context, "Print Callback", Toast.LENGTH_SHORT).show();
