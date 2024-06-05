@@ -40,6 +40,8 @@ import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 import com.replik.peksansevkiyat.Transection.Voids;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,7 +59,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
     CardView transportCard;
     APIInterface apiInterface;
     ConstraintLayout progressBar;
-    TextView staffNameTextView, sipNoTextView, customerTextView, shippingNameTextView, deliveryNameTextView, deliveryAddressTextView, deliveryDate;
+    TextView staffNameTextView, sipNoTextView, customerTextView, shippingNameTextView, deliveryNameTextView, deliveryAddressTextView, deliveryDate, txtKoliPalet;
     ListAdapter_Customer_Order_Detail listAdapter;
     RecyclerView recyclerView;
     Context context = ShipmentOrderDetailActivity.this;
@@ -79,6 +81,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
 
         loader = Dialog.getDialog(context, getString(R.string.loading));
 
+        txtKoliPalet = (TextView) findViewById(R.id.txtKoliPalet);
         progressBar = (ConstraintLayout) findViewById(R.id.pnlProgressBar);
         barcodeEditText = (EditText) findViewById(R.id.txtBarcode);
         recyclerView = (RecyclerView) findViewById(R.id.customer_order_detail_list_recycler_view);

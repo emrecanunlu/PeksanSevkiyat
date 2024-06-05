@@ -12,9 +12,15 @@ public class OrderShippingList {
     @SerializedName("message")
     private String message;
 
-    public List<OrderShipping> getOrderShipping() { return OrderShippings; }
+    public List<OrderShipping> getOrderShipping() {
+        return OrderShippings;
+    }
 
-    public Boolean getSuccess() { return success; }
+    public Boolean getSuccess() {
+        return success;
+    }
 
-    public String getMessage() { return message; }
+    public String getMessage() {
+        return message;
+    }
 }
