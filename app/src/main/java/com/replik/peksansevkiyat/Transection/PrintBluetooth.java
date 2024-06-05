@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -95,8 +97,8 @@ public class PrintBluetooth extends AppCompatActivity {
     public void printPalletLabel(String barcode) {
         try {
             String printData = "SIZE 75 mm,75 mm\nGAP 0 mm,0 mm\nCLS" +
-                    "\nTEXT 70 mm,30 mm,\"3\",0,1.5 mm,1.5 mm,\""+barcode+"\"" +
-                    "\nQRCODE 70 mm,80 mm,\"1\",20,1,0,1,1,\""+barcode+"\"" +
+                    "\nTEXT 70 mm,30 mm,\"3\",0,1.5 mm,1.5 mm,\"" + barcode + "\"" +
+                    "\nQRCODE 70 mm,80 mm,\"1\",20,1,0,1,1,\"" + barcode + "\"" +
                     "\nPRINT 1\nEND\n";
             mmOutputStream.write(printData.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {

@@ -97,15 +97,15 @@ public interface APIInterface {
 
     // --------------- DELETE
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
-    @HTTP(method = "DELETE", path = "api/delPalletDetail", hasBody = true)
+    @HTTP(method = "POST", path = "api/delPalletDetail", hasBody = true)
     Call<PalletDetailList> delPalletDetail(@Body PalletDetailDtos.delPalletDetailColumn delPalletDetailColumn);
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
-    @HTTP(method = "DELETE", path = "api/delPallet", hasBody = true)
+    @HTTP(method = "POST", path = "api/delPallet", hasBody = true)
     Call<Result> delPallet(@Body getStandartLong delStandartColumn);
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
-    @HTTP(method = "DELETE", path = "api/delOrderPicking", hasBody = true)
+    @HTTP(method = "POST", path = "api/delOrderPicking", hasBody = true)
     Call<Result> delOrderPicking(@Body OrderDtos.delPickingItem delPickingItem);
 
 
