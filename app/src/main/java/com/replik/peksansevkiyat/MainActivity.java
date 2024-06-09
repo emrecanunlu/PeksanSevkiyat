@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.dcastalia.localappupdate.DownloadApk;
-import com.google.firebase.appcheck.interop.BuildConfig;
 import com.replik.peksansevkiyat.DataClass.ModelDto.ApkVersion;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.Personel;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.PersonelList;
@@ -162,11 +161,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fnVersionControl() {
-        nDialog.show();
         apiInterface.getApkVersion().enqueue(new Callback<ApkVersion>() {
             @Override
             public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
-                nDialog.hide();
                 if (response.isSuccessful()) {
                     if (!response.body().getVersion().equals(GlobalVariable.apiVersion)) {
                         fnNewVersionDownload(response.body().getUrl(), response.body().getDetail());
@@ -197,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                nDialog.hide();
                 DownloadApk downloadApk = new DownloadApk(context);
                 downloadApk.startDownloadingApk(url, "update");
             }
@@ -251,11 +247,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getPersonelList() {
-        nDialog.show();
         apiInterface.getUserList().enqueue(new Callback<PersonelList>() {
             @Override
             public void onResponse(Call<PersonelList> call, Response<PersonelList> response) {
-                nDialog.hide();
                 if (response != null) {
                     if (response.body().getSuccess()) {
                         personels = response.body();
@@ -278,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PersonelList> call, Throwable t) {
-                nDialog.hide();
                 alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                 alert.show();
             }

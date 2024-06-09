@@ -10,18 +10,24 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ShippingPrintLabelDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.TSPL.WidtHeight;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PrintBluetooth extends AppCompatActivity {
 
-    // android built in classes for bluetooth operations
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -104,6 +110,69 @@ public class PrintBluetooth extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void printTestLabel(ShippingPrintLabelDto shippingPrintLabelDto) {
+        try {
+            List<String> commands = new ArrayList<>();
+
+            int totalHeight = 0;
+            String deliveryName = "";
+            List<String> deliveryAddress = this.splitString(shippingPrintLabelDto.deliveryAddress, 45);
+
+            if (shippingPrintLabelDto.deliveryName.length() > 28) {
+                deliveryName = shippingPrintLabelDto.deliveryName.substring(0, 25) + "...";
+            } else {
+                deliveryName = shippingPrintLabelDto.deliveryName;
+            }
+
+            commands.add("SIZE 75 mm, 75 mm");
+            commands.add("GAP 0,0");
+            commands.add("CLS");
+            commands.add("TEXT 10,48,\"3\",0,1.5,1.5,\"{deliveryName}\"");
+            totalHeight += 60;
+            for (int i = 0; i < deliveryAddress.size(); i++) {
+                totalHeight += 28;
+                final String text = "TEXT 10,{height},\"3\",0,1,1,\"{text}\""
+                        .replace("{height}", String.valueOf(totalHeight))
+                        .replace("{text}", deliveryAddress.get(i));
+
+                commands.add(text);
+            }
+            totalHeight += 50;
+            commands.add("TEXT 10," + totalHeight + ",\"3\",0,1.5,1.5,\"{deliveryNo}\"");
+            totalHeight += 40;
+            commands.add("QRCODE 10," + totalHeight + ",\"1\",15,1,0,1,1,\"{deliveryNo}\"");
+            commands.add("PRINT 1");
+            commands.add("END");
+
+            final String raw = String.join("\n", commands)
+                    .replace("{deliveryName}", deliveryName)
+                    .replace("{deliveryAddress}", shippingPrintLabelDto.deliveryName)
+                    .replace("{deliveryNo}", shippingPrintLabelDto.shippingNo);
+
+
+            mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> splitString(String input, int length) {
+        List<String> parts = new ArrayList<>();
+        if (input.length() > length) {
+            int startIndex = 0;
+            while (startIndex < input.length()) {
+                // Uzunluk kadar bir parça al
+                int endIndex = Math.min(startIndex + length, input.length());
+                parts.add(input.substring(startIndex, endIndex));
+                startIndex = endIndex;
+            }
+        } else {
+            parts.add(input);
+        }
+
+        return parts;
     }
 
     public void printOrderLabel(String code) {

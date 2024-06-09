@@ -22,7 +22,6 @@ public class GlobalVariable extends Application {
         return customerOrderDetails;
     }
 
-
     public static void setCustomerOrderDetails(List<CustomerOrderDetail> products) {
         customerOrderDetails = products;
     }

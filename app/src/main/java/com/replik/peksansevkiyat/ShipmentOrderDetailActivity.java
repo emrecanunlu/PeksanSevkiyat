@@ -27,6 +27,7 @@ import com.replik.peksansevkiyat.DataClass.ListAdapter.ListenerInterface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ShippingPrintLabelDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderProduct;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingTransport;
@@ -38,10 +39,12 @@ import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.Transection.Alert;
 import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
+import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 import com.replik.peksansevkiyat.Transection.Voids;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +57,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
     ImageView logoImageView, printImageView;
     Button finishOrderButton;
     EditText barcodeEditText;
+    PrintBluetooth printBluetooth = new PrintBluetooth();
     ProgressDialog loader;
     AlertDialog alert;
     CardView transportCard;
@@ -115,7 +119,27 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
         deliveryNameTextView.setText(order.getTeslimAdi());
         deliveryAddressTextView.setText(order.getTeslimAdresi());
 
-        printImageView.setOnClickListener(v -> print());
+        printImageView.setOnClickListener(v -> {
+            try {
+                PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+                /*begin print region*/
+                printBluetooth.findBT();
+                printBluetooth.openBT();
+                printBluetooth.printTestLabel(
+                        new ShippingPrintLabelDto(
+                                order.getSevkNo(),
+                                "Global Tech Solutions and Innovations",
+                                "1234 Elm Street, Suite 567, Springfield, IL 62704, United States of America, near Central Park"
+                        )
+                );
+                printBluetooth.closeBT();
+                /*end print region*/
+            } catch (IOException e) {
+                alert = Alert.getAlert(context, getString(R.string.error), e.getMessage());
+                alert.show();
+            }
+        });
 
         logoImageView.setOnClickListener(v -> {
             finish();
@@ -290,10 +314,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                     }
                 }
         );
-    }
-
-    void print() {
-        Toast.makeText(context, "Print Callback", Toast.LENGTH_SHORT).show();
     }
 
     @Override
