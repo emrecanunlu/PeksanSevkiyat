@@ -1,16 +1,16 @@
 package com.replik.peksansevkiyat.DataClass.ModelDto.Label;
 
 public class ZarfProducts {
-    private String stokKodu;
+    private String stokkodu;
     private String renkLogo;
     private String miktar;
 
-    public String getStokKodu() {
-        return stokKodu;
+    public String getStokkodu() {
+        return stokkodu;
     }
 
-    public void setStokKodu(String stokKodu) {
-        this.stokKodu = stokKodu;
+    public void setStokkodu(String stokkodu) {
+        this.stokkodu = stokkodu;
     }
 
     public String getRenkLogo() {

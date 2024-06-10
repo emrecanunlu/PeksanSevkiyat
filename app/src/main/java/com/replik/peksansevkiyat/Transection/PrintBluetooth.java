@@ -125,20 +125,30 @@ public class PrintBluetooth extends AppCompatActivity {
 
             commands.add("TEXT 20,40,\"3\",0,1,1,\"Stok Kodu\"");
             commands.add("TEXT 230,40,\"3\",0,1,1,\"Renk/Logo\"");
-            commands.add("TEXT 460,40,\"3\",0,1,1,\"Miktar\"");
+            commands.add("TEXT 480,40,\"3\",0,1,1,\"Miktar\"");
 
             commands.add("BAR 0,80," + totalWidth + ",5");
 
             for (int i = 0; i < products.size(); i++) {
-                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getStokKodu() + "\"");
+                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getStokkodu() + "\"");
                 commands.add("TEXT 230," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getRenkLogo() + "\"");
-                commands.add("TEXT 460," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getMiktar() + "\"");
+                commands.add("TEXT 480," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getMiktar() + "\"");
             }
 
             commands.add("PRINT 1");
             commands.add("END");
 
-            final String raw = String.join("\n", commands);
+            final String raw = String.join("\n", commands)
+                    .replace(".İ", "I")
+                    .replace("ı", "i")
+                    .replace("Ö", "O")
+                    .replace("ö", "o")
+                    .replace("Ü", "U")
+                    .replace("ü", "u")
+                    .replace("Ş", "S")
+                    .replace("ş", "s")
+                    .replace("Ç", "C")
+                    .replace("ç", "c");
 
             mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
