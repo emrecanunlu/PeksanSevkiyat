@@ -56,20 +56,8 @@ public class MenuActivity extends AppCompatActivity {
 
         btnShipment = (Button) findViewById(R.id.btnShipment);
         btnShipment.setOnClickListener(v -> {
-            /*Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
-            startActivity(intent);*/
-
-            try {
-                PrintBluetooth printBluetooth = new PrintBluetooth();
-                PrintBluetooth.printer_id = GlobalVariable.printerName;
-
-                printBluetooth.findBT();
-                printBluetooth.openBT();
-                printBluetooth.printTestTable();
-                printBluetooth.closeBT();
-            } catch (IOException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+            Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
+            startActivity(intent);
         });
 
         imgLogo = (ImageButton) findViewById(R.id.imgLogo);

@@ -34,8 +34,6 @@ public class GlobalVariable extends Application {
 
     public static String printerName;
 
-    public static String shipmentPdfUrl = "api/Mobile/PdfDeneme";
-
     public static void setPrinter(String name) {
         printerName = name;
     }

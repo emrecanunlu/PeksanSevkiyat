@@ -25,6 +25,8 @@ import com.replik.peksansevkiyat.DataClass.ListAdapter.ListAdapter_OrderShipping
 import com.replik.peksansevkiyat.DataClass.ListAdapter.ListenerInterface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabelResult;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfProducts;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderShipment;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
@@ -35,8 +37,10 @@ import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.Transection.Alert;
 import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
+import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 import com.replik.peksansevkiyat.Transection.Voids;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -271,87 +275,22 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         nDialog.show();
 
         apiInterface.createNetsisShipment(data).enqueue(
-                new Callback<Result>() {
+                new Callback<ZarfLabelResult>() {
                     @Override
-                    public void onResponse(Call<Result> call, Response<Result> response) {
+                    public void onResponse(Call<ZarfLabelResult> call, Response<ZarfLabelResult> response) {
                         nDialog.dismiss();
 
                         if (response.isSuccessful() && response.body() != null) {
                             if (response.body().getSuccess()) {
                                 Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
 
+                                printLabel(response.body().getProducts());
+
                                 Intent i = new Intent(context, MenuActivity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(i);
 
                                 finish();
-
-                                // success result
-                                /*String IrsNo = response.body().getMessage().replace("|", "-").split("-")[0];
-                                String GibIrsNo = response.body().getMessage().replace("|", "-").split("-")[1];*/
-
-                                /*nDialog.show();
-                                apiInterface.setNetsisEIrsPacked(IrsNo).enqueue(
-                                        new Callback<Result>() {
-                                            @Override
-                                            public void onResponse(Call<Result> call, Response<Result> response) {
-                                                nDialog.dismiss();
-
-                                                if (response.isSuccessful() && response.body() != null) {
-
-                                                    if (response.body().getSuccess()) {
-
-                                                        nDialog.show();
-                                                        apiInterface.setNetsisPrint(GibIrsNo).enqueue(
-                                                                new Callback<Result>() {
-                                                                    @Override
-                                                                    public void onResponse(Call<Result> call, Response<Result> response) {
-                                                                        nDialog.dismiss();
-
-                                                                        Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
-
-                                                                        finish();
-
-                                                                        Intent ii = new Intent(context, ShipmentCustomerListActivity.class);
-                                                                        startActivity(ii);
-
-                                                                        if (response.isSuccessful() && response.body() != null) {
-                                                                            if (response.body().getSuccess()) {
-                                                                                alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                                                                                alert.show();
-                                                                            }
-                                                                        } else {
-                                                                            alert = Alert.getAlert(context, getString(R.string.error), response.message());
-                                                                            alert.show();
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onFailure(Call<Result> call, Throwable t) {
-                                                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                                                                        alert.show();
-                                                                    }
-                                                                }
-                                                        );
-                                                    } else {
-                                                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                                                        alert.show();
-                                                    }
-                                                } else {
-                                                    alert = Alert.getAlert(context, getString(R.string.error), response.message());
-                                                    alert.show();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<Result> call, Throwable t) {
-                                                nDialog.dismiss();
-
-                                                alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                                                alert.show();
-                                            }
-                                        }
-                                );*/
                             } else {
                                 alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                 alert.show();
@@ -363,7 +302,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                     }
 
                     @Override
-                    public void onFailure(Call<Result> call, Throwable t) {
+                    public void onFailure(Call<ZarfLabelResult> call, Throwable t) {
                         nDialog.dismiss();
 
                         alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
@@ -422,5 +361,19 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         });
 
         builder.show();
+    }
+
+    void printLabel(List<ZarfProducts> products) {
+        try {
+            PrintBluetooth printBluetooth = new PrintBluetooth();
+            PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+            printBluetooth.findBT();
+            printBluetooth.openBT();
+            printBluetooth.printTestTable(products);
+            printBluetooth.closeBT();
+        } catch (IOException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

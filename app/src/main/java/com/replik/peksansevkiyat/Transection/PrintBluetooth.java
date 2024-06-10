@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ShippingPrintLabelDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfProducts;
 import com.replik.peksansevkiyat.DataClass.ModelDto.TSPL.WidtHeight;
 
 import java.io.IOException;
@@ -112,7 +113,7 @@ public class PrintBluetooth extends AppCompatActivity {
         }
     }
 
-    public void printTestTable() {
+    public void printTestTable(List<ZarfProducts> products) {
         try {
             List<String> commands = new ArrayList<>();
 
@@ -128,10 +129,10 @@ public class PrintBluetooth extends AppCompatActivity {
 
             commands.add("BAR 0,80," + totalWidth + ",5");
 
-            for (int i = 0; i <= 10; i++) {
-                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"029.020CSP42B\"");
-                commands.add("TEXT 230," + (100 + i * 40) + ",\"3\",0,1,1,\"Beyaz01/Sari01\"");
-                commands.add("TEXT 460," + (100 + i * 40) + ",\"3\",0,1,1,\"250\"");
+            for (int i = 0; i < products.size(); i++) {
+                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getStokKodu() + "\"");
+                commands.add("TEXT 230," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getRenkLogo() + "\"");
+                commands.add("TEXT 460," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getMiktar() + "\"");
             }
 
             commands.add("PRINT 1");
@@ -147,11 +148,14 @@ public class PrintBluetooth extends AppCompatActivity {
 
     public void printTestLabel(ShippingPrintLabelDto shippingPrintLabelDto) {
         try {
+            final String pdfUrl = GlobalVariable.getApiUrl().concat("api/Mobile/ZarfPdf?sevkNo=" + shippingPrintLabelDto.shippingNo);
+
             List<String> commands = new ArrayList<>();
+            List<String> deliveryAddress = this.splitString(shippingPrintLabelDto.deliveryAddress, 45);
+            String deliveryName = "";
 
             int totalHeight = 0;
-            String deliveryName = "";
-            List<String> deliveryAddress = this.splitString(shippingPrintLabelDto.deliveryAddress, 45);
+
 
             if (shippingPrintLabelDto.deliveryName.length() > 28) {
                 deliveryName = shippingPrintLabelDto.deliveryName.substring(0, 25) + "...";
@@ -182,7 +186,7 @@ public class PrintBluetooth extends AppCompatActivity {
             final String raw = String.join("\n", commands)
                     .replace("{deliveryName}", deliveryName)
                     .replace("{deliveryAddress}", shippingPrintLabelDto.deliveryName)
-                    .replace("{deliveryPdfUrl}", GlobalVariable.getApiUrl().concat(GlobalVariable.shipmentPdfUrl + "?barkod=" + shippingPrintLabelDto.shippingNo))
+                    .replace("{deliveryPdfUrl}", pdfUrl)
                     .replace("{deliveryNo}", shippingPrintLabelDto.shippingNo);
 
 

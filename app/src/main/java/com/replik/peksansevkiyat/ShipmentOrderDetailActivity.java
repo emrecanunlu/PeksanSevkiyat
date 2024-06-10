@@ -47,6 +47,8 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -119,28 +121,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
         deliveryNameTextView.setText(order.getTeslimAdi());
         deliveryAddressTextView.setText(order.getTeslimAdresi());
 
-        printImageView.setOnClickListener(v -> {
-            try {
-                PrintBluetooth.printer_id = GlobalVariable.printerName;
-
-                /*begin print region*/
-                printBluetooth.findBT();
-                printBluetooth.openBT();
-                printBluetooth.printTestLabel(
-                        new ShippingPrintLabelDto(
-                                order.getSevkNo(),
-                                order.getTeslimAdi(),
-                                order.getTeslimAdresi()
-                        )
-                );
-                printBluetooth.closeBT();
-                /*end print region*/
-            } catch (IOException e) {
-                alert = Alert.getAlert(context, getString(R.string.error), e.getMessage());
-                alert.show();
-            }
-        });
-
         logoImageView.setOnClickListener(v -> {
             finish();
         });
@@ -163,7 +143,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
             startActivity(i);
         });
 
-        barcodeEditText.setInputType(InputType.TYPE_NULL);
         barcodeEditText.requestFocus();
         barcodeEditText.setOnKeyListener(
                 (v, keyCode, event) -> {
@@ -218,8 +197,81 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                     public void onResponse(Call<List<PalletDetail>> call, Response<List<PalletDetail>> response) {
                         loader.dismiss();
 
-                        if (response.isSuccessful()) {
+                        if (response.isSuccessful() && response.body() != null) {
                             List<CustomerOrderDetail> list = customerOrderDetailList.stream().filter(x -> x.getSevkMiktar() != x.getGonderilenMiktar()).collect(Collectors.toList());
+
+                            if (response.body().size() == list.size() || response.body().size() < list.size()) {
+                                for (PalletDetail palletDetail : response.body()) {
+                                    if (list.stream().noneMatch(x -> Objects.equals(x.getStokKodu(), palletDetail.getStokKod()) && Objects.equals(x.getUrunYapkod(), palletDetail.getYapkod()))) {
+                                        alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
+                                        alert.show();
+
+                                        return;
+                                    }
+                                }
+                            } else {
+                                alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
+                                alert.show();
+
+                                return;
+                            }
+
+                            for (PalletDetail product : response.body()) {
+                                Optional<CustomerOrderDetail> orderDetail = list.stream().filter(x -> Objects.equals(x.getStokKodu(), product.getStokKod()) && Objects.equals(x.getUrunYapkod(), product.getYapkod())).findFirst();
+
+                                if (orderDetail.isPresent()) {
+                                    final OrderDtos.createOrderByProductsDto orderByProductsDto =
+                                            new OrderDtos.createOrderByProductsDto(
+                                                    orderDetail.get().getSevkNo(),
+                                                    orderDetail.get().getSipNo(),
+                                                    customer.getCode(),
+                                                    GlobalVariable.getUserId(),
+                                                    product.getProducts().stream().map(x -> new OrderProduct(x, product.getStokKod(), product.getYapkod())).collect(Collectors.toList())
+                                            );
+
+                                    loader.show();
+                                    apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
+                                            new Callback<Result>() {
+                                                @Override
+                                                public void onResponse(Call<Result> call, Response<Result> response) {
+                                                    loader.dismiss();
+
+                                                    if (response.body() != null) {
+                                                        if (response.body().getSuccess()) {
+                                                            fetchOrderDetailList();
+
+                                                            printLabel(new ShippingPrintLabelDto(
+                                                                    order.getSevkNo(),
+                                                                    order.getTeslimAdi(),
+                                                                    order.getTeslimAdresi()
+                                                            ));
+
+                                                            Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
+                                                        } else {
+                                                            alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
+                                                            alert.show();
+                                                        }
+                                                    } else {
+                                                        alert = Alert.getAlert(context, getString(R.string.error), response.message());
+                                                        alert.show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Result> call, Throwable t) {
+                                                    loader.dismiss();
+
+                                                    alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+                                                    alert.show();
+                                                }
+                                            }
+                                    );
+                                }
+                            }
+
+
+
+                            /*List<CustomerOrderDetail> list = customerOrderDetailList.stream().filter(x -> x.getSevkMiktar() != x.getGonderilenMiktar()).collect(Collectors.toList());
 
                             if (response.body().stream().anyMatch(x -> x.getProducts().isEmpty())) {
                                 alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
@@ -228,7 +280,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                 return;
                             }
 
-                            if (response.body().size() != list.size()) {
+                            if (response.body().size() > list.size()) {
                                 alert = Alert.getAlert(context, getString(R.string.error), "Hatalı Palet Serisi!");
 
                                 alert.show();
@@ -249,14 +301,12 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
 
                                 alert.show();
                                 return;
-                            }
+                            }*/
 
-                            for (int i = 0; i < list.size(); i++) {
-                                final CustomerOrderDetail customerOrderDetail = list.get(i);
-
-                                /**/
+/*
+                            for (int i = 0; i < response.body().size(); i++) {
                                 final PalletDetail palletDetail = response.body().get(i);
-                                /**/
+                                final CustomerOrderDetail customerOrderDetail = list.get(i);
 
                                 final OrderDtos.createOrderByProductsDto orderByProductsDto =
                                         new OrderDtos.createOrderByProductsDto(
@@ -266,9 +316,6 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                                 GlobalVariable.getUserId(),
                                                 palletDetail.getProducts().stream().map(x -> new OrderProduct(x, palletDetail.getStokKod(), palletDetail.getYapkod())).collect(Collectors.toList())
                                         );
-
-                                /* TO DO */
-                                // Her product için isteği sıraya al.
 
                                 loader.show();
                                 apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
@@ -280,6 +327,12 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                                 if (response.body() != null) {
                                                     if (response.body().getSuccess()) {
                                                         fetchOrderDetailList();
+
+                                                        printLabel(new ShippingPrintLabelDto(
+                                                                order.getSevkNo(),
+                                                                order.getTeslimAdi(),
+                                                                order.getTeslimAdresi()
+                                                        ));
                                                     } else {
                                                         alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                                         alert.show();
@@ -300,6 +353,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                         }
                                 );
                             }
+*/
                         } else {
                             alert = Alert.getAlert(context, getString(R.string.error), getString(R.string.danger));
                             alert.show();
@@ -314,6 +368,19 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                     }
                 }
         );
+    }
+
+    void printLabel(ShippingPrintLabelDto shippingPrintLabelDto) {
+        try {
+            PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+            printBluetooth.findBT();
+            printBluetooth.openBT();
+            printBluetooth.printTestLabel(shippingPrintLabelDto);
+            printBluetooth.closeBT();
+        } catch (IOException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

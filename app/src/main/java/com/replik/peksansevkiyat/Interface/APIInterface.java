@@ -6,6 +6,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Dtos.dtoPalletDetailAndSeritra_data;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Dtos.getStandartLong;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabelResult;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderDetail.OrderDetailList;
@@ -145,7 +146,7 @@ public interface APIInterface {
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Shipment/CreateNetsisShipment")
-    Call<Result> createNetsisShipment(@Body OrderDtos.setNetsisShipment setNetsisShipmentDto);
+    Call<ZarfLabelResult> createNetsisShipment(@Body OrderDtos.setNetsisShipment setNetsisShipmentDto);
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/Shipment/TransportList")
