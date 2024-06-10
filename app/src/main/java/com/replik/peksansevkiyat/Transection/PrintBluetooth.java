@@ -112,6 +112,39 @@ public class PrintBluetooth extends AppCompatActivity {
         }
     }
 
+    public void printTestTable() {
+        try {
+            List<String> commands = new ArrayList<>();
+
+            int totalWidth = 560;
+
+            commands.add("SIZE 75 mm,75 mm");
+            commands.add("GAP 0,0");
+            commands.add("CLS");
+
+            commands.add("TEXT 20,40,\"3\",0,1,1,\"Stok Kodu\"");
+            commands.add("TEXT 230,40,\"3\",0,1,1,\"Renk/Logo\"");
+            commands.add("TEXT 460,40,\"3\",0,1,1,\"Miktar\"");
+
+            commands.add("BAR 0,80," + totalWidth + ",5");
+
+            for (int i = 0; i <= 10; i++) {
+                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"029.020CSP42B\"");
+                commands.add("TEXT 230," + (100 + i * 40) + ",\"3\",0,1,1,\"Beyaz01/Sari01\"");
+                commands.add("TEXT 460," + (100 + i * 40) + ",\"3\",0,1,1,\"250\"");
+            }
+
+            commands.add("PRINT 1");
+            commands.add("END");
+
+            final String raw = String.join("\n", commands);
+
+            mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void printTestLabel(ShippingPrintLabelDto shippingPrintLabelDto) {
         try {
             List<String> commands = new ArrayList<>();
@@ -126,7 +159,7 @@ public class PrintBluetooth extends AppCompatActivity {
                 deliveryName = shippingPrintLabelDto.deliveryName;
             }
 
-            commands.add("SIZE 75 mm, 75 mm");
+            commands.add("SIZE 75 mm,75 mm");
             commands.add("GAP 0,0");
             commands.add("CLS");
             commands.add("TEXT 10,48,\"3\",0,1.5,1.5,\"{deliveryName}\"");
@@ -140,15 +173,16 @@ public class PrintBluetooth extends AppCompatActivity {
                 commands.add(text);
             }
             totalHeight += 50;
-            commands.add("TEXT 10," + totalHeight + ",\"3\",0,1.5,1.5,\"{deliveryNo}\"");
+            commands.add("TEXT " + String.valueOf(300 - (shippingPrintLabelDto.shippingNo.length() * 12)) + ", " + totalHeight + ",\"3\",0,1.5,1.5,\"{deliveryNo}\"");
             totalHeight += 40;
-            commands.add("QRCODE 10," + totalHeight + ",\"1\",15,1,0,1,1,\"{deliveryNo}\"");
+            commands.add("QRCODE 90," + totalHeight + ",\"1\",11,1,0,1,1,\"{deliveryPdfUrl}\"");
             commands.add("PRINT 1");
             commands.add("END");
 
             final String raw = String.join("\n", commands)
                     .replace("{deliveryName}", deliveryName)
                     .replace("{deliveryAddress}", shippingPrintLabelDto.deliveryName)
+                    .replace("{deliveryPdfUrl}", GlobalVariable.getApiUrl().concat(GlobalVariable.shipmentPdfUrl + "?barkod=" + shippingPrintLabelDto.shippingNo))
                     .replace("{deliveryNo}", shippingPrintLabelDto.shippingNo);
 
 

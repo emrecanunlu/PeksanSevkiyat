@@ -129,8 +129,8 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                 printBluetooth.printTestLabel(
                         new ShippingPrintLabelDto(
                                 order.getSevkNo(),
-                                "Global Tech Solutions and Innovations",
-                                "1234 Elm Street, Suite 567, Springfield, IL 62704, United States of America, near Central Park"
+                                order.getTeslimAdi(),
+                                order.getTeslimAdresi()
                         )
                 );
                 printBluetooth.closeBT();

@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
+import com.replik.peksansevkiyat.Transection.PrintBluetooth;
+
+import java.io.IOException;
 
 public class MenuActivity extends AppCompatActivity {
     Button btnMenuPalette, btnMenuOrder, btnShipment;
@@ -34,7 +38,6 @@ public class MenuActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
         btnMenuPalette = (Button) findViewById(R.id.btnPaletteAdd);
         btnMenuPalette.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -53,8 +56,20 @@ public class MenuActivity extends AppCompatActivity {
 
         btnShipment = (Button) findViewById(R.id.btnShipment);
         btnShipment.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
-            startActivity(intent);
+            /*Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
+            startActivity(intent);*/
+
+            try {
+                PrintBluetooth printBluetooth = new PrintBluetooth();
+                PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+                printBluetooth.findBT();
+                printBluetooth.openBT();
+                printBluetooth.printTestTable();
+                printBluetooth.closeBT();
+            } catch (IOException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
 
         imgLogo = (ImageButton) findViewById(R.id.imgLogo);
