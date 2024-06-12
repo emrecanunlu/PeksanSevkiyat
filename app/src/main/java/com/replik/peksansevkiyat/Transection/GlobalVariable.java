@@ -16,7 +16,7 @@ public class GlobalVariable extends Application {
         return apiUrl; /*apiUrl == null ? "http://192.168.2.251:7076/" : apiUrl; */
     }
 
-    public static String apiPdfUrl = "http://192.168.2.251:7248/";
+    public static String apiPdfUrl = "http://192.168.1.102:7248/";
 
     public static List<CustomerOrderDetail> customerOrderDetails;
 
