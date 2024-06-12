@@ -5,6 +5,12 @@ public class ZarfProducts {
     private String renkLogo;
     private String miktar;
 
+    public ZarfProducts(String stokkodu, String renkLogo, String miktar) {
+        this.stokkodu = stokkodu;
+        this.renkLogo = renkLogo;
+        this.miktar = miktar;
+    }
+
     public String getStokkodu() {
         return stokkodu;
     }

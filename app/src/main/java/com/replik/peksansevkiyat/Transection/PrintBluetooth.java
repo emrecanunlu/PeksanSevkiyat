@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ShippingPrintLabelDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabel;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfProducts;
 import com.replik.peksansevkiyat.DataClass.ModelDto.TSPL.WidtHeight;
 
@@ -102,10 +103,12 @@ public class PrintBluetooth extends AppCompatActivity {
     }
 
     public void printPalletLabel(String barcode) {
+        final String pdfUrl = GlobalVariable.apiPdfUrl.concat("api/Generate/Palet?paletNo=" + barcode);
+
         try {
             String printData = "SIZE 75 mm,75 mm\nGAP 0 mm,0 mm\nCLS" +
                     "\nTEXT 70 mm,30 mm,\"3\",0,1.5 mm,1.5 mm,\"" + barcode + "\"" +
-                    "\nQRCODE 70 mm,80 mm,\"1\",20,1,0,1,1,\"" + barcode + "\"" +
+                    "\nQRCODE 70 mm,80 mm,\"1\",11,1,0,1,1,\"" + pdfUrl + "\"" +
                     "\nPRINT 1\nEND\n";
             mmOutputStream.write(printData.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -113,33 +116,55 @@ public class PrintBluetooth extends AppCompatActivity {
         }
     }
 
-    public void printTestTable(List<ZarfProducts> products) {
+    public void printTestTable(ZarfLabel label) {
         try {
             List<String> commands = new ArrayList<>();
+            List<String> deliveryAddress = this.splitString(label.getTeslimAdresi(), 45);
 
             int totalWidth = 560;
+            int totalHeight = 0;
 
             commands.add("SIZE 75 mm,75 mm");
             commands.add("GAP 0,0");
             commands.add("CLS");
 
-            commands.add("TEXT 20,40,\"3\",0,1,1,\"Stok Kodu\"");
-            commands.add("TEXT 230,40,\"3\",0,1,1,\"Renk/Logo\"");
-            commands.add("TEXT 480,40,\"3\",0,1,1,\"Miktar\"");
+            commands.add("TEXT 20,30,\"3\",0,1.25,1.25,\"{deliveryName}\"");
+            commands.add("TEXT 20,65,\"3\",0,1.25,1.5,\"{transportName}\"");
+            totalHeight += 85;
 
-            commands.add("BAR 0,80," + totalWidth + ",5");
+            for (int i = 0; i < deliveryAddress.size(); i++) {
+                totalHeight += 28;
+                String command = "TEXT 20," + totalHeight + ",\"3\",0,1,1,\"{text}\""
+                        .replace("{text}", deliveryAddress.get(i));
 
-            for (int i = 0; i < products.size(); i++) {
-                commands.add("TEXT 20," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getStokkodu() + "\"");
-                commands.add("TEXT 230," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getRenkLogo() + "\"");
-                commands.add("TEXT 480," + (100 + i * 40) + ",\"3\",0,1,1,\"" + products.get(i).getMiktar() + "\"");
+                commands.add(command);
+            }
+
+            totalHeight += 60;
+
+            commands.add("TEXT 20," + totalHeight + ",\"3\",0,1,1,\"Stok Kodu\"");
+            commands.add("TEXT 230," + totalHeight + ",\"3\",0,1,1,\"Renk/Logo\"");
+            commands.add("TEXT 480," + totalHeight + ",\"3\",0,1,1,\"Miktar\"");
+
+            totalHeight += 40;
+
+            commands.add("BAR 20," + totalHeight + "," + totalWidth + ",5");
+
+            totalHeight += 20;
+
+            for (int i = 0; i < label.getProducts().size(); i++) {
+                commands.add("TEXT 20," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getStokkodu() + "\"");
+                commands.add("TEXT 230," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getRenkLogo() + "\"");
+                commands.add("TEXT 480," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getMiktar() + "\"");
             }
 
             commands.add("PRINT 1");
             commands.add("END");
 
             final String raw = String.join("\n", commands)
-                    .replace(".İ", "I")
+                    .replace("{deliveryName}", this.getTruncatedString(label.getTeslimAdi(), 27))
+                    .replace("{transportName}", this.getTruncatedString(label.getNakliyeTipi(), 27))
+                    .replace("İ", "I")
                     .replace("ı", "i")
                     .replace("Ö", "O")
                     .replace("ö", "o")
@@ -158,20 +183,12 @@ public class PrintBluetooth extends AppCompatActivity {
 
     public void printTestLabel(ShippingPrintLabelDto shippingPrintLabelDto) {
         try {
-            final String pdfUrl = GlobalVariable.getApiUrl().concat("api/Mobile/ZarfPdf?sevkNo=" + shippingPrintLabelDto.shippingNo);
+            final String pdfUrl = GlobalVariable.apiPdfUrl.concat("api/Generate/Zarf?sevkNo=" + shippingPrintLabelDto.shippingNo);
 
             List<String> commands = new ArrayList<>();
             List<String> deliveryAddress = this.splitString(shippingPrintLabelDto.deliveryAddress, 45);
-            String deliveryName = "";
 
             int totalHeight = 0;
-
-
-            if (shippingPrintLabelDto.deliveryName.length() > 28) {
-                deliveryName = shippingPrintLabelDto.deliveryName.substring(0, 25) + "...";
-            } else {
-                deliveryName = shippingPrintLabelDto.deliveryName;
-            }
 
             commands.add("SIZE 75 mm,75 mm");
             commands.add("GAP 0,0");
@@ -194,7 +211,7 @@ public class PrintBluetooth extends AppCompatActivity {
             commands.add("END");
 
             final String raw = String.join("\n", commands)
-                    .replace("{deliveryName}", deliveryName)
+                    .replace("{deliveryName}", getTruncatedString(shippingPrintLabelDto.deliveryName, 27))
                     .replace("{deliveryAddress}", shippingPrintLabelDto.deliveryName)
                     .replace("{deliveryPdfUrl}", pdfUrl)
                     .replace("{deliveryNo}", shippingPrintLabelDto.shippingNo);
@@ -221,6 +238,14 @@ public class PrintBluetooth extends AppCompatActivity {
         }
 
         return parts;
+    }
+
+    public String getTruncatedString(String input, int length) {
+        if (input.length() > length) {
+            return input.substring(length - 3).concat("...");
+        }
+
+        return input;
     }
 
     public void printOrderLabel(String code) {

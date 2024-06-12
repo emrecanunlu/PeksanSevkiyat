@@ -46,6 +46,7 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -143,15 +144,28 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
             startActivity(i);
         });
 
+        barcodeEditText.setInputType(InputType.TYPE_NULL);
         barcodeEditText.requestFocus();
         barcodeEditText.setOnKeyListener(
                 (v, keyCode, event) -> {
                     if (event.getAction() == KeyEvent.ACTION_UP) {
                         if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                            barcodeEntry(barcodeEditText.getText().toString());
+                            if (barcodeEditText.getText().toString().contains("=")) {
+                                String[] value = barcodeEditText.getText().toString().split("=");
+
+                                barcodeEntry(value[1].toUpperCase());
+                            } else
+                                barcodeEntry(barcodeEditText.getText().toString());
 
                             return true;
                         }
+
+                        /*if (txtBarcode.getText().toString().contains("=")) {
+                            String value = txtBarcode.getText().toString().split("=")[1];
+
+                            fnBarcodeControl(value);
+                        } else
+                            fnBarcodeControl(txtBarcode.getText().toString());*/
                     }
                     return false;
                 }

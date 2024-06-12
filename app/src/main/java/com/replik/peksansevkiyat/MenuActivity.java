@@ -7,14 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabel;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfProducts;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuActivity extends AppCompatActivity {
     Button btnMenuPalette, btnMenuOrder, btnShipment;
@@ -58,6 +61,36 @@ public class MenuActivity extends AppCompatActivity {
         btnShipment.setOnClickListener(v -> {
             Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
             startActivity(intent);
+
+            /*try {
+                PrintBluetooth printBluetooth = new PrintBluetooth();
+                PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+                ZarfProducts product1 = new ZarfProducts("STK001", "Kırmızı", "5");
+                ZarfProducts product2 = new ZarfProducts("STK002", "Mavi", "10");
+                ZarfProducts product3 = new ZarfProducts("STK003", "Yeşil", "7");
+
+                // Ürün listesini oluşturma
+                List<ZarfProducts> products = new ArrayList<>();
+                products.add(product1);
+                products.add(product2);
+                products.add(product3);
+
+                // ZarfLabel örneği oluşturma
+                ZarfLabel zarfLabel = new ZarfLabel(
+                        "Mehmet Ali Demir",
+                        "Barbaros Mahallesi, 23. Sokak, No: 12, Beşiktaş, İstanbul",
+                        "Adana | Express Kargo",
+                        products
+                );
+
+                printBluetooth.findBT();
+                printBluetooth.openBT();
+                printBluetooth.printTestTable(zarfLabel);
+                printBluetooth.closeBT();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
         });
 
         imgLogo = (ImageButton) findViewById(R.id.imgLogo);

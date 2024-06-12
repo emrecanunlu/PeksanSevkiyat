@@ -20,8 +20,11 @@ public class ZarfLabelResult {
         return message;
     }
 
+    public ZarfLabel getData() {
+        return data;
+    }
 
-    public List<ZarfProducts> getProducts() {
-        return data.getProducts();
+    public void setData(ZarfLabel data) {
+        this.data = data;
     }
 }

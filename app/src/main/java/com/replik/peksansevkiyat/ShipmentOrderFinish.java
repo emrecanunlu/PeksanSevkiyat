@@ -3,7 +3,6 @@ package com.replik.peksansevkiyat;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,8 +25,8 @@ import com.replik.peksansevkiyat.DataClass.ListAdapter.ListAdapter_OrderShipping
 import com.replik.peksansevkiyat.DataClass.ListAdapter.ListenerInterface;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabel;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfLabelResult;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Label.ZarfProducts;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderDtos;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.OrderShipment;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
@@ -34,6 +34,8 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingL
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.Interface.APIClient;
 import com.replik.peksansevkiyat.Interface.APIInterface;
+import com.replik.peksansevkiyat.Interface.APIPdfClient;
+import com.replik.peksansevkiyat.Interface.ApiPdfInterface;
 import com.replik.peksansevkiyat.Transection.Alert;
 import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
@@ -43,6 +45,7 @@ import com.replik.peksansevkiyat.Transection.Voids;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -51,6 +54,7 @@ import retrofit2.Response;
 
 public class ShipmentOrderFinish extends AppCompatActivity implements ListenerInterface.OrderShippingListener {
     APIInterface apiInterface;
+    ApiPdfInterface apiPdfInterface;
     ProgressDialog nDialog;
     AlertDialog alert;
 
@@ -86,6 +90,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         order = (CustomerOrder) intent.getSerializableExtra("order");
 
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
+        apiPdfInterface = APIPdfClient.getRetrofit().create(ApiPdfInterface.class);
         nDialog = Dialog.getDialog(context, getString(R.string.loading));
 
         pBar = findViewById(R.id.pnlProgressBar);
@@ -126,12 +131,9 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         fnGetShippingList("");
 
         imgSettings = findViewById(R.id.imgSettings);
-        imgSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(context, SettingsActivity.class);
-                startActivity(i);
-            }
+        imgSettings.setOnClickListener(view -> {
+            Intent i = new Intent(context, SettingsActivity.class);
+            startActivity(i);
         });
 
         imgLogo = findViewById(R.id.imgLogo);
@@ -141,132 +143,116 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         });
 
         txtSearch = findViewById(R.id.txtSearch);
-        txtSearch.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP) {
-                    lst = new ArrayList<>();
-                    fnGetShippingList(txtSearch.getText().toString());
-                    return true;
-                }
-                return false;
+        txtSearch.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                lst = new ArrayList<>();
+                fnGetShippingList(txtSearch.getText().toString());
+                return true;
             }
+            return false;
         });
 
         btnAddShipping = findViewById(R.id.btnAddShipping);
-        btnAddShipping.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nDialog.show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(getString(R.string.sure));
-                builder.setMessage(getString(R.string.question_order_shipping_add));
-                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        nDialog.dismiss();
-                    }
-                });
-                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        nDialog.dismiss();
-                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                        pnlManualEntry.setVisibility(View.VISIBLE);
-                        pnlSearch.setVisibility(View.GONE);
-                    }
-                });
-                builder.show();
-            }
+        btnAddShipping.setOnClickListener(view -> {
+            nDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(getString(R.string.sure));
+            builder.setMessage(getString(R.string.question_order_shipping_add));
+            builder.setNegativeButton(getString(R.string.no), (dialogInterface, i) -> nDialog.dismiss());
+            builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i) -> {
+                nDialog.dismiss();
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+                pnlManualEntry.setVisibility(View.VISIBLE);
+                pnlSearch.setVisibility(View.GONE);
+            });
+            builder.show();
         });
 
         btnOrderFinish = findViewById(R.id.btnOrderFinish);
-        btnOrderFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String ErrorMessage = "";
-                int renkE = Color.rgb(240, 80, 80);
-                if (txtOrderPlaka.getText().toString().isEmpty()) {
-                    txtOrderPlaka.setHintTextColor(renkE);
-                    ErrorMessage += getString(R.string.order_plaka);
-                }
+        btnOrderFinish.setOnClickListener(view -> {
+            String ErrorMessage = "";
+            int renkE = Color.rgb(240, 80, 80);
+            if (txtOrderPlaka.getText().toString().isEmpty()) {
+                txtOrderPlaka.setHintTextColor(renkE);
+                ErrorMessage += getString(R.string.order_plaka);
+            }
 
-                if (txtOrderVergiNo.getText().toString().isEmpty()) {
-                    txtOrderVergiNo.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_vergino);
-                }
+            if (txtOrderVergiNo.getText().toString().isEmpty()) {
+                txtOrderVergiNo.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_vergino);
+            }
 
-                if (txtOrderIsim.getText().toString().isEmpty()) {
-                    txtOrderIsim.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_isim);
-                }
+            if (txtOrderIsim.getText().toString().isEmpty()) {
+                txtOrderIsim.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_isim);
+            }
 
-                if (txtOrderIlce.getText().toString().isEmpty()) {
-                    txtOrderIlce.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ilce);
-                }
+            if (txtOrderIlce.getText().toString().isEmpty()) {
+                txtOrderIlce.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ilce);
+            }
 
-                if (txtOrderIl.getText().toString().isEmpty()) {
-                    txtOrderIl.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
-                }
+            if (txtOrderIl.getText().toString().isEmpty()) {
+                txtOrderIl.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
+            }
 
-                if (txtOrderIl.getText().toString().isEmpty()) {
-                    txtOrderIl.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
-                }
+            if (txtOrderIl.getText().toString().isEmpty()) {
+                txtOrderIl.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_il);
+            }
 
-                if (txtOrderUlke.getText().toString().isEmpty()) {
-                    txtOrderUlke.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ulke);
-                }
+            if (txtOrderUlke.getText().toString().isEmpty()) {
+                txtOrderUlke.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_ulke);
+            }
 
-                if (txtOrderPosta.getText().toString().isEmpty()) {
-                    txtOrderPosta.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_posta);
-                }
+            if (txtOrderPosta.getText().toString().isEmpty()) {
+                txtOrderPosta.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_posta);
+            }
 
-                if (txtOrderSoforAd.getText().toString().isEmpty()) {
-                    txtOrderSoforAd.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_ad);
-                }
+            if (txtOrderSoforAd.getText().toString().isEmpty()) {
+                txtOrderSoforAd.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_ad);
+            }
 
-                if (txtOrderSoforSoyad.getText().toString().isEmpty()) {
-                    txtOrderSoforSoyad.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_soyad);
-                }
+            if (txtOrderSoforSoyad.getText().toString().isEmpty()) {
+                txtOrderSoforSoyad.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_soyad);
+            }
 
-                if (txtOrderSoforTc.getText().toString().isEmpty()) {
-                    txtOrderSoforTc.setHintTextColor(renkE);
-                    ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_tc);
-                }
+            if (txtOrderSoforTc.getText().toString().isEmpty()) {
+                txtOrderSoforTc.setHintTextColor(renkE);
+                ErrorMessage += (!ErrorMessage.isEmpty() ? "\n" : "") + getString(R.string.order_sofor_tc);
+            }
 
-                if (ErrorMessage.isEmpty()) {
-                    OrderShipping os = new OrderShipping();
-                    os.setOrderShipping(
-                            txtOrderPlaka.getText().toString(),
-                            txtOrderVergiNo.getText().toString(),
-                            txtOrderIsim.getText().toString(),
-                            txtOrderIlce.getText().toString(),
-                            txtOrderIl.getText().toString(),
-                            txtOrderUlke.getText().toString(),
-                            txtOrderPosta.getText().toString(),
-                            txtOrderSoforAd.getText().toString(),
-                            txtOrderSoforAd.getText().toString(),
-                            txtOrderAciklama.getText().toString(),
-                            txtOrderSoforTc.getText().toString(),
-                            txtOrderDorse.getText().toString());
+            if (ErrorMessage.isEmpty()) {
+                OrderShipping os = new OrderShipping();
+                os.setOrderShipping(
+                        txtOrderPlaka.getText().toString(),
+                        txtOrderVergiNo.getText().toString(),
+                        txtOrderIsim.getText().toString(),
+                        txtOrderIlce.getText().toString(),
+                        txtOrderIl.getText().toString(),
+                        txtOrderUlke.getText().toString(),
+                        txtOrderPosta.getText().toString(),
+                        txtOrderSoforAd.getText().toString(),
+                        txtOrderSoforAd.getText().toString(),
+                        txtOrderAciklama.getText().toString(),
+                        txtOrderSoforTc.getText().toString(),
+                        txtOrderDorse.getText().toString());
 
-                    final List<OrderShipment> orderShipments = GlobalVariable.getCustomerOrderDetails().stream().map(x -> new OrderShipment(
-                            x.getSipNo(),
-                            os
-                    )).collect(Collectors.toList());
+                final List<OrderShipment> orderShipments = GlobalVariable.getCustomerOrderDetails().stream().map(x -> new OrderShipment(
+                        x.getSipNo(),
+                        os
+                )).collect(Collectors.toList());
 
-                    postOrderFinish(new OrderDtos.setNetsisShipment(order.getSevkNo(), customer.getCode(), GlobalVariable.getUserId(), orderShipments));
-                } else {
-                    alert = Alert.getAlert(context, getString(R.string.error), ErrorMessage + "\n" + getString(R.string.not_empty));
-                    alert.show();
-                }
+                postOrderFinish(new OrderDtos.setNetsisShipment(order.getSevkNo(), customer.getCode(), GlobalVariable.getUserId(), orderShipments));
+            } else {
+                alert = Alert.getAlert(context, getString(R.string.error), ErrorMessage + "\n" + getString(R.string.not_empty));
+                alert.show();
             }
         });
     }
@@ -277,20 +263,40 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         apiInterface.createNetsisShipment(data).enqueue(
                 new Callback<ZarfLabelResult>() {
                     @Override
-                    public void onResponse(Call<ZarfLabelResult> call, Response<ZarfLabelResult> response) {
+                    public void onResponse(@NonNull Call<ZarfLabelResult> call, @NonNull Response<ZarfLabelResult> response) {
                         nDialog.dismiss();
 
                         if (response.isSuccessful() && response.body() != null) {
                             if (response.body().getSuccess()) {
-                                Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                                printLabel(response.body().getProducts());
+                                nDialog.show();
+                                apiPdfInterface.generatePdf(order.getSevkNo())
+                                        .enqueue(
+                                                new Callback<Result>() {
+                                                    @Override
+                                                    public void onResponse(@NonNull Call<Result> call, @NonNull Response<Result> r) {
+                                                        nDialog.dismiss();
 
-                                Intent i = new Intent(context, MenuActivity.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(i);
+                                                        Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                                finish();
+                                                        printLabel(response.body().getData());
+
+                                                        Intent i = new Intent(context, MenuActivity.class);
+                                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(i);
+
+                                                        finish();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(@NonNull Call<Result> call, @NonNull Throwable t) {
+                                                        nDialog.dismiss();
+
+                                                        alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
+                                                        alert.show();
+                                                    }
+                                                }
+                                        );
                             } else {
                                 alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                                 alert.show();
@@ -302,7 +308,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                     }
 
                     @Override
-                    public void onFailure(Call<ZarfLabelResult> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ZarfLabelResult> call, @NonNull Throwable t) {
                         nDialog.dismiss();
 
                         alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
@@ -316,12 +322,13 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         pBar.setVisibility(View.VISIBLE);
         apiInterface.getOrderShippingList(GlobalVariable.getUserId(), search).enqueue(new Callback<OrderShippingList>() {
             @Override
-            public void onResponse(Call<OrderShippingList> call, Response<OrderShippingList> response) {
+            public void onResponse(@NonNull Call<OrderShippingList> call, @NonNull Response<OrderShippingList> response) {
                 pBar.setVisibility(View.GONE);
+                assert response.body() != null;
                 if (response.body().getSuccess()) {
                     adapter.setData(response.body().getOrderShipping());
 
-                    if (response.body().getOrderShipping().size() == 0)
+                    if (response.body().getOrderShipping().isEmpty())
                         pnlAddShipping.setVisibility(View.VISIBLE);
                     else
                         pnlAddShipping.setVisibility(View.GONE);
@@ -332,7 +339,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
             }
 
             @Override
-            public void onFailure(Call<OrderShippingList> call, Throwable t) {
+            public void onFailure(@NonNull Call<OrderShippingList> call, @NonNull Throwable t) {
                 pBar.setVisibility(View.GONE);
                 alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                 alert.show();
@@ -346,9 +353,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         builder.setTitle(getString(R.string.sure));
         builder.setMessage(getString(R.string.question_order_finish));
 
-        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
-            dialog.dismiss();
-        });
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.dismiss());
 
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
 
@@ -363,14 +368,14 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         builder.show();
     }
 
-    void printLabel(List<ZarfProducts> products) {
+    void printLabel(ZarfLabel label) {
         try {
             PrintBluetooth printBluetooth = new PrintBluetooth();
             PrintBluetooth.printer_id = GlobalVariable.printerName;
 
             printBluetooth.findBT();
             printBluetooth.openBT();
-            printBluetooth.printTestTable(products);
+            printBluetooth.printTestTable(label);
             printBluetooth.closeBT();
         } catch (IOException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();

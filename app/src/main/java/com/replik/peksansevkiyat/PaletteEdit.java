@@ -33,6 +33,9 @@ import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,7 +89,6 @@ public class PaletteEdit extends AppCompatActivity {
 
         txtBarcode = findViewById(R.id.txtSearch);
         //txtBarcode.setShowSoftInputOnFocus(false);
-        txtBarcode.setInputType(InputType.TYPE_NULL);
         txtBarcode.requestFocus();
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -98,7 +100,13 @@ public class PaletteEdit extends AppCompatActivity {
                     }*/
 
                     if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        fnBarcodeControl(txtBarcode.getText().toString());
+                        if (txtBarcode.getText().toString().contains("=")) {
+                            String[] value = txtBarcode.getText().toString().split("=");
+
+                            fnBarcodeControl(value[1].toUpperCase());
+
+                        } else
+                            fnBarcodeControl(txtBarcode.getText().toString());
                         return true;
                     }
                 }

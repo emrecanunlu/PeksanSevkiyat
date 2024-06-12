@@ -8,6 +8,13 @@ public class ZarfLabel {
     private String nakliyeTipi;
     private List<ZarfProducts> products;
 
+    public ZarfLabel(String teslimAdi, String teslimAdresi, String nakliyeTipi, List<ZarfProducts> products) {
+        this.teslimAdi = teslimAdi;
+        this.teslimAdresi = teslimAdresi;
+        this.nakliyeTipi = nakliyeTipi;
+        this.products = products;
+    }
+    
     public String getTeslimAdi() {
         return teslimAdi;
     }
