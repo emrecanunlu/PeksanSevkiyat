@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,64 +118,101 @@ public class PrintBluetooth extends AppCompatActivity {
         }
     }
 
-    public void printTestTable(ZarfLabel label) {
+    public void printZarfTable(List<ZarfProducts> products) {
         try {
-            List<String> commands = new ArrayList<>();
-            List<String> deliveryAddress = this.splitString(label.getTeslimAdresi(), 45);
+            final int labelWidth = 75 * 8 - 20 * 2;
 
-            int totalWidth = 560;
-            int totalHeight = 0;
+            final List<List<ZarfProducts>> slices = this.divideArray(products, 10);
+            final List<String> commands = new ArrayList<>();
+
+            commands.add("SIZE 75 mm,75 mm");
+            commands.add("GAP 0,0");
+
+            for (int i = 0; i < slices.size(); i++) {
+                int positionY = 0;
+
+                commands.add("CLS");
+                commands.add("TEXT 20,40,\"3\",0,1,1,\"S.Kodu\"");
+                commands.add("TEXT 200,40,\"3\",0,1,1,\"Renk/Logo\"");
+                commands.add("TEXT 470,40,\"3\",0,1,1,\"Miktar\"");
+
+                commands.add("BAR 20,80," + labelWidth + ",5");
+
+                positionY = 110;
+                for (int j = 0; j < slices.get(i).size(); j++) {
+                    commands.add("TEXT 20," + positionY + ",\"3\",0,0.9,0.9,\"" + slices.get(i).get(j).getStokkodu() + "\"");
+                    commands.add("TEXT 200," + positionY + ",\"3\",0,0.9,0.9,\"" + slices.get(i).get(j).getRenkLogo() + "\"");
+                    commands.add("TEXT 500," + positionY + ",\"3\",0,0.9,0.9,\"" + slices.get(i).get(j).getMiktar() + "\"");
+
+                    positionY += 40;
+                }
+
+                commands.add("PRINT 1");
+            }
+
+            commands.add("END");
+
+            mmOutputStream.write(String.join("\n", commands).getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void printZarfHeader(ZarfLabel label) {
+        try {
+            int totalWidth = 75 * 8 - 20 * 2;
+            int y = 0;
+
+            final String pdfUrl = GlobalVariable.apiPdfUrl.concat("api/Generate/Zarf?sevkNo=" + label.getSevkNo());
+            final String deliveryName = this.getTruncatedString(label.getTeslimAdi(), 30);
+            final String shippingType = this.getTruncatedString(label.getNakliyeTipi(), 30);
+            final List<String> deliveryAddressList = this.splitString(label.getTeslimAdresi(), 36);
+            final List<String> descriptionList = this.splitString("Not: " + label.getNot(), 45);
+
+            List<String> commands = new ArrayList<>();
 
             commands.add("SIZE 75 mm,75 mm");
             commands.add("GAP 0,0");
             commands.add("CLS");
 
-            commands.add("TEXT 20,30,\"3\",0,1.25,1.25,\"{deliveryName}\"");
-            commands.add("TEXT 20,65,\"3\",0,1.25,1.5,\"{transportName}\"");
-            totalHeight += 85;
+            commands.add("TEXT 20,20,\"3\",0,1.5,1.5,\"{deliveryName}\"");
+            commands.add("TEXT 20,65,\"3\",0,1.5,1.5,\"{shippingType}\"");
 
-            for (int i = 0; i < deliveryAddress.size(); i++) {
-                totalHeight += 28;
-                String command = "TEXT 20," + totalHeight + ",\"3\",0,1,1,\"{text}\""
-                        .replace("{text}", deliveryAddress.get(i));
+            y = 80;
+
+            for (int i = 0; i < deliveryAddressList.size(); i++) {
+                y += (int) (i + 16 * 1.25 + 10);
+
+                final String command = "TEXT 20,{y},\"3\",0,1.25,1.25,\"{text}\""
+                        .replace("{y}", String.valueOf(y))
+                        .replace("{text}", deliveryAddressList.get(i));
 
                 commands.add(command);
             }
 
-            totalHeight += 60;
+            y += 16;
 
-            commands.add("TEXT 20," + totalHeight + ",\"3\",0,1,1,\"Stok Kodu\"");
-            commands.add("TEXT 230," + totalHeight + ",\"3\",0,1,1,\"Renk/Logo\"");
-            commands.add("TEXT 480," + totalHeight + ",\"3\",0,1,1,\"Miktar\"");
+            for (int i = 0; i < descriptionList.size(); i++) {
+                y += (int) (i + 16 + 10);
 
-            totalHeight += 40;
+                final String command = "TEXT 20,{y},\"3\",0,1,1,\"{text}\""
+                        .replace("{y}", String.valueOf(y))
+                        .replace("{text}", descriptionList.get(i));
 
-            commands.add("BAR 20," + totalHeight + "," + totalWidth + ",5");
-
-            totalHeight += 20;
-
-            for (int i = 0; i < label.getProducts().size(); i++) {
-                commands.add("TEXT 20," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getStokkodu() + "\"");
-                commands.add("TEXT 230," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getRenkLogo() + "\"");
-                commands.add("TEXT 480," + (totalHeight + i * 40) + ",\"3\",0,1,1,\"" + label.getProducts().get(i).getMiktar() + "\"");
+                commands.add(command);
             }
+
+            y += 60;
+
+            commands.add("QRCODE 170," + y + ",\"1\",8,1,0,1,1,\"{pdfUrl}\"");
 
             commands.add("PRINT 1");
             commands.add("END");
 
             final String raw = String.join("\n", commands)
-                    .replace("{deliveryName}", this.getTruncatedString(label.getTeslimAdi(), 27))
-                    .replace("{transportName}", this.getTruncatedString(label.getNakliyeTipi(), 27))
-                    .replace("İ", "I")
-                    .replace("ı", "i")
-                    .replace("Ö", "O")
-                    .replace("ö", "o")
-                    .replace("Ü", "U")
-                    .replace("ü", "u")
-                    .replace("Ş", "S")
-                    .replace("ş", "s")
-                    .replace("Ç", "C")
-                    .replace("ç", "c");
+                    .replace("{deliveryName}", deliveryName)
+                    .replace("{shippingType}", shippingType)
+                    .replace("{pdfUrl}", pdfUrl);
 
             mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -228,7 +267,6 @@ public class PrintBluetooth extends AppCompatActivity {
         if (input.length() > length) {
             int startIndex = 0;
             while (startIndex < input.length()) {
-                // Uzunluk kadar bir parça al
                 int endIndex = Math.min(startIndex + length, input.length());
                 parts.add(input.substring(startIndex, endIndex));
                 startIndex = endIndex;
@@ -240,9 +278,23 @@ public class PrintBluetooth extends AppCompatActivity {
         return parts;
     }
 
+    public <T> List<List<T>> divideArray(List<T> array, int chunkSize) {
+        List<List<T>> dividedArrays = new ArrayList<>();
+
+        for (int i = 0; i < Math.ceil((double) array.size() / chunkSize); i++) {
+            int startIndex = i * chunkSize;
+            int endIndex = Math.min(startIndex + chunkSize, array.size());
+
+            List<T> sublist = array.subList(startIndex, endIndex);
+            dividedArrays.add(sublist);
+        }
+
+        return dividedArrays;
+    }
+
     public String getTruncatedString(String input, int length) {
         if (input.length() > length) {
-            return input.substring(length - 3).concat("...");
+            return input.substring(0, length - 3).concat("...");
         }
 
         return input;

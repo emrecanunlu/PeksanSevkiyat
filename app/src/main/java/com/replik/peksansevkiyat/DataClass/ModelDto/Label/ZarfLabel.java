@@ -6,15 +6,19 @@ public class ZarfLabel {
     private String teslimAdi;
     private String teslimAdresi;
     private String nakliyeTipi;
+    private String sevkNo;
+    private String not;
     private List<ZarfProducts> products;
 
-    public ZarfLabel(String teslimAdi, String teslimAdresi, String nakliyeTipi, List<ZarfProducts> products) {
+    public ZarfLabel(String teslimAdi, String teslimAdresi, String nakliyeTipi, String not, String sevkNo, List<ZarfProducts> products) {
         this.teslimAdi = teslimAdi;
         this.teslimAdresi = teslimAdresi;
         this.nakliyeTipi = nakliyeTipi;
         this.products = products;
+        this.not = not;
+        this.sevkNo = sevkNo;
     }
-    
+
     public String getTeslimAdi() {
         return teslimAdi;
     }
@@ -45,5 +49,21 @@ public class ZarfLabel {
 
     public void setProducts(List<ZarfProducts> products) {
         this.products = products;
+    }
+
+    public String getSevkNo() {
+        return sevkNo;
+    }
+
+    public void setSevkNo(String sevkNo) {
+        this.sevkNo = sevkNo;
+    }
+
+    public String getNot() {
+        return not;
+    }
+
+    public void setNot(String not) {
+        this.not = not;
     }
 }

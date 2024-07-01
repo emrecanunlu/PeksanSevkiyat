@@ -375,7 +375,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
 
             printBluetooth.findBT();
             printBluetooth.openBT();
-            printBluetooth.printTestTable(label);
+            printBluetooth.printZarfTable(label.getProducts());
             printBluetooth.closeBT();
         } catch (IOException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
