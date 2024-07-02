@@ -13,10 +13,10 @@ public class GlobalVariable extends Application {
     public static String apiUrl;
 
     public static String getApiUrl() {
-        return apiUrl; /*apiUrl == null ? "http://192.168.2.251:7076/" : apiUrl; */
+        return apiUrl;
     }
 
-    public static String apiPdfUrl = "http://192.168.1.102:7248/";
+    public static String apiPdfUrl = "http://185.148.84.56:7248/";
 
     public static List<CustomerOrderDetail> customerOrderDetails;
 
@@ -32,7 +32,7 @@ public class GlobalVariable extends Application {
         apiUrl = url;
     }
 
-    public static String apiVersion = "1.0.34";
+    public static String apiVersion = "1.0.37";
 
     public static String printerName;
 

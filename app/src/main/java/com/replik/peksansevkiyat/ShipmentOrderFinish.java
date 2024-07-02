@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -279,7 +280,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
 
                                                         Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                                                        printLabel(response.body().getData());
+                                                        printLabel(response.body().getData(), order.getSevkNo());
 
                                                         Intent i = new Intent(context, MenuActivity.class);
                                                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -290,6 +291,9 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
 
                                                     @Override
                                                     public void onFailure(@NonNull Call<Result> call, @NonNull Throwable t) {
+
+                                                        Log.i("info", call.toString());
+
                                                         nDialog.dismiss();
 
                                                         alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
@@ -368,13 +372,16 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
         builder.show();
     }
 
-    void printLabel(ZarfLabel label) {
+    void printLabel(ZarfLabel label, String sevkNo) {
         try {
             PrintBluetooth printBluetooth = new PrintBluetooth();
             PrintBluetooth.printer_id = GlobalVariable.printerName;
 
+            label.setSevkNo(sevkNo);
+
             printBluetooth.findBT();
             printBluetooth.openBT();
+            printBluetooth.printZarfHeader(label);
             printBluetooth.printZarfTable(label.getProducts());
             printBluetooth.closeBT();
         } catch (IOException e) {

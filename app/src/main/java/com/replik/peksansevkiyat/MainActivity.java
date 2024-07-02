@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fnVersionControl() {
+        nDialog.show();
         apiInterface.getApkVersion().enqueue(new Callback<ApkVersion>() {
             @Override
             public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
@@ -250,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getPersonelList() {
+        nDialog.show();
         apiInterface.getUserList().enqueue(new Callback<PersonelList>() {
             @Override
             public void onResponse(Call<PersonelList> call, Response<PersonelList> response) {

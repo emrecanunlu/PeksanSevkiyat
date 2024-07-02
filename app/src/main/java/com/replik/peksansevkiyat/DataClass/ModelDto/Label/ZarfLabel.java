@@ -1,11 +1,14 @@
 package com.replik.peksansevkiyat.DataClass.ModelDto.Label;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 public class ZarfLabel {
     private String teslimAdi;
     private String teslimAdresi;
     private String nakliyeTipi;
+    @Nullable
     private String sevkNo;
     private String not;
     private List<ZarfProducts> products;

@@ -112,7 +112,7 @@ public class PrintBluetooth extends AppCompatActivity {
                     "\nTEXT 70 mm,30 mm,\"3\",0,1.5 mm,1.5 mm,\"" + barcode + "\"" +
                     "\nQRCODE 70 mm,80 mm,\"1\",11,1,0,1,1,\"" + pdfUrl + "\"" +
                     "\nPRINT 1\nEND\n";
-            mmOutputStream.write(printData.getBytes(StandardCharsets.UTF_8));
+            mmOutputStream.write(toTurkish(printData).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,7 +152,7 @@ public class PrintBluetooth extends AppCompatActivity {
 
             commands.add("END");
 
-            mmOutputStream.write(String.join("\n", commands).getBytes(StandardCharsets.UTF_8));
+            mmOutputStream.write(toTurkish(String.join("\n", commands)).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -214,7 +214,7 @@ public class PrintBluetooth extends AppCompatActivity {
                     .replace("{shippingType}", shippingType)
                     .replace("{pdfUrl}", pdfUrl);
 
-            mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
+            mmOutputStream.write(toTurkish(raw).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -256,10 +256,25 @@ public class PrintBluetooth extends AppCompatActivity {
                     .replace("{deliveryNo}", shippingPrintLabelDto.shippingNo);
 
 
-            mmOutputStream.write(raw.getBytes(StandardCharsets.UTF_8));
+            mmOutputStream.write(toTurkish(raw).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String toTurkish(String text) {
+        return text.replace("İ", "I")
+                .replace("ı", "i")
+                .replace("Ö", "O")
+                .replace("ö", "o")
+                .replace("Ü", "U")
+                .replace("ü", "u")
+                .replace("Ş", "S")
+                .replace("ş", "s")
+                .replace("Ç", "C")
+                .replace("ç", "c")
+                .replace("ğ", "g")
+                .replace("Ğ", "G");
     }
 
     public List<String> splitString(String input, int length) {
