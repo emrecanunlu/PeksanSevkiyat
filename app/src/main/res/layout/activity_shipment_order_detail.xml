@@ -354,25 +354,48 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <EditText
-                android:id="@+id/txtBarcode"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/forty"
-                android:layout_marginVertical="@dimen/five"
-                android:layout_marginLeft="@dimen/forty"
-                android:layout_marginRight="@dimen/forty"
-                android:backgroundTint="@color/white_light"
-                android:ems="10"
-                android:hint="@string/barcode"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white_light"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/ten"
+                android:paddingVertical="@dimen/five">
+
+                <EditText
+                    android:id="@+id/txtBarcode"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/forty"
+                    android:backgroundTint="@color/white_light"
+                    android:ems="10"
+                    android:hint="@string/barcode"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white_light"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.9"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <CheckBox
+                    android:id="@+id/labelCheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/thirty_two"
+                    android:buttonTint="@color/white_light"
+                    android:checked="true"
+                    android:scaleX="1.2"
+                    android:scaleY="1.2"
+                    android:textColor="@color/white_light"
+                    android:textColorHint="@color/white_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/txtBarcode"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="2"
                 android:background="@color/fragment_bg">
 

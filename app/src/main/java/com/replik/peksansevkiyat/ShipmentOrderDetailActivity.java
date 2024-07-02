@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,6 +69,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
     ConstraintLayout progressBar;
     TextView staffNameTextView, sipNoTextView, customerTextView, shippingNameTextView, deliveryNameTextView, deliveryAddressTextView, deliveryDate, txtKoliPalet;
     ListAdapter_Customer_Order_Detail listAdapter;
+    CheckBox labelToPrint;
     RecyclerView recyclerView;
     Context context = ShipmentOrderDetailActivity.this;
     List<CustomerOrderDetail> customerOrderDetailList = new ArrayList<>();
@@ -88,6 +90,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
 
         loader = Dialog.getDialog(context, getString(R.string.loading));
 
+        labelToPrint = (CheckBox) findViewById(R.id.labelCheckbox);
         txtKoliPalet = (TextView) findViewById(R.id.txtKoliPalet);
         progressBar = (ConstraintLayout) findViewById(R.id.pnlProgressBar);
         barcodeEditText = (EditText) findViewById(R.id.txtBarcode);
@@ -254,11 +257,14 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                                         if (response.body().getSuccess()) {
                                                             fetchOrderDetailList();
 
-                                                            printLabel(new ShippingPrintLabelDto(
-                                                                    order.getSevkNo(),
-                                                                    order.getTeslimAdi(),
-                                                                    order.getTeslimAdresi()
-                                                            ));
+                                                            /*CHECKBOX CHECKED CONTROL*/
+                                                            if (labelToPrint.isChecked()) {
+                                                                printLabel(new ShippingPrintLabelDto(
+                                                                        order.getSevkNo(),
+                                                                        order.getTeslimAdi(),
+                                                                        order.getTeslimAdresi()
+                                                                ));
+                                                            }
 
                                                             Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
                                                         } else {
