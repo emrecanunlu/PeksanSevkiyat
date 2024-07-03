@@ -4,11 +4,14 @@ import android.app.Application;
 
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrderDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Order.Order;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateShipmentVehicleStatusDto;
 
 import java.util.List;
 
 public class GlobalVariable extends Application {
     public static String FileName = "/Replik.txt";
+
+    public static UpdateShipmentVehicleStatusDto shipmentVehicleStatus;
 
     public static String apiUrl;
 
@@ -24,6 +27,14 @@ public class GlobalVariable extends Application {
         return customerOrderDetails;
     }
 
+    public static void setShipmentVehicleStatus(UpdateShipmentVehicleStatusDto updateShipmentVehicleStatusDto) {
+        shipmentVehicleStatus = updateShipmentVehicleStatusDto;
+    }
+
+    public static UpdateShipmentVehicleStatusDto getShipmentVehicleStatus() {
+        return shipmentVehicleStatus;
+    }
+
     public static void setCustomerOrderDetails(List<CustomerOrderDetail> products) {
         customerOrderDetails = products;
     }
@@ -32,7 +43,7 @@ public class GlobalVariable extends Application {
         apiUrl = url;
     }
 
-    public static String apiVersion = "1.0.38";
+    public static String apiVersion = "1.0.40";
 
     public static String printerName;
 

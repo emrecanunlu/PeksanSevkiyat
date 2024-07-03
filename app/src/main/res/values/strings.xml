@@ -99,6 +99,8 @@
     <string name="server_address">Api Adresi</string>
     <string name="printer_name">Yazıcı</string>
     <string name="not_empty">Boş Geçilemez!</string>
+    <string name="vehicle_control">ARAÇ KONTROL</string>
+    <string name="check_vehicle_control">Lütfen araç kontrollerini tamamlayınız.</string>
 
     <string-array name="planets_array">
         <item>MERCURY</item>
