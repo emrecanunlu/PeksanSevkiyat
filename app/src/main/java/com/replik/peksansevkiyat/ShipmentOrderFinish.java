@@ -272,7 +272,7 @@ public class ShipmentOrderFinish extends AppCompatActivity implements ListenerIn
                             if (response.body().getSuccess()) {
 
                                 nDialog.show();
-                                apiPdfInterface.generatePdf(order.getSevkNo(), GlobalVariable.getUserId())
+                                apiPdfInterface.generatePdf(order.getSevkNo(), GlobalVariable.getUserCode())
                                         .enqueue(
                                                 new Callback<Result>() {
                                                     @Override

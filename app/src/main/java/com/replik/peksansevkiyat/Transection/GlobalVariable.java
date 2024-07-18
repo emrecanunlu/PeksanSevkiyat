@@ -43,12 +43,22 @@ public class GlobalVariable extends Application {
         apiUrl = url;
     }
 
-    public static String apiVersion = "1.0.40";
+    public static String apiVersion = "1.0.42";
+
+    public static int userCode;
+
+    public static void setUserCode(int value) {
+        userCode = value;
+    }
 
     public static String printerName;
 
-    public static void setPrinter(String name) {
-        printerName = name;
+    public static void setPrinter(String value) {
+        printerName = value;
+    }
+
+    public static int getUserCode() {
+        return userCode;
     }
 
     private static Integer userId;

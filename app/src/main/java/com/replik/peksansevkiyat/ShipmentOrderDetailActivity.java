@@ -159,7 +159,7 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
 
 
             UpdateShipmentVehicleStatusDto shipmentVehicleStatusDto =
-                    new UpdateShipmentVehicleStatusDto(order.getSevkNo(), GlobalVariable.getUserId(), 0, vehicleStatus.getOrDefault("hygenie", false), vehicleStatus.getOrDefault("insect", false), vehicleStatus.getOrDefault("smell", false), vehicleStatus.getOrDefault("leakage", false));
+                    new UpdateShipmentVehicleStatusDto(order.getSevkNo(), GlobalVariable.getUserCode(), 0, vehicleStatus.getOrDefault("hygenie", false), vehicleStatus.getOrDefault("insect", false), vehicleStatus.getOrDefault("smell", false), vehicleStatus.getOrDefault("leakage", false));
 
             GlobalVariable.setShipmentVehicleStatus(shipmentVehicleStatusDto);
             GlobalVariable.setCustomerOrderDetails(customerOrderDetailList);
@@ -268,10 +268,12 @@ public class ShipmentOrderDetailActivity extends AppCompatActivity implements Li
                                                     orderDetail.get().getSipNo(),
                                                     customer.getCode(),
                                                     GlobalVariable.getUserId(),
+                                                    barcode.toUpperCase().contains("PLT") && orderDetail.get().isDeposit(),
                                                     product.getProducts().stream().map(x -> new OrderProduct(x, product.getStokKod(), product.getYapkod())).collect(Collectors.toList())
                                             );
 
                                     loader.show();
+
                                     apiInterface.createOrderByProducts(orderByProductsDto).enqueue(
                                             new Callback<Result>() {
                                                 @Override
