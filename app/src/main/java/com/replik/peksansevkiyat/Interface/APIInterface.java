@@ -1,5 +1,7 @@
 package com.replik.peksansevkiyat.Interface;
 
+import androidx.annotation.Nullable;
+
 import com.replik.peksansevkiyat.DataClass.ModelDto.ApkVersion;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.Customer;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Customer.CustomerOrder;
@@ -13,7 +15,11 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.OrderDetail.OrderDetailList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingTransport;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateOrderShippingTransportDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.CreatePalletDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentResponse;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletLabelResponse;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletSingle;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.dtoPalletPrint;
 import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailDtos;
@@ -155,4 +161,12 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Shipment/UpdateTransportType")
     Call<Result> updateTransportType(@Body UpdateOrderShippingTransportDto updateOrderShippingTransportDto);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/Pallet/PalletDetailList")
+    Call<PalletContentResponse> PalletDetailList(@Body PalletContentDto palletContentDto);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/Pallet/CreatePallet")
+    Call<PalletLabelResponse> PalletCreate(@Body CreatePalletDto createPalletDto);
 }
