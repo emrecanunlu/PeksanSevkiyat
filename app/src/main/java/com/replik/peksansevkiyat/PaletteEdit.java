@@ -88,7 +88,7 @@ public class PaletteEdit extends AppCompatActivity {
 
 
         txtBarcode = findViewById(R.id.txtSearch);
-        //txtBarcode.setShowSoftInputOnFocus(false);
+        txtBarcode.setInputType(InputType.TYPE_NULL);
         txtBarcode.requestFocus();
         txtBarcode.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -106,7 +106,7 @@ public class PaletteEdit extends AppCompatActivity {
                             fnBarcodeControl(value[1].toUpperCase());
 
                         } else
-                            fnBarcodeControl(txtBarcode.getText().toString());
+                            fnBarcodeControl(txtBarcode.getText().toString().toUpperCase());
                         return true;
                     }
                 }
@@ -127,11 +127,9 @@ public class PaletteEdit extends AppCompatActivity {
     void fnBarcodeControl(String barcode) {
         lblBoxCount.setText("0");
         txtBarcode.setText("");
-        nDialog.show();
         if (barcode.endsWith("PLT"))
             fnGetPallet(barcode);
         else if (palletId == -1) {
-            nDialog.hide();
             alert = Alert.getAlert(context, getString(R.string.danger), getString(R.string.error_pallet_barcode));
             alert.show();
         } else
@@ -139,10 +137,12 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnPalletInSeriEdit(String barcode) {
+        nDialog.show();
         apiInterface.getSeriControlFromPallet(GlobalVariable.getUserId(), barcode).enqueue(new Callback<dtoPalletDetailAndSeritra_data>() {
             @Override
             public void onResponse(Call<dtoPalletDetailAndSeritra_data> call, Response<dtoPalletDetailAndSeritra_data> response) {
                 nDialog.hide();
+
                 if (response.body().getSuccess()) {
                     spSeritra seritra = response.body().getDtoPalletDetailAndSeritra().getSeritra();
                     PalletDetail palletDetail = response.body().getDtoPalletDetailAndSeritra().getPalletDetail();
@@ -155,6 +155,7 @@ public class PaletteEdit extends AppCompatActivity {
                         fnDeleteDetail(palletDetail.getId());
                     }
                 } else {
+                    nDialog.hide();
                     alert = Alert.getAlert(context, getString(R.string.danger), response.body().getMessage());
                     alert.show();
                 }
@@ -162,7 +163,6 @@ public class PaletteEdit extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<dtoPalletDetailAndSeritra_data> call, Throwable t) {
-                nDialog.hide();
                 alert = Alert.getAlert(context, getString(R.string.danger), t.getMessage());
                 alert.show();
             }
@@ -174,17 +174,22 @@ public class PaletteEdit extends AppCompatActivity {
         builder.setTitle(getString(R.string.sure));
         builder.setMessage(getString(R.string.question_pallet_detail_add));
         builder.setNegativeButton(getString(R.string.no), null);
+
         builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 PalletDetailDtos.setPalletDetailColumn data = new PalletDetailDtos.setPalletDetailColumn(palletId, "", GlobalVariable.getUserId(), seritra.getSeriNo(), seritra.getStokKodu(), seritra.getMiktar(), seritra.getMiktar2());
+
+                nDialog.show();
                 apiInterface.setPalletDetail(data).enqueue(new Callback<PalletDetailList>() {
                     @Override
                     public void onResponse(Call<PalletDetailList> call, Response<PalletDetailList> response) {
+                        nDialog.hide();
                         if (response.body().getSuccess())
                             setPalletDetailAdapter(response.body());
                         else {
                             nDialog.hide();
+
                             alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                             alert.show();
                         }
@@ -192,7 +197,6 @@ public class PaletteEdit extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<PalletDetailList> call, Throwable t) {
-                        nDialog.hide();
                         alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                         alert.show();
                     }
@@ -203,7 +207,6 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnDeleteDetail(Integer palletDetailId) {
-        nDialog.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(getString(R.string.sure));
         builder.setMessage(getString(R.string.question_pallet_detail_delete));
@@ -211,14 +214,18 @@ public class PaletteEdit extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                nDialog.show();
                 apiInterface.delPalletDetail(new PalletDetailDtos.delPalletDetailColumn(palletDetailId, GlobalVariable.getUserId())).enqueue(new Callback<PalletDetailList>() {
                     @Override
                     public void onResponse(Call<PalletDetailList> call, Response<PalletDetailList> response) {
+                        nDialog.hide();
+
                         if (response.body().getSuccess()) {
                             setPalletDetailAdapter(response.body());
                             Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
                         } else {
                             nDialog.hide();
+
                             alert = Alert.getAlert(context, getString(R.string.danger), response.body().getMessage());
                             alert.show();
                         }
@@ -226,7 +233,6 @@ public class PaletteEdit extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<PalletDetailList> call, Throwable t) {
-                        nDialog.hide();
                         alert = Alert.getAlert(context, getString(R.string.danger), t.getMessage());
                         alert.show();
                     }
@@ -237,7 +243,6 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnDeletePallet() {
-        nDialog.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(getString(R.string.sure));
         builder.setMessage(getString(R.string.question_pallet_delete));
@@ -245,16 +250,19 @@ public class PaletteEdit extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                nDialog.show();
+
                 apiInterface.delPallet(new getStandartLong(GlobalVariable.getUserId(), palletId)).enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
+                        nDialog.hide();
+
                         if (response.body().getSuccess()) {
                             palletId = -1;
                             setPalletDetailAdapter(null);
                             btnPalletDelete.setVisibility(View.GONE);
                             Toast.makeText(context, getString(R.string.success), Toast.LENGTH_LONG).show();
                         } else {
-                            nDialog.hide();
                             alert = Alert.getAlert(context, getString(R.string.danger), response.body().getMessage());
                             alert.show();
                         }
@@ -263,6 +271,7 @@ public class PaletteEdit extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<Result> call, Throwable t) {
                         nDialog.hide();
+
                         alert = Alert.getAlert(context, getString(R.string.danger), t.getMessage());
                         alert.show();
                     }
@@ -273,15 +282,18 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnGetPallet(String barcode) {
+        nDialog.show();
+
         apiInterface.getPalletControl(GlobalVariable.getUserId(), barcode).enqueue(new Callback<PalletSingle>() {
             @Override
             public void onResponse(Call<PalletSingle> call, Response<PalletSingle> response) {
+                nDialog.hide();
+
                 if (response.body().getSuccess()) {
                     if (response.body().getPallet() != null) {
                         palletId = response.body().getPallet().getId();
                         fnGetPalletDetailList();
                     } else {
-                        nDialog.hide();
                         alert = Alert.getAlert(context, getString(R.string.error), getString(R.string.no_pallet));
                         alert.show();
                     }
@@ -294,7 +306,6 @@ public class PaletteEdit extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PalletSingle> call, Throwable t) {
-                nDialog.hide();
                 alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                 alert.show();
             }
@@ -302,13 +313,17 @@ public class PaletteEdit extends AppCompatActivity {
     }
 
     void fnGetPalletDetailList() {
+        nDialog.show();
         apiInterface.getPalletDetail(GlobalVariable.getUserId(), palletId).enqueue(new Callback<PalletDetailList>() {
             @Override
             public void onResponse(Call<PalletDetailList> call, Response<PalletDetailList> response) {
+                nDialog.hide();
+
                 if (response.body().getSuccess())
                     setPalletDetailAdapter(response.body());
                 else {
                     nDialog.hide();
+
                     alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                     alert.show();
                 }
@@ -317,6 +332,7 @@ public class PaletteEdit extends AppCompatActivity {
             @Override
             public void onFailure(Call<PalletDetailList> call, Throwable t) {
                 nDialog.hide();
+
                 alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                 alert.show();
             }
@@ -337,7 +353,5 @@ public class PaletteEdit extends AppCompatActivity {
 
         ListAdapter_PalletDetail adapter = new ListAdapter_PalletDetail(context, R.layout.list_adapter_pallet_detail, lst);
         lstData.setAdapter(adapter);
-
-        nDialog.hide();
     }
 }

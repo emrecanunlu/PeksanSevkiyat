@@ -98,6 +98,7 @@ public class PaletteAdd extends AppCompatActivity {
         inputBarcode.setOnKeyListener((v, keyCode, event) -> {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
                 sendBarcodeRequest(inputBarcode.getText().toString().toUpperCase());
+                inputBarcode.setText("");
                 return true;
             }
 
@@ -198,7 +199,7 @@ public class PaletteAdd extends AppCompatActivity {
                         loader.hide();
 
                         if (response.code() == 200) {
-                            Toast.makeText(PaletteAdd.this, getString(R.string.success), Toast.LENGTH_LONG).show();
+                            Toast.makeText(PaletteAdd.this, response.body().getData().getBarkod(), Toast.LENGTH_LONG).show();
 
                             products.clear();
                             setListAdapter(products);
