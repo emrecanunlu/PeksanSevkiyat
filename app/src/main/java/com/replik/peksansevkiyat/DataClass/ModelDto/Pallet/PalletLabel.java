@@ -8,4 +8,24 @@ public class PalletLabel {
     private String aciklama;
     private String createStaff;
     private String createDate;
+
+    public Number getId() {
+        return id;
+    }
+
+    public String getAciklama() {
+        return aciklama;
+    }
+
+    public String getBarkod() {
+        return barkod;
+    }
+
+    public String getCreateStaff() {
+        return createStaff;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
 }

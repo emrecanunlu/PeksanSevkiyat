@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -29,7 +30,9 @@ import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.Transection.Alert;
 import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
+import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,6 +56,7 @@ public class PaletteAdd extends AppCompatActivity {
     ProgressDialog loader;
     List<PalletContent> products = new ArrayList<>();
     ListView listView;
+    PrintBluetooth printBluetooth = new PrintBluetooth();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -194,8 +198,12 @@ public class PaletteAdd extends AppCompatActivity {
                         loader.hide();
 
                         if (response.code() == 200) {
+                            Toast.makeText(PaletteAdd.this, getString(R.string.success), Toast.LENGTH_LONG).show();
+
                             products.clear();
                             setListAdapter(products);
+
+                            printLabel(response.body().getData().getBarkod());
                         } else {
                             final ErrorResult errorResult = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
 
@@ -210,6 +218,20 @@ public class PaletteAdd extends AppCompatActivity {
                         Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
                     }
                 });
+    }
+
+    void printLabel(String barcode) {
+        try {
+            PrintBluetooth.printer_id = GlobalVariable.printerName;
+
+            // send command to blueooth for print label
+            printBluetooth.findBT();
+            printBluetooth.openBT();
+            printBluetooth.printPalletLabel(barcode);
+            printBluetooth.closeBT();
+        } catch (IOException e) {
+            Alert.getAlert(this, getString(R.string.error), e.getMessage()).show();
+        }
     }
 
     void setListAdapter(List<PalletContent> list) {
