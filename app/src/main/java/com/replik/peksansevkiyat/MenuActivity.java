@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuActivity extends AppCompatActivity {
-    Button btnMenuPalette, btnMenuOrder, btnShipment;
+    Button btnMenuPalette, btnMenuOrder, btnShipment, btnEnumeration;
     ImageButton imgLogo, imgSettings;
     TextView txtUserName;
     Context context = MenuActivity.this;
@@ -62,6 +62,13 @@ public class MenuActivity extends AppCompatActivity {
             Intent intent = new Intent(context, ShipmentCustomerListActivity.class);
             startActivity(intent);
         });
+
+        btnEnumeration = (Button) findViewById(R.id.btnEnumeration);
+        btnEnumeration.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EnumerationActivity.class);
+            startActivity(intent);
+        });
+
 
         imgLogo = (ImageButton) findViewById(R.id.imgLogo);
         imgLogo.setOnClickListener(new View.OnClickListener() {

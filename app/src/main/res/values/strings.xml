@@ -29,6 +29,7 @@
     <string name="menu_order_send">SİPARİŞ SEVK</string>
     <string name="menu_shipment">SEVK İŞLEMLERİ</string>
     <string name="menu_settings">AYARLAR</string>
+    <string name="menu_enumeration">SAYIM İŞLEMLERİ</string>
     <string name="palette_add">PALET OLUŞTUR</string>
     <string name="palette_edit">PALET DÜZENLE</string>
     <string name="customer_list">CARİ LİSTESİ</string>
@@ -58,6 +59,7 @@
     <string name="no">HAYIR</string>
     <string name="yes">EVET</string>
     <string name="sure">Emin Misiniz?</string>
+    <string name="question_is_product">Ürün Mü?</string>
     <string name="question_pallet_detail_delete">Seri Paletten Silinecek</string>
     <string name="question_pallet_delete">Palet Tamamen Silinecek</string>
     <string name="question_pallet_detail_add">Seri Palete Eklenecek</string>
