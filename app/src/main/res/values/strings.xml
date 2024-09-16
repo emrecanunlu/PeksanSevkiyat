@@ -76,6 +76,7 @@
     <string name="question_order_finish">Sipariş Sevk Edilecek</string>
     <string name="question_order_shipping_add">Yeni Teslimat Bilgisi Oluşturulacak</string>
     <string name="question_pallet_print">Palet Etiketi Yazıdırılacak\nLütfen Yazıcınızı Kontrol Ediniz!</string>
+    <string name="question_pallet_will_be_added">Bu ürün zaten eklenmiş, tekrardan eklensin mi?</string>
     <string name="question_end">İşlem Sonlandırılacak</string>
     <string name="question_new_version">Yeni Versiyon Mevcut Kurulsun mu?</string>
     <string name="save">KAYDET</string>

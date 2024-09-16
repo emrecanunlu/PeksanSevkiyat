@@ -3,7 +3,6 @@ package com.replik.peksansevkiyat;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -34,12 +33,10 @@ import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -158,31 +155,52 @@ public class PaletteAdd extends AppCompatActivity {
         series.add(barcode);
 
         loader.show();
-        apiInterface.PalletDetailList(palletContentDto)
-                .enqueue(new Callback<PalletContentResponse>() {
-                    @Override
-                    public void onResponse(Call<PalletContentResponse> call, Response<PalletContentResponse> response) {
-                        loader.hide();
+        apiInterface.PalletDetailList(palletContentDto).enqueue(new Callback<PalletContentResponse>() {
+            @Override
+            public void onResponse(Call<PalletContentResponse> call, Response<PalletContentResponse> response) {
+                loader.hide();
 
-                        if (response.code() == 200) {
-                            products.clear();
-                            products.addAll(response.body().getData());
+                if (response.code() == 200) {
+/*
+
+                    Optional<PalletContent> productQuery = products.stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
+
+                    if (productQuery.isPresent()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PaletteAdd.this);
+
+                        builder.setTitle(getString(R.string.info));
+                        builder.setMessage(getString(R.string.question_pallet_will_be_added));
+
+                        builder.setNegativeButton(getString(R.string.no), (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        });
+                        builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i) -> {
+                            products.add(productQuery.get());
 
                             setListAdapter(products);
-                        } else {
-                            ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
+                        });
+                    } else {
+                        products.clear();
+                        products.addAll(response.body().getData());
 
-                            Alert.getAlert(PaletteAdd.this, getString(R.string.error), error.getStatusCode() + ": " + error.getMessage()).show();
-                        }
+                        setListAdapter(products);
                     }
+*/
 
-                    @Override
-                    public void onFailure(Call<PalletContentResponse> call, Throwable t) {
-                        loader.hide();
+                } else {
+                    ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
 
-                        Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
-                    }
-                });
+                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), error.getStatusCode() + ": " + error.getMessage()).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PalletContentResponse> call, Throwable t) {
+                loader.hide();
+
+                Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
+            }
+        });
     }
 
     void sendCreatePalletRequest() {
@@ -192,33 +210,32 @@ public class PaletteAdd extends AppCompatActivity {
         final CreatePalletDto createPalletDto = new CreatePalletDto(series, staffId);
 
         loader.show();
-        apiInterface.PalletCreate(createPalletDto)
-                .enqueue(new Callback<PalletLabelResponse>() {
-                    @Override
-                    public void onResponse(Call<PalletLabelResponse> call, Response<PalletLabelResponse> response) {
-                        loader.hide();
+        apiInterface.PalletCreate(createPalletDto).enqueue(new Callback<PalletLabelResponse>() {
+            @Override
+            public void onResponse(Call<PalletLabelResponse> call, Response<PalletLabelResponse> response) {
+                loader.hide();
 
-                        if (response.code() == 200) {
-                            Toast.makeText(PaletteAdd.this, response.body().getData().getBarkod(), Toast.LENGTH_LONG).show();
+                if (response.code() == 200) {
+                    Toast.makeText(PaletteAdd.this, response.body().getData().getBarkod(), Toast.LENGTH_LONG).show();
 
-                            products.clear();
-                            setListAdapter(products);
+                    products.clear();
+                    setListAdapter(products);
 
-                            printLabel(response.body().getData().getBarkod());
-                        } else {
-                            final ErrorResult errorResult = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
+                    printLabel(response.body().getData().getBarkod());
+                } else {
+                    final ErrorResult errorResult = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
 
-                            Alert.getAlert(PaletteAdd.this, getString(R.string.error), errorResult.getMessage()).show();
-                        }
-                    }
+                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), errorResult.getMessage()).show();
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<PalletLabelResponse> call, Throwable t) {
-                        loader.hide();
+            @Override
+            public void onFailure(Call<PalletLabelResponse> call, Throwable t) {
+                loader.hide();
 
-                        Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
-                    }
-                });
+                Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
+            }
+        });
     }
 
     void printLabel(String barcode) {
