@@ -3,6 +3,7 @@ package com.replik.peksansevkiyat;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -137,6 +138,24 @@ public class PaletteAdd extends AppCompatActivity {
                 sendCreatePalletRequest();
                 dialog.dismiss();
             });
+
+            builder.show();
+        });
+
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle(getString(R.string.danger));
+
+            builder.setMessage(getString(R.string.question_pallet_detail_delete));
+
+            builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i1) -> {
+                products.remove(i);
+
+                setListAdapter(products);
+            });
+            builder.setNegativeButton(getString(R.string.no), (dialogInterface, i1) -> dialogInterface.dismiss());
+
 
             builder.show();
         });
