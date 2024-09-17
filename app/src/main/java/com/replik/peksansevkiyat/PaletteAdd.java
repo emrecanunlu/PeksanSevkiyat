@@ -94,9 +94,28 @@ public class PaletteAdd extends AppCompatActivity {
         inputBarcode.setInputType(InputType.TYPE_NULL);
         inputBarcode.setOnKeyListener((v, keyCode, event) -> {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                sendBarcodeRequest(inputBarcode.getText().toString().toUpperCase());
+                String barcode = inputBarcode.getText().toString().toUpperCase();
+
+                Optional<PalletContent> productQuery = products.stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
+
+                if (productQuery.isPresent()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setTitle(getString(R.string.info));
+                    builder.setMessage(getString(R.string.question_pallet_will_be_added));
+
+                    builder.setNegativeButton(getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss());
+                    builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i) -> {
+                        products.add(productQuery.get());
+                        setListAdapter(products);
+                    });
+
+                    builder.show();
+                } else {
+                    sendBarcodeRequest(barcode);
+                }
+
                 inputBarcode.setText("");
-                return true;
             }
 
 
@@ -140,19 +159,14 @@ public class PaletteAdd extends AppCompatActivity {
     }
 
     void sendBarcodeRequest(String barcode) {
-        if (products.stream().anyMatch(x -> x.getSerialNo().equalsIgnoreCase(barcode))) {
-            Alert.getAlert(this, getString(R.string.error), getString(R.string.error_palette_used)).show();
-            return;
-        }
-
         final List<String> series = products.stream().map(PalletContent::getSerialNo).collect(Collectors.toList());
         final Number staffId = GlobalVariable.getUserId();
         final String stockCode = getYapAndStockCode().get("stockCode");
         final String yapKod = getYapAndStockCode().get("yapKod");
 
-        final PalletContentDto palletContentDto = new PalletContentDto(series, staffId, stockCode, yapKod);
-
         series.add(barcode);
+
+        final PalletContentDto palletContentDto = new PalletContentDto(series, staffId, stockCode, yapKod);
 
         loader.show();
         apiInterface.PalletDetailList(palletContentDto).enqueue(new Callback<PalletContentResponse>() {
@@ -161,31 +175,9 @@ public class PaletteAdd extends AppCompatActivity {
                 loader.hide();
 
                 if (response.code() == 200) {
-/*
 
-                    Optional<PalletContent> productQuery = products.stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
-
-                    if (productQuery.isPresent()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(PaletteAdd.this);
-
-                        builder.setTitle(getString(R.string.info));
-                        builder.setMessage(getString(R.string.question_pallet_will_be_added));
-
-                        builder.setNegativeButton(getString(R.string.no), (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        });
-                        builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i) -> {
-                            products.add(productQuery.get());
-
-                            setListAdapter(products);
-                        });
-                    } else {
-                        products.clear();
-                        products.addAll(response.body().getData());
-
-                        setListAdapter(products);
-                    }
-*/
+                    products.add(response.body().getData().get(response.body().getData().size() - 1));
+                    setListAdapter(products);
 
                 } else {
                     ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
