@@ -195,9 +195,12 @@ public class PaletteAdd extends AppCompatActivity {
 
                 if (response.code() == 200) {
 
-                    products.add(response.body().getData().get(response.body().getData().size() - 1));
-                    setListAdapter(products);
+                    Optional<PalletContent> productQuery = response.body().getData().stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
 
+                    if (productQuery.isPresent()) {
+                        products.add(productQuery.get());
+                        setListAdapter(products);
+                    }
                 } else {
                     ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
 
