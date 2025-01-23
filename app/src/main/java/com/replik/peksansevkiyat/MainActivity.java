@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList personelList;
     PersonelList personels;
     Integer SelectedPersonelId = -1;
+    Integer SelectedPersonCode = -1;
 
     private SQLiteDatabase database;
 
@@ -131,10 +132,16 @@ public class MainActivity extends AppCompatActivity {
         ddlUser.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0)
+                if (i != 0) {
                     SelectedPersonelId = personels.getPersonels().get(i - 1).getId();
-                else
+                    SelectedPersonCode = Integer.valueOf(personels.getPersonels().get(i - 1).getStaffCode());
+                }
+
+                else {
                     SelectedPersonelId = -1;
+                    SelectedPersonCode = -1;
+                }
+
             }
 
             @Override
@@ -151,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     String userName = ddlUser.getSelectedItem().toString();
                     GlobalVariable.setUserName(userName);
                     GlobalVariable.setUserId(SelectedPersonelId);
+                    GlobalVariable.setUserCode(SelectedPersonCode);
                     //i.putExtra("userName", userName);
                     startActivity(i);
                 } else {

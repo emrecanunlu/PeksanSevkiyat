@@ -18,6 +18,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateOrderShi
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.CreatePalletDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentResponse;
+import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.UpdateShipmentVehicleStatusDto;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletDetail;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletLabelResponse;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletSingle;
@@ -169,4 +170,6 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Pallet/CreatePallet")
     Call<PalletLabelResponse> PalletCreate(@Body CreatePalletDto createPalletDto);
+    @POST("api/Shipment/VehicleControl")
+    Call<Result> updateVehicleStatus(@Body UpdateShipmentVehicleStatusDto updateShipmentVehicleStatusDto);
 }

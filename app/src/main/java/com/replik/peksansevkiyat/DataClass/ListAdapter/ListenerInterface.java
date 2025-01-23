@@ -6,10 +6,20 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Order.Order;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShipping;
 import com.replik.peksansevkiyat.DataClass.ModelDto.OrderShipping.OrderShippingTransport;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Map;
+
 public class ListenerInterface {
 
     public interface UpdateTransportDialogListener {
         void onTransportSelected(OrderShippingTransport transport);
+
+        void onVehicleStatusOpen();
+    }
+
+    public interface UpdateVehicleStatusDialogListener {
+        void onSubmit(Map<String, Boolean> status);
     }
 
     public interface ShipmentCustomerOrderListener {
