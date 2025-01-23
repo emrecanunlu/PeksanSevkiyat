@@ -1,30 +1,30 @@
 package com.replik.peksansevkiyat;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.replik.peksansevkiyat.DataClass.ListAdapter.ListAdapter_PalletDetail;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Dtos.getStandartLong;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletSingle;
-import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetail;
-import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailDtos;
-import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailList;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Seritra.spSeritra;
-import com.replik.peksansevkiyat.DataClass.ModelDto.Seritra.spSeritraSingle;
+import com.google.gson.Gson;
+import com.replik.peksansevkiyat.DataClass.ListAdapter.ListAdapter_PalletContent;
+import com.replik.peksansevkiyat.DataClass.ModelDto.ErrorResult;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.CreatePalletDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContent;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentDto;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletContentResponse;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Pallet.PalletLabelResponse;
 import com.replik.peksansevkiyat.Interface.APIClient;
 import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.Transection.Alert;
@@ -34,297 +34,244 @@ import com.replik.peksansevkiyat.Transection.PrintBluetooth;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PaletteAdd extends AppCompatActivity {
+
+    TextView txtStaffName, txtProductCount;
+    ImageButton imgHeaderLogo;
+    Button btnPrint;
+    EditText inputBarcode;
     APIInterface apiInterface;
-    ProgressDialog nDialog;
-    AlertDialog alert;
-
-    PrintBluetooth printBT = new PrintBluetooth();
-
-    Context context = PaletteAdd.this;
-
-    ImageButton imgLogo, imgSettings;
-    TextView txtUserName, txtBarcode, lblBoxCount;
-    ListView lstData;
-    Button btnPalletPrint;
-
-    Integer palletId = -1;
-    String palletBarcode = "";
-    String palletAciklama = "";
+    ProgressDialog loader;
+    List<PalletContent> products = new ArrayList<>();
+    ListView listView;
+    PrintBluetooth printBluetooth = new PrintBluetooth();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_palette_add);
 
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
-        nDialog = Dialog.getDialog(context, getString(R.string.loading));
 
-        txtUserName = (TextView) findViewById(R.id.txtUserName);
-        txtUserName.setText(GlobalVariable.getUserName());
+        loader = Dialog.getDialog(this, getString(R.string.loading));
 
-        lblBoxCount = (TextView) findViewById(R.id.lblBoxCount);
+        txtStaffName = findViewById(R.id.txt_username);
+        txtProductCount = findViewById(R.id.txt_count);
+        imgHeaderLogo = findViewById(R.id.img_logo);
+        inputBarcode = findViewById(R.id.input_barcode);
+        btnPrint = findViewById(R.id.btn_print);
+        listView = findViewById(R.id.list_data);
 
-        imgSettings = findViewById(R.id.imgSettings);
-        imgSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(context, SettingsActivity.class);
-                startActivity(i);
-            }
-        });
+        // set staff title from header
+        txtStaffName.setText(GlobalVariable.getUserName());
 
-        imgLogo = (ImageButton) findViewById(R.id.imgLogo);
-        imgLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        // on click back button
+        imgHeaderLogo.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        lstData = findViewById(R.id.lstData);
+            builder.setTitle(getString(R.string.danger));
+            builder.setMessage(getString(R.string.question_pallet_delete));
 
-        txtBarcode = findViewById(R.id.txtSearch);
-        //txtBarcode.setShowSoftInputOnFocus(false);
-        txtBarcode.setInputType(InputType.TYPE_NULL);
-        txtBarcode.requestFocus();
-        txtBarcode.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP) {
-                    /*if (event.getAction() == KeyEvent.KEYCODE_ENTER) {
-                        Toast.makeText(context, "The text is: " + txtBarcode.getText() , Toast.LENGTH_LONG).show();
-                        fnSeriControl(txtBarcode.getText().toString());
-                        return true;
-                    }*/
+            builder.setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.cancel());
 
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        if (txtBarcode.getText().toString().contains("=")) {
-                            String[] value = txtBarcode.getText().toString().split("=");
+            builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> finish());
 
-                            fnSeriControl(value[1].toUpperCase());
-
-                        } else
-                            fnSeriControl(txtBarcode.getText().toString());
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        btnPalletPrint = findViewById(R.id.btnPalletPrint);
-        btnPalletPrint.setVisibility(View.GONE);
-        btnPalletPrint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fnPrintLabel();
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        fnBackControl();
-    }
-
-    private void fnBackControl() {
-        if (btnPalletPrint.getVisibility() == View.VISIBLE) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(getString(R.string.sure));
-            builder.setMessage(getString(R.string.question_pallet_not_print));
-            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
-                }
-            });
-            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    fnPrintLabel();
-                    finish();
-                }
-            });
             builder.show();
-        } else
-            finish();
+        });
+
+        // listen barcode input
+        inputBarcode.requestFocus();
+        inputBarcode.setInputType(InputType.TYPE_NULL);
+        inputBarcode.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                String barcode = inputBarcode.getText().toString().toUpperCase();
+
+                Optional<PalletContent> productQuery = products.stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
+
+                if (productQuery.isPresent()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setTitle(getString(R.string.info));
+                    builder.setMessage(getString(R.string.question_pallet_will_be_added));
+
+                    builder.setNegativeButton(getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss());
+                    builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i) -> {
+                        products.add(productQuery.get());
+                        setListAdapter(products);
+                    });
+
+                    builder.show();
+                } else {
+                    sendBarcodeRequest(barcode);
+                }
+
+                inputBarcode.setText("");
+            }
+
+
+            return false;
+        });
+
+
+        btnPrint.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle(getString(R.string.print_pallet));
+            builder.setMessage(getString(R.string.question_pallet_print));
+
+            builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+                dialog.dismiss();
+            });
+
+            builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                sendCreatePalletRequest();
+                dialog.dismiss();
+            });
+
+            builder.show();
+        });
+
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle(getString(R.string.danger));
+
+            builder.setMessage(getString(R.string.question_pallet_detail_delete));
+
+            builder.setPositiveButton(getString(R.string.yes), (dialogInterface, i1) -> {
+                products.remove(i);
+
+                setListAdapter(products);
+            });
+            builder.setNegativeButton(getString(R.string.no), (dialogInterface, i1) -> dialogInterface.dismiss());
+
+
+            builder.show();
+        });
     }
 
-    private void fnPrintLabel() {
+    Map<String, String> getYapAndStockCode() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("stockCode", null);
+        map.put("yapKod", null);
+
+        if (!products.isEmpty()) {
+            final PalletContent content = products.get(products.size() - 1);
+
+            map.put("stockCode", content.getStockCode());
+            map.put("yapKod", content.getYapKod());
+        }
+
+        return map;
+    }
+
+    void sendBarcodeRequest(String barcode) {
+        final List<String> series = products.stream().map(PalletContent::getSerialNo).collect(Collectors.toList());
+        final Number staffId = GlobalVariable.getUserId();
+        final String stockCode = getYapAndStockCode().get("stockCode");
+        final String yapKod = getYapAndStockCode().get("yapKod");
+
+        series.add(barcode);
+
+        final PalletContentDto palletContentDto = new PalletContentDto(series, staffId, stockCode, yapKod);
+
+        loader.show();
+        apiInterface.PalletDetailList(palletContentDto).enqueue(new Callback<PalletContentResponse>() {
+            @Override
+            public void onResponse(Call<PalletContentResponse> call, Response<PalletContentResponse> response) {
+                loader.hide();
+
+                if (response.code() == 200) {
+
+                    Optional<PalletContent> productQuery = response.body().getData().stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
+
+                    if (productQuery.isPresent()) {
+                        products.add(productQuery.get());
+                        setListAdapter(products);
+                    }
+                } else {
+                    ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
+
+                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), error.getStatusCode() + ": " + error.getMessage()).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PalletContentResponse> call, Throwable t) {
+                loader.hide();
+
+                Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
+            }
+        });
+    }
+
+    void sendCreatePalletRequest() {
+        final List<String> series = products.stream().map(PalletContent::getSerialNo).collect(Collectors.toList());
+        final Number staffId = GlobalVariable.getUserId();
+
+        final CreatePalletDto createPalletDto = new CreatePalletDto(series, staffId);
+
+        loader.show();
+        apiInterface.PalletCreate(createPalletDto).enqueue(new Callback<PalletLabelResponse>() {
+            @Override
+            public void onResponse(Call<PalletLabelResponse> call, Response<PalletLabelResponse> response) {
+                loader.hide();
+
+                if (response.code() == 200) {
+                    Toast.makeText(PaletteAdd.this, response.body().getData().getBarkod(), Toast.LENGTH_LONG).show();
+
+                    products.clear();
+                    setListAdapter(products);
+
+                    printLabel(response.body().getData().getBarkod());
+                } else {
+                    final ErrorResult errorResult = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
+
+                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), errorResult.getMessage()).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PalletLabelResponse> call, Throwable t) {
+                loader.hide();
+
+                Alert.getAlert(PaletteAdd.this, getString(R.string.error), t.getMessage()).show();
+            }
+        });
+    }
+
+    void printLabel(String barcode) {
         try {
             PrintBluetooth.printer_id = GlobalVariable.printerName;
 
-            // YAZMA BAŞLAR
-            printBT.findBT();
-            printBT.openBT();
-            printBT.printPalletLabel(palletBarcode);
-            printBT.closeBT();
-            // YAZMA BİTER
-
-            nDialog.show();
-            apiInterface.setPalletPrint(new getStandartLong(GlobalVariable.getUserId(), palletId)).enqueue(new Callback<Result>() {
-                @Override
-                public void onResponse(Call<Result> call, Response<Result> response) {
-                    nDialog.hide();
-
-                    if (response.body().getSuccess()) {
-                        alert = Alert.getAlert(context, getString(R.string.info), palletBarcode + "\nYazdırıldı.");
-                        alert.show();
-                        btnPalletPrint.setVisibility(View.GONE);
-                    } else {
-                        alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                        alert.show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Result> call, Throwable t) {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                    alert.show();
-                }
-            });
+            // send command to blueooth for print label
+            printBluetooth.findBT();
+            printBluetooth.openBT();
+            printBluetooth.printPalletLabel(barcode);
+            printBluetooth.closeBT();
         } catch (IOException e) {
-            String error = e.getMessage();
-            e.printStackTrace();
+            Alert.getAlert(this, getString(R.string.error), e.getMessage()).show();
         }
     }
 
-    void fnSeriControl(String barcode) {
-        lblBoxCount.setText("0");
-        txtBarcode.setText("");
-        nDialog.show();
-        if (barcode.endsWith("PLT"))
-            fnGetPallet(barcode);
-        else
-            fnGetSeriControl(barcode);
-    }
+    void setListAdapter(List<PalletContent> list) {
+        btnPrint.setVisibility(products.isEmpty() ? View.GONE : View.VISIBLE);
 
-    void fnGetPallet(String barcode) {
-        apiInterface.getPalletControl(GlobalVariable.getUserId(), barcode).enqueue(new Callback<PalletSingle>() {
-            @Override
-            public void onResponse(Call<PalletSingle> call, Response<PalletSingle> response) {
-                if (response.body().getSuccess()) {
-                    palletId = response.body().getPallet().getId();
-                    palletBarcode = response.body().getPallet().getBarkod();
-                    btnPalletPrint.setVisibility(View.VISIBLE);
-                    fnGetPalletDetailList();
-                } else {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                    alert.show();
-                }
-            }
+        txtProductCount.setText(String.valueOf(products.size()));
 
-            @Override
-            public void onFailure(Call<PalletSingle> call, Throwable t) {
-                nDialog.hide();
-                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                alert.show();
-            }
-        });
-    }
-
-    void fnGetPalletDetailList() {
-        apiInterface.getPalletDetail(GlobalVariable.getUserId(), palletId).enqueue(new Callback<PalletDetailList>() {
-            @Override
-            public void onResponse(Call<PalletDetailList> call, Response<PalletDetailList> response) {
-                if (response.body().getSuccess())
-                    setPalletDetailAdapter(response.body());
-                else {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                    alert.show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PalletDetailList> call, Throwable t) {
-                nDialog.hide();
-                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                alert.show();
-            }
-        });
-    }
-
-    void fnGetSeriControl(String barcode) {
-        apiInterface.getSeriControl(GlobalVariable.getUserId(), barcode).enqueue(new Callback<spSeritraSingle>() {
-            @Override
-            public void onResponse(Call<spSeritraSingle> call, Response<spSeritraSingle> response) {
-                if (response.body().getSuccess() && response.body().getSpSeritra() != null)
-                    fnSetPalletDetail(response.body().getSpSeritra());
-                else {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage().toString().equals("") ? "SERİ TANIMLI DEĞİLDİR." : response.body().getMessage());
-                    alert.show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<spSeritraSingle> call, Throwable t) {
-                nDialog.hide();
-                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                alert.show();
-            }
-        });
-    }
-
-    void fnSetPalletDetail(spSeritra seritra) {
-        PalletDetailDtos.setPalletDetailColumn data = new PalletDetailDtos.setPalletDetailColumn(palletId, palletAciklama, GlobalVariable.getUserId(), seritra.getSeriNo(), seritra.getStokKodu(), seritra.getMiktar(), seritra.getMiktar2());
-        apiInterface.setPalletDetail(data).enqueue(new Callback<PalletDetailList>() {
-            @Override
-            public void onResponse(Call<PalletDetailList> call, Response<PalletDetailList> response) {
-                if (response.body().getSuccess())
-                    setPalletDetailAdapter(response.body());
-                else {
-                    nDialog.hide();
-                    alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
-                    alert.show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PalletDetailList> call, Throwable t) {
-                nDialog.hide();
-                alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
-                alert.show();
-            }
-        });
-    }
-
-    void setPalletDetailAdapter(PalletDetailList lstPalletDetail) {
-        ArrayList lst = new ArrayList<PalletDetail>();
-        for (PalletDetail p : lstPalletDetail.getPalletDetails()) {
-            palletId = p.getPalletId();
-            btnPalletPrint.setVisibility(View.VISIBLE);
-            lst.add(p);
-        }
-
-        lblBoxCount.setText(String.valueOf(lst.size()));
-
-        //paletin barkodunu bul
-        apiInterface.getPalletControl(GlobalVariable.getUserId(), palletId).enqueue(new Callback<PalletSingle>() {
-            @Override
-            public void onResponse(Call<PalletSingle> call, Response<PalletSingle> response) {
-                palletBarcode = response.body().getPallet().getBarkod();
-            }
-
-            @Override
-            public void onFailure(Call<PalletSingle> call, Throwable t) {
-
-            }
-        });
-
-        ListAdapter_PalletDetail adapter = new ListAdapter_PalletDetail(context, R.layout.list_adapter_pallet_detail, lst);
-        lstData.setAdapter(adapter);
-
-        nDialog.hide();
+        ListAdapter_PalletContent adapter = new ListAdapter_PalletContent(this, R.layout.list_adapter_pallet_detail, list);
+        listView.setAdapter(adapter);
     }
 }

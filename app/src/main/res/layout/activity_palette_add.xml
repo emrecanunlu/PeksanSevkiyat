@@ -23,7 +23,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imgLogo"
+                android:id="@+id/img_logo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -39,7 +39,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txtUserName"
+                    android:id="@+id/txt_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ten"
@@ -78,13 +78,14 @@
                 android:layout_height="@dimen/sixty"
                 android:orientation="horizontal">
 
+
                 <EditText
-                    android:id="@+id/txtSearch"
+                    android:id="@+id/input_barcode"
                     android:layout_width="257dp"
                     android:layout_height="@dimen/fifty"
-                    android:layout_marginLeft="@dimen/forty"
+                    android:layout_marginStart="@dimen/forty"
                     android:layout_marginTop="@dimen/ten"
-                    android:layout_marginRight="@dimen/twenty"
+                    android:layout_marginEnd="@dimen/twenty"
                     android:layout_weight="1"
                     android:backgroundTint="@color/white_light"
                     android:ems="10"
@@ -92,10 +93,11 @@
                     android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/white_light" />
+                    android:textColorHint="@color/white_light"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
-                    android:id="@+id/lblBoxCount"
+                    android:id="@+id/txt_count"
                     android:layout_width="87dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ten"
@@ -154,7 +156,7 @@
             </LinearLayout>
 
             <ListView
-                android:id="@+id/lstData"
+                android:id="@+id/list_data"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/ten"
@@ -163,12 +165,13 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/btnPalletPrint"
+                android:id="@+id/btn_print"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sixty"
                 android:layout_margin="@dimen/ten"
                 android:layout_weight="0"
-                android:text="@string/print_pallet" />
+                android:text="@string/print_pallet"
+                android:visibility="gone" />
 
         </LinearLayout>
 
