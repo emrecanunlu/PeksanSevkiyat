@@ -50,7 +50,7 @@
                     android:id="@+id/txtMenuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu"
+                    android:text="@string/menu_raw_material"
                     android:textColor="@color/white_light" />
             </LinearLayout>
 
@@ -88,37 +88,6 @@
                     app:cornerRadius="@dimen/fifteen"
                     app:strokeColor="@color/button_border"
                     app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnPaletteEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_order"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnShipment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_shipment"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnRawMaterial"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_raw_material"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
 
 
             </LinearLayout>

@@ -25,6 +25,16 @@
         android:theme="@style/Theme.TestAPP"
         tools:targetApi="31">
         <activity
+            android:name=".RawMaterialLotTransfer"
+            android:exported="false"
+            android:theme="@style/Theme.TestAPP" />
+        <activity
+            android:name=".RawMaterial"
+            android:exported="false" />
+        <activity
+            android:name=".RawMaterialMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".EnumerationActivity"
             android:exported="false" />
         <activity

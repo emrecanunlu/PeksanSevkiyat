@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/replik"
-    tools:context="com.replik.peksansevkiyat.MenuActivity">
+    tools:context=".RawMaterial">
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -50,7 +49,7 @@
                     android:id="@+id/txtMenuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu"
+                    android:text="@string/menu_raw_material"
                     android:textColor="@color/white_light" />
             </LinearLayout>
 
@@ -67,64 +66,22 @@
 
         </LinearLayout>
 
-        <ScrollView
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/fragment_bg">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/forty"
-                android:layout_marginTop="@dimen/thirty"
-                android:layout_marginRight="@dimen/forty"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/btnPaletteAdd"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:text="@string/menu_palette"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnPaletteEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_order"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnShipment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_shipment"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnRawMaterial"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_raw_material"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
+            android:layout_height="wrap_content"
+            android:background="@color/replik"
+            app:tabTextColor="@color/white_light" />
 
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-            </LinearLayout>
-
-        </ScrollView>
 
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

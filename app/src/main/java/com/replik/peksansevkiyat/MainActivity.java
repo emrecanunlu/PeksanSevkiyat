@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.dcastalia.localappupdate.DownloadApk;
-import com.google.firebase.appcheck.interop.BuildConfig;
 import com.replik.peksansevkiyat.DataClass.ModelDto.ApkVersion;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.Personel;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.PersonelList;

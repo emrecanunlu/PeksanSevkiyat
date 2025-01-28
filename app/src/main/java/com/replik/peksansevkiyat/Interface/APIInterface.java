@@ -22,6 +22,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailLis
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.PersonelList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Seritra.spSeritraSingle;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockItem;
 
 import java.util.List;
 
@@ -160,4 +161,12 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @POST("api/Shipment/VehicleControl")
     Call<Result> updateVehicleStatus(@Body UpdateShipmentVehicleStatusDto updateShipmentVehicleStatusDto);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/MaterialTransfer/AllStocks")
+    Call<List<StockItem>> getStockList();
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/MaterialTransfer/RequestStocks")
+    Call<List<StockItem>> getRequstedStockList();
 }
