@@ -42,7 +42,7 @@ public class ListAdapter_RawMaterial_Lot extends RecyclerView.Adapter<ListAdapte
         Log.i("Serial Number", lotItem.getSerialNo());
 
         holder.serialNumberTextView.setText(lotItem.getSerialNo());
-        holder.lotNumberTextView.setText(lotItem.getLotNo());
+        holder.lotNumberTextView.setText(lotItem.getLotNo().isEmpty() ? "---" : lotItem.getLotNo());
         holder.serialNumberAmountTextView.setText(lotItem.getAmount() + " Kg");
     }
 

@@ -173,6 +173,6 @@ public interface APIInterface {
 
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/MaterialTransfer/StockMovements/{stockCode}")
-    Call<List<StockLot>> getStockLotList(@Path("stockCode") String stockCode);
+    Call<List<StockLot>> getStockLotList(@Path("stockCode") String stockCode, @Query("search") String search);
 }
 
