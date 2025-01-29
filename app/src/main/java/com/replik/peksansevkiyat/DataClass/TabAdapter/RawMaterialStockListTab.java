@@ -2,6 +2,7 @@ package com.replik.peksansevkiyat.DataClass.TabAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockItem;
 import com.replik.peksansevkiyat.Interface.APIClient;
 import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.R;
+import com.replik.peksansevkiyat.RawMaterialLotTransferActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,7 @@ public class RawMaterialStockListTab extends Fragment implements ListenerInterfa
         return view;
     }
 
+
     void loadStockList() {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -80,5 +83,11 @@ public class RawMaterialStockListTab extends Fragment implements ListenerInterfa
 
     @Override
     public void onClick(StockItem stockItem) {
+        Intent intent = new Intent(requireContext(), RawMaterialLotTransferActivity.class);
+
+        intent.putExtra("stockCode", stockItem.getStockCode());
+        intent.putExtra("stockName", stockItem.getStockName());
+
+        startActivity(intent);
     }
 }

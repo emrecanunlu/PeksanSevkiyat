@@ -50,7 +50,6 @@
                 android:text="@string/empty"
                 android:textColor="@color/white_light" />
 
-
         </LinearLayout>
 
 
