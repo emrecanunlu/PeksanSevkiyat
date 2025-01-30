@@ -22,6 +22,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.PalletDetail.PalletDetailLis
 import com.replik.peksansevkiyat.DataClass.ModelDto.Personel.PersonelList;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Seritra.spSeritraSingle;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.LotItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockLot;
 
@@ -174,5 +175,12 @@ public interface APIInterface {
     @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
     @GET("api/MaterialTransfer/StockMovements/{stockCode}")
     Call<List<StockLot>> getStockLotList(@Path("stockCode") String stockCode, @Query("search") String search);
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @GET("api/MaterialTransfer/StockMovements/{stockCode}")
+    Call<List<LotItem>> getLotList(
+        @Path("stockCode") String stockCode,
+        @Query("search") String search
+    );
 }
 

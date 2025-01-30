@@ -25,6 +25,13 @@
         android:theme="@style/Theme.TestAPP"
         tools:targetApi="31">
         <activity
+            android:name=".RawMaterialStockListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RawMaterialsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".RawMaterialLotTransferActivity"
             android:exported="false" />
         <activity
@@ -97,6 +104,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LotListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

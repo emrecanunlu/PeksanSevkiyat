@@ -5,45 +5,46 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 public class StockItem {
-    @Nullable
-    final private Integer id;
+    @SerializedName("id")
+    private int id;
+    
     @SerializedName("stokKodu")
-    final private String stockCode;
+    private String stockCode;
+    
     @SerializedName("stokAdi")
-    final private String stockName;
+    private String stockName;
+    
     @SerializedName("miktar")
-    final private double amount;
-    @Nullable
+    private double amount;
+    
     @SerializedName("createdDate")
-    final private String createdAt;
+    private String createdDate;
 
-    public StockItem(int id, String stockCode, String stockName, double amount, @Nullable String createdAt) {
+    public StockItem(int id, String stockCode, String stockName, double amount, String createdDate) {
         this.id = id;
         this.stockCode = stockCode;
         this.stockName = stockName;
         this.amount = amount;
-        this.createdAt = createdAt;
+        this.createdDate = createdDate;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public String getStockName() {
-        return stockName;
+    public int getId() {
+        return id;
     }
 
     public String getStockCode() {
         return stockCode;
     }
 
-    @Nullable
-    public Integer getId() {
-        return id;
+    public String getStockName() {
+        return stockName;
     }
 
-    @Nullable
-    public String getCreatedAt() {
-        return createdAt;
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
     }
 }

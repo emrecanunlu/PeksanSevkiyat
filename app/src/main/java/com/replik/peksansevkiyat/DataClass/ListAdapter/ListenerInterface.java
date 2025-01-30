@@ -40,6 +40,6 @@ public class ListenerInterface {
     }
 
     public interface RawMaterialListener {
-        void onClick(StockItem stockItem);
+        void onClick(StockItem stockItem, int position);
     }
 }
