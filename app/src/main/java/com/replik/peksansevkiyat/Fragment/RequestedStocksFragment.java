@@ -53,7 +53,7 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_requested_stock_list, container, false);
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
-        
+
         if (getActivity() != null && getActivity().getIntent() != null) {
             existingStockCodes = getActivity().getIntent().getStringArrayListExtra("existingStockCodes");
         }
@@ -86,10 +86,12 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
         if (etSearch != null) {
             etSearch.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -124,7 +126,7 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
 
         for (StockItem stock : allStocks) {
             if (stock.getStockCode().toLowerCase().contains(lowerQuery) ||
-                stock.getStockName().toLowerCase().contains(lowerQuery)) {
+                    stock.getStockName().toLowerCase().contains(lowerQuery)) {
                 filteredList.add(stock);
             }
         }
@@ -137,20 +139,20 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
             intent.putExtra("stockName", selectedStock.getStockName());
             intent.putExtra("stockCode", selectedStock.getStockCode());
             intent.putExtra("amount", amount);
-            
+
             // Sonucu aktiviteye ekle
             ((RawMaterialStockListActivity) getActivity()).addResult(intent);
-            
+
             // Eklenen stok kodunu listeye ekle
             existingStockCodes.add(selectedStock.getStockCode());
-            
+
             // Seçimi temizle ve formu gizle
             selectedStock = null;
             layoutAmountInput.setVisibility(View.GONE);
             layoutSearch.setVisibility(View.VISIBLE);
             etAmount.setText("");
             adapter.clearSelection();
-            
+
             // Adapter'ı güncelle
             adapter.setExistingStockCodes(existingStockCodes);
         }
