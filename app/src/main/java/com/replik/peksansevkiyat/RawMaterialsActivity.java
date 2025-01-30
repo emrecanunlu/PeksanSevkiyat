@@ -62,7 +62,8 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
                     // Stok koduna göre ilgili RawMaterialItem'ı bul
                     RawMaterialItem item = adapter.findItemByStockCode(stockCode);
                     if (item != null && lots != null) {
-                        // Lotları stoğa ekle
+                        // Önceki lotları temizle ve yeni lotları ekle
+                        item.getLots().clear();
                         for (LotItem lot : lots) {
                             item.addLot(lot);
                         }

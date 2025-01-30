@@ -32,6 +32,11 @@ public class LotAdapter extends RecyclerView.Adapter<LotAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void clearSelection() {
+        selectedPosition = -1;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

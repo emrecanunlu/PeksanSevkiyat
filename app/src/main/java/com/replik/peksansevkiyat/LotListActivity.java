@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -20,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.replik.peksansevkiyat.Adapter.LotAdapter;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.LotItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.RawMaterialItem;
@@ -30,6 +30,7 @@ import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +40,7 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
     private ImageButton imgLogo;
     private TextView txtUserName;
     private TextView txtStockCode;
-    private TextInputEditText etSearch;
+    private EditText etSearch;
     private LinearLayout layoutSearch;
     private ProgressBar progressBar;
     private RecyclerView rvLots;
@@ -50,8 +51,7 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
     private RawMaterialItem rawMaterialItem;
 
     private LinearLayout layoutAmountInput;
-    private TextView tvLotInfo;
-    private TextInputEditText etAmount;
+    private EditText etAmount;
     private MaterialButton btnAdd;
     private LotItem selectedLot;
 
@@ -94,13 +94,11 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
 
     @Override
     public void onBackPressed() {
-        // Activity kapanırken tüm eklenen lotları gönder
-        if (!rawMaterialItem.getLots().isEmpty()) {
-            Intent intent = new Intent();
-            intent.putExtra("stockCode", stockCode);
-            intent.putExtra("lots", new ArrayList<>(rawMaterialItem.getLots()));
-            setResult(RESULT_OK, intent);
-        }
+        // Activity kapanırken tüm lotları gönder
+        Intent intent = new Intent();
+        intent.putExtra("stockCode", stockCode);
+        intent.putExtra("lots", new ArrayList<>(rawMaterialItem.getLots()));
+        setResult(RESULT_OK, intent);
         super.onBackPressed();
     }
 
@@ -111,10 +109,9 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
         etSearch = findViewById(R.id.et_search);
         layoutSearch = findViewById(R.id.layout_search);
         progressBar = findViewById(R.id.progress_bar);
-        rvLots = findViewById(R.id.rv_lots);
+        rvLots = findViewById(R.id.rv_lot_items);
 
         layoutAmountInput = findViewById(R.id.layout_amount_input);
-        tvLotInfo = findViewById(R.id.tv_lot_info);
         etAmount = findViewById(R.id.et_amount);
         btnAdd = findViewById(R.id.btn_add);
 
@@ -131,26 +128,28 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
         txtStockCode.setText(stockCode);
         imgLogo.setOnClickListener(v -> onBackPressed());
 
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        if (etSearch != null) {
+            etSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                fetchLots(s.toString());
-            }
-        });
+                @Override
+                public void afterTextChanged(Editable s) {
+                    fetchLots(s.toString());
+                }
+            });
 
-        etSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard();
-                return true;
-            }
-            return false;
-        });
+            etSearch.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard();
+                    return true;
+                }
+                return false;
+            });
+        }
 
         etAmount.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -238,6 +237,15 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
         }
     }
 
+    private void showLoading(boolean show) {
+        if (progressBar != null) {
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (rvLots != null) {
+            rvLots.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
     private void fetchLots(String search) {
         showLoading(true);
         apiInterface.getLotList(stockCode, search).enqueue(new Callback<List<LotItem>>() {
@@ -256,26 +264,11 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
         });
     }
 
-    private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        rvLots.setVisibility(show ? View.GONE : View.VISIBLE);
-    }
-
     @Override
     public void onLotSelected(LotItem lot) {
         selectedLot = lot;
-        tvLotInfo.setText(String.format("Lot No: %s\nSeri No: %s", lot.getLotNumber(), lot.getSerialNumber()));
-        etAmount.setText(String.format("%.2f", rawMaterialItem.getRemainingAmount()));
         layoutAmountInput.setVisibility(View.VISIBLE);
         layoutSearch.setVisibility(View.GONE);
-        showKeyboard();
-    }
-
-    private void showKeyboard() {
-        if (etAmount != null) {
-            etAmount.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
-        }
+        etAmount.setText(String.format(Locale.US, "%.2f", rawMaterialItem.getRemainingAmount()));
     }
 } 

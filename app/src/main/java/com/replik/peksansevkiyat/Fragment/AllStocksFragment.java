@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,10 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
     private MaterialButton btnAdd;
     private StockItem selectedStock;
     private ArrayList<String> existingStockCodes;
+    private ProgressBar progressBar;
+    private EditText etSearch;
+    private LinearLayout layoutSearch;
+    private List<StockItem> allStocks = new ArrayList<>();
 
     @Nullable
     @Override
@@ -67,6 +72,9 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
         layoutAmountInput = view.findViewById(R.id.layout_amount_input);
         etAmount = view.findViewById(R.id.et_amount);
         btnAdd = view.findViewById(R.id.btn_add);
+        progressBar = view.findViewById(R.id.progress_bar);
+        etSearch = view.findViewById(R.id.et_search);
+        layoutSearch = view.findViewById(R.id.layout_search);
 
         rvStockItems.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new StockAdapter(existingStockCodes);
@@ -76,6 +84,19 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
     private void setupViews() {
         adapter.setOnStockSelectedListener(this);
         
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                filterStocks(s.toString());
+            }
+        });
+
         etAmount.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard();
@@ -96,6 +117,24 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
         });
     }
 
+    private void filterStocks(String query) {
+        if (query.isEmpty()) {
+            adapter.setStocks(allStocks);
+            return;
+        }
+
+        List<StockItem> filteredList = new ArrayList<>();
+        String lowerQuery = query.toLowerCase();
+
+        for (StockItem stock : allStocks) {
+            if (stock.getStockCode().toLowerCase().contains(lowerQuery) ||
+                stock.getStockName().toLowerCase().contains(lowerQuery)) {
+                filteredList.add(stock);
+            }
+        }
+        adapter.setStocks(filteredList);
+    }
+
     private void returnResult(double amount) {
         if (getActivity() != null && selectedStock != null) {
             Intent intent = new Intent();
@@ -112,6 +151,7 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
             // Seçimi temizle ve formu gizle
             selectedStock = null;
             layoutAmountInput.setVisibility(View.GONE);
+            layoutSearch.setVisibility(View.VISIBLE);
             etAmount.setText("");
             adapter.clearSelection();
             
@@ -136,17 +176,30 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
         }
     }
 
+    private void showLoading(boolean show) {
+        if (progressBar != null) {
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (rvStockItems != null) {
+            rvStockItems.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
     private void fetchStocks() {
+        showLoading(true);
         apiInterface.getStockList().enqueue(new Callback<List<StockItem>>() {
             @Override
             public void onResponse(@NonNull Call<List<StockItem>> call, @NonNull Response<List<StockItem>> response) {
+                showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    adapter.setStocks(response.body());
+                    allStocks = response.body();
+                    adapter.setStocks(allStocks);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<StockItem>> call, @NonNull Throwable t) {
+                showLoading(false);
                 // Hata durumunda yapılacak işlemler
             }
         });
@@ -156,6 +209,7 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
     public void onStockSelected(StockItem stock) {
         selectedStock = stock;
         layoutAmountInput.setVisibility(View.VISIBLE);
+        layoutSearch.setVisibility(View.GONE);
         etAmount.setText("");
         showKeyboard();
     }

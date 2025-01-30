@@ -123,23 +123,26 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
             tvAmount.setText(String.format("%.2f Kg", stock.getAmount()));
 
             if (isDisabled) {
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.fragment_bg));
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
                 tvStockName.setTextColor(ContextCompat.getColor(context, R.color.black));
                 tvStockCode.setTextColor(ContextCompat.getColor(context, R.color.black));
                 tvAmount.setTextColor(ContextCompat.getColor(context, R.color.black));
                 cardView.setEnabled(false);
+                cardView.setAlpha(0.5f);
             } else if (isSelected) {
                 cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.replik));
                 tvStockName.setTextColor(ContextCompat.getColor(context, R.color.white_light));
                 tvStockCode.setTextColor(ContextCompat.getColor(context, R.color.white_light));
                 tvAmount.setTextColor(ContextCompat.getColor(context, R.color.white_light));
                 cardView.setEnabled(true);
+                cardView.setAlpha(1f);
             } else {
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white_light));
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
                 tvStockName.setTextColor(ContextCompat.getColor(context, R.color.black));
                 tvStockCode.setTextColor(ContextCompat.getColor(context, R.color.black));
                 tvAmount.setTextColor(ContextCompat.getColor(context, R.color.replik));
                 cardView.setEnabled(true);
+                cardView.setAlpha(1f);
             }
         }
     }
