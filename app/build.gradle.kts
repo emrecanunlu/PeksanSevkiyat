@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -7,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.replik.peksansevkiyat"
+        applicationId = "com.peksan.warehouse"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -44,7 +45,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     //implementation("com.android.support:cardview-v7:28.0.0")
-    implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("androidx.navigation:navigation-fragment:2.8.5")
     implementation("androidx.navigation:navigation-ui:2.8.5")
     implementation("androidx.activity:activity:1.8.0")

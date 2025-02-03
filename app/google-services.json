@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1067619521776",
-    "project_id": "peksansevkiyat-64678",
-    "storage_bucket": "peksansevkiyat-64678.firebasestorage.app"
+    "project_number": "910745141866",
+    "project_id": "peksan-sevkiyat-8773d",
+    "storage_bucket": "peksan-sevkiyat-8773d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1067619521776:android:bcf9333cbc100204c51e35",
+        "mobilesdk_app_id": "1:910745141866:android:317e309d230b6e341ac013",
         "android_client_info": {
-          "package_name": "com.replik.peksansevkiyat"
+          "package_name": "com.peksan.warehouse"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCnA1Rt50DcxvXXDzFeJ51j2rOk8_xveSM"
+          "current_key": "AIzaSyCSv3CzTK72Q6rWcw1YJLY0iRTiJJYazfI"
         }
       ],
       "services": {
