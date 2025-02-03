@@ -25,6 +25,7 @@ import com.replik.peksansevkiyat.DataClass.ModelDto.Seritra.spSeritraSingle;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.LotItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.StockLot;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Transfer.TransferRequest;
 
 import java.util.List;
 
@@ -182,5 +183,9 @@ public interface APIInterface {
         @Path("stockCode") String stockCode,
         @Query("search") String search
     );
+
+    @Headers({"CONNECT_TIMEOUT:60000", "READ_TIMEOUT:60000", "WRITE_TIMEOUT:60000"})
+    @POST("api/MaterialTransfer/TransferMaterial")
+    Call<Result> transferMaterial(@Body List<TransferRequest> request);
 }
 

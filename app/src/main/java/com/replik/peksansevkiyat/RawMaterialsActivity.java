@@ -2,24 +2,43 @@ package com.replik.peksansevkiyat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.replik.peksansevkiyat.Adapter.RawMaterialAdapter;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Result;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.LotItem;
 import com.replik.peksansevkiyat.DataClass.ModelDto.Stock.RawMaterialItem;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Transfer.TransferRequest;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Transfer.LineItem;
+import com.replik.peksansevkiyat.Interface.APIClient;
+import com.replik.peksansevkiyat.Interface.APIInterface;
+import com.replik.peksansevkiyat.Transection.Alert;
+import com.replik.peksansevkiyat.Transection.Dialog;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
+import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.widget.Toast;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class RawMaterialsActivity extends AppCompatActivity implements RawMaterialAdapter.OnItemClickListener {
     private ImageButton imgLogo;
@@ -28,6 +47,9 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
     private MaterialButton btnTransfer;
     private RecyclerView rvRawMaterials;
     private RawMaterialAdapter adapter;
+    private APIInterface apiInterface;
+    private ProgressDialog nDialog;
+    private AlertDialog alert;
 
     private final ActivityResultLauncher<Intent> stockListLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -41,9 +63,9 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
                     if (stockNames != null && stockCodes != null && amounts != null) {
                         for (int i = 0; i < stockCodes.size(); i++) {
                             RawMaterialItem item = new RawMaterialItem(
-                                stockCodes.get(i),
-                                stockNames.get(i),
-                                amounts[i]
+                                    stockCodes.get(i),
+                                    stockNames.get(i),
+                                    amounts[i]
                             );
                             adapter.addItem(item);
                         }
@@ -78,6 +100,12 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_raw_materials);
 
+        // API interface'ini başlat
+        apiInterface = APIClient.getRetrofit().create(APIInterface.class);
+
+        // Progress dialog'u başlat
+        nDialog = Dialog.getDialog(this, getString(R.string.loading));
+
         initializeViews();
         setupViews();
     }
@@ -94,6 +122,8 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
         adapter = new RawMaterialAdapter();
         adapter.setOnItemClickListener(this);
         rvRawMaterials.setAdapter(adapter);
+
+        nDialog = Dialog.getDialog(this, getString(R.string.loading));
     }
 
     private void setupViews() {
@@ -105,9 +135,11 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
             stockListLauncher.launch(intent);
         });
 
-        btnTransfer.setOnClickListener(v -> {
-            // TODO: Transfer işlemini burada yapacağız
-            Toast.makeText(this, "Transfer işlemi başlatılıyor...", Toast.LENGTH_SHORT).show();
+        btnTransfer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                transferMaterials();
+            }
         });
     }
 
@@ -130,6 +162,50 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
         }
 
         btnTransfer.setVisibility(allComplete ? View.VISIBLE : View.GONE);
+    }
+
+    private void transferMaterials() {
+        nDialog.show();
+
+        List<TransferRequest> transferRequests = adapter.getItems().stream()
+                .map(element -> new TransferRequest(
+                        element.getStockCode(),
+                        element.getLots().stream()
+                                .map(lot -> new LineItem(lot.getSerialNumber(), lot.getAmount()))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+
+        apiInterface.transferMaterial(transferRequests)
+                .enqueue(
+                        new Callback<Result>() {
+                            @Override
+                            public void onResponse(Call<Result> call, Response<Result> response) {
+                                nDialog.dismiss();
+
+
+                                if (response.body().getSuccess()) {
+                                    Toast.makeText(RawMaterialsActivity.this, getString(R.string.success), Toast.LENGTH_SHORT).show();
+
+                                    adapter.clearItems();
+                                    checkTransferButton();
+                                } else {
+                                    alert = Alert.getAlert(RawMaterialsActivity.this, getString(R.string.error), response.body().getMessage());
+                                    alert.show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Result> call, Throwable t) {
+                                nDialog.dismiss();
+
+                                alert = Alert.getAlert(RawMaterialsActivity.this,
+                                        getString(R.string.error),
+                                        "Bağlantı hatası: " + t.getMessage());
+                                alert.show();
+                            }
+                        }
+                );
     }
 
     @Override

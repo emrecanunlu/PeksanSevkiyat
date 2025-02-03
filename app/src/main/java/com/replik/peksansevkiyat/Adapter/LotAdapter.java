@@ -1,5 +1,6 @@
 package com.replik.peksansevkiyat.Adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class LotAdapter extends RecyclerView.Adapter<LotAdapter.ViewHolder> {
 
     public void setLots(List<LotItem> lots) {
         this.lots = lots;
+        selectedPosition = -1;
         notifyDataSetChanged();
     }
 
@@ -33,8 +35,9 @@ public class LotAdapter extends RecyclerView.Adapter<LotAdapter.ViewHolder> {
     }
 
     public void clearSelection() {
+        int oldPosition = selectedPosition;
         selectedPosition = -1;
-        notifyDataSetChanged();
+        notifyItemChanged(oldPosition);
     }
 
     @NonNull
@@ -47,46 +50,24 @@ public class LotAdapter extends RecyclerView.Adapter<LotAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LotItem lot = lots.get(position);
-        boolean isExisting = existingSerialNumbers.contains(lot.getSerialNumber());
-        boolean isSelected = position == selectedPosition;
-
-        holder.tvLotNumber.setText(lot.getLotNumber());
-        holder.tvSerialNumber.setText(lot.getSerialNumber());
-        holder.tvAmount.setText(String.format("%.2f Kg", lot.getAmount()));
-
-        if (isExisting) {
-            holder.tvLotNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
-            holder.tvSerialNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
-            holder.tvAmount.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
-            holder.itemView.setEnabled(false);
-            holder.itemView.setClickable(false);
-            holder.itemView.setAlpha(0.5f);
-        } else {
-            if (isSelected) {
-                holder.cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.replik));
-                holder.tvLotNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white));
-                holder.tvSerialNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white));
-                holder.tvAmount.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white));
-            } else {
-                holder.cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white));
-                holder.tvLotNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.black));
-                holder.tvSerialNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.black));
-                holder.tvAmount.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.replik));
-            }
-            holder.itemView.setEnabled(true);
-            holder.itemView.setClickable(true);
-            holder.itemView.setAlpha(1f);
-        }
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null && !isExisting) {
-                int oldPosition = selectedPosition;
-                selectedPosition = position;
-                notifyItemChanged(oldPosition);
+        boolean isDisabled = existingSerialNumbers.contains(lot.getSerialNumber());
+        holder.bind(lot, position == selectedPosition, isDisabled);
+        
+        if (!isDisabled) {
+            holder.cardView.setOnClickListener(v -> {
+                int previousSelected = selectedPosition;
+                selectedPosition = holder.getAdapterPosition();
+                
+                notifyItemChanged(previousSelected);
                 notifyItemChanged(selectedPosition);
-                listener.onLotSelected(lot);
-            }
-        });
+                
+                if (listener != null) {
+                    listener.onLotSelected(lot);
+                }
+            });
+        } else {
+            holder.cardView.setOnClickListener(null);
+        }
     }
 
     @Override
@@ -107,13 +88,44 @@ public class LotAdapter extends RecyclerView.Adapter<LotAdapter.ViewHolder> {
         TextView tvSerialNumber;
         TextView tvAmount;
         MaterialCardView cardView;
+        Context context;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+            context = itemView.getContext();
             tvLotNumber = itemView.findViewById(R.id.tv_lot_number);
             tvSerialNumber = itemView.findViewById(R.id.tv_serial_number);
             tvAmount = itemView.findViewById(R.id.tv_amount);
             cardView = itemView.findViewById(R.id.card_view);
+        }
+
+        public void bind(LotItem lot, boolean isSelected, boolean isDisabled) {
+            tvLotNumber.setText(lot.getLotNumber());
+            tvSerialNumber.setText(lot.getSerialNumber());
+            tvAmount.setText(String.format("%.2f Kg", lot.getAmount()));
+
+            if (isDisabled) {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                tvLotNumber.setTextColor(ContextCompat.getColor(context, R.color.black));
+                tvSerialNumber.setTextColor(ContextCompat.getColor(context, R.color.black));
+                tvAmount.setTextColor(ContextCompat.getColor(context, R.color.black));
+                cardView.setEnabled(false);
+                cardView.setAlpha(0.5f);
+            } else if (isSelected) {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.replik));
+                tvLotNumber.setTextColor(ContextCompat.getColor(context, R.color.white_light));
+                tvSerialNumber.setTextColor(ContextCompat.getColor(context, R.color.white_light));
+                tvAmount.setTextColor(ContextCompat.getColor(context, R.color.white_light));
+                cardView.setEnabled(true);
+                cardView.setAlpha(1f);
+            } else {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                tvLotNumber.setTextColor(ContextCompat.getColor(context, R.color.black));
+                tvSerialNumber.setTextColor(ContextCompat.getColor(context, R.color.black));
+                tvAmount.setTextColor(ContextCompat.getColor(context, R.color.replik));
+                cardView.setEnabled(true);
+                cardView.setAlpha(1f);
+            }
         }
     }
 } 

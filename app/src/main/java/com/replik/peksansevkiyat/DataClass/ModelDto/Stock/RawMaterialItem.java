@@ -42,7 +42,7 @@ public class RawMaterialItem {
 
     public void addLot(LotItem lot) {
         if (lots == null) {
-            lots = new ArrayList<>();
+            lots = new ArrayList<>();   
         }
         lots.add(lot);
     }

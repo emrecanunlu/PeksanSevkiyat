@@ -31,6 +31,7 @@ import com.replik.peksansevkiyat.Transection.GlobalVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -113,6 +114,9 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
 
         layoutAmountInput = findViewById(R.id.layout_amount_input);
         etAmount = findViewById(R.id.et_amount);
+        etAmount.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etAmount.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        etAmount.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
         btnAdd = findViewById(R.id.btn_add);
 
         apiInterface = APIClient.getRetrofit().create(APIInterface.class);
@@ -201,12 +205,17 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
             LotItem newLot = new LotItem(selectedLot.getSerialNumber(), selectedLot.getLotNumber(), amount);
             rawMaterialItem.addLot(newLot);
 
-            // Lot eklendikten sonra
-            List<String> existingSerialNumbers = new ArrayList<>();
-            for (LotItem lot : rawMaterialItem.getLots()) {
-                existingSerialNumbers.add(lot.getSerialNumber());
-            }
-            adapter.setExistingSerialNumbers(existingSerialNumbers);
+            // Lot eklendikten sonra adapter'ı güncelle
+            adapter.setExistingSerialNumbers(rawMaterialItem.getLots().stream()
+                    .map(LotItem::getSerialNumber)
+                    .collect(Collectors.toList()));
+            adapter.clearSelection();
+
+            // Form'u kapat ve search'i göster
+            hideKeyboard();
+            selectedLot = null;
+            layoutSearch.setVisibility(View.VISIBLE);
+            layoutAmountInput.setVisibility(View.GONE);
 
             // Debug için log ekleyelim
             double totalAmount = 0;
@@ -220,10 +229,6 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
             if (Math.abs(rawMaterialItem.getRemainingAmount()) < 0.001) {
                 Toast.makeText(this, "Stok miktarı tamamlandı", Toast.LENGTH_SHORT).show();
                 onBackPressed();
-            } else {
-                // Form'u kapat ve search'i göster
-                hideKeyboard();
-                selectedLot = null;
             }
         });
     }

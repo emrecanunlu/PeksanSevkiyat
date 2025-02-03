@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -73,8 +74,12 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager();
 
-        if (!checkPermission())
-            requestPer();
+
+        if (!checkPermission()) requestPer();
+
+        Intent intent = getIntent();
+
+        Log.i("From Notification", intent.getBooleanExtra("fromNotification", false) ? "VAR" : "YOK");
 
         lblVersion = findViewById(R.id.lblVersion);
         lblVersion.setText(GlobalVariable.apiVersion);
@@ -134,9 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 if (i != 0) {
                     SelectedPersonelId = personels.getPersonels().get(i - 1).getId();
                     SelectedPersonCode = Integer.valueOf(personels.getPersonels().get(i - 1).getStaffCode());
-                }
-
-                else {
+                } else {
                     SelectedPersonelId = -1;
                     SelectedPersonCode = -1;
                 }
@@ -213,30 +216,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     boolean checkPermission() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) +
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) + ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) + ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) + ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) + ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) + ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) + ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) + ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_GRANTED;
     }
 
     void requestPer() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            requestPermissions(new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                    Manifest.permission.INTERNET,
-                    Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.REQUEST_INSTALL_PACKAGES
-            }, 200);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH, Manifest.permission.REQUEST_INSTALL_PACKAGES}, 200);
 /*
         int permissionExternalMemory = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionExternalMemory != PackageManager.PERMISSION_GRANTED)
@@ -371,8 +356,7 @@ public class MainActivity extends AppCompatActivity {
             int printerNameNoIndex = cursor.getColumnIndex("printerName");
 
             while (cursor.moveToNext())
-                if (cursor.getString(apiUrlIndex).toString().equals(""))
-                    return false;
+                if (cursor.getString(apiUrlIndex).toString().equals("")) return false;
             return true;
         } else {
             database.execSQL("INSERT INTO Parameter (id, apiUrl, printerName) VALUES(1, '', '')");

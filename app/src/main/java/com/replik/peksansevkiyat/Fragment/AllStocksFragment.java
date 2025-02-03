@@ -71,6 +71,9 @@ public class AllStocksFragment extends Fragment implements StockAdapter.OnStockS
         rvStockItems = view.findViewById(R.id.rv_stock_items);
         layoutAmountInput = view.findViewById(R.id.layout_amount_input);
         etAmount = view.findViewById(R.id.et_amount);
+        etAmount.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etAmount.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        etAmount.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
         btnAdd = view.findViewById(R.id.btn_add);
         progressBar = view.findViewById(R.id.progress_bar);
         etSearch = view.findViewById(R.id.et_search);
