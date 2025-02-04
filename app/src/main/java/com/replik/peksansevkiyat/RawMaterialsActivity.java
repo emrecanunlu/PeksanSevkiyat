@@ -237,13 +237,31 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
 
     @Override
     public void onBackPressed() {
-        if (getIntent().getBooleanExtra("fromNotification", false)) {
-            Intent intent = new Intent(this, MenuActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+        if (adapter != null && adapter.getItemCount() > 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.warning))
+                   .setMessage("Transfer edilmemiş hammaddeler var. Çıkmak istediğinizden emin misiniz?")
+                   .setPositiveButton("Evet", (dialog, which) -> {
+                        if (getIntent().getBooleanExtra("fromNotification", false)) {
+                            Intent intent = new Intent(this, MenuActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            super.onBackPressed();
+                        }
+                   })
+                   .setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.dismiss())
+                   .show();
         } else {
-            super.onBackPressed();
+            if (getIntent().getBooleanExtra("fromNotification", false)) {
+                Intent intent = new Intent(this, MenuActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 } 
