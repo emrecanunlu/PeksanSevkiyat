@@ -156,13 +156,29 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (SelectedPersonelId != -1) {
-                    Intent i = new Intent(context, MenuActivity.class);
                     String userName = ddlUser.getSelectedItem().toString();
                     GlobalVariable.setUserName(userName);
                     GlobalVariable.setUserId(SelectedPersonelId);
                     GlobalVariable.setUserCode(SelectedPersonCode);
-                    //i.putExtra("userName", userName);
-                    startActivity(i);
+
+                    if (getIntent().getBooleanExtra("fromNotification", false)) {
+                        // Önce MenuActivity'yi başlat
+                        Intent menuIntent = new Intent(context, MenuActivity.class);
+                        menuIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(menuIntent);
+
+                        // Sonra RawMaterialsActivity'yi başlat
+                        Intent rawMaterialIntent = new Intent(context, RawMaterialsActivity.class);
+                        rawMaterialIntent.putExtra("notificationRawMaterials", getIntent().getSerializableExtra("notificationRawMaterials"));
+                        rawMaterialIntent.putExtra("fromNotification", true);
+                        startActivity(rawMaterialIntent);
+
+                        // MainActivity'yi kapat
+                        finish();
+                    } else {
+                        Intent i = new Intent(context, MenuActivity.class);
+                        startActivity(i);
+                    }
                 } else {
                     Toast.makeText(context, getString(R.string.please_select_user), Toast.LENGTH_LONG).show();
                 }

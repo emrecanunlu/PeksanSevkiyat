@@ -2,10 +2,11 @@ package com.replik.peksansevkiyat.DataClass.ModelDto.Stock;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RawMaterialItem {
+public class RawMaterialItem implements Serializable {
     @SerializedName("stokKodu")
     private String stockCode;
     

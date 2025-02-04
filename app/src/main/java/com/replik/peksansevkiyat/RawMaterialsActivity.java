@@ -108,6 +108,15 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
 
         initializeViews();
         setupViews();
+
+        // Bildirimden gelen verileri kontrol et
+        ArrayList<RawMaterialItem> notificationItems = (ArrayList<RawMaterialItem>) getIntent().getSerializableExtra("notificationRawMaterials");
+        if (notificationItems != null && !notificationItems.isEmpty()) {
+            for (RawMaterialItem item : notificationItems) {
+                adapter.addItem(item);
+            }
+            checkTransferButton();
+        }
     }
 
     private void initializeViews() {
@@ -128,7 +137,16 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
 
     private void setupViews() {
         txtUserName.setText(GlobalVariable.getUserName());
-        imgLogo.setOnClickListener(v -> onBackPressed());
+        imgLogo.setOnClickListener(v -> {
+            if (getIntent().getBooleanExtra("fromNotification", false)) {
+                Intent intent = new Intent(this, MenuActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            } else {
+                onBackPressed();
+            }
+        });
         btnAddNew.setOnClickListener(v -> {
             Intent intent = new Intent(this, RawMaterialStockListActivity.class);
             intent.putStringArrayListExtra("existingStockCodes", new ArrayList<>(adapter.getStockCodes()));
@@ -215,5 +233,17 @@ public class RawMaterialsActivity extends AppCompatActivity implements RawMateri
         intent.putExtra("stockAmount", item.getAmount());
         intent.putExtra("existingLots", new ArrayList<>(item.getLots()));
         lotListLauncher.launch(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getIntent().getBooleanExtra("fromNotification", false)) {
+            Intent intent = new Intent(this, MenuActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 } 
