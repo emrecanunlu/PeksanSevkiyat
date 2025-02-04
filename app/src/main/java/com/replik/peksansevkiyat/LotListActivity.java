@@ -28,6 +28,8 @@ import com.replik.peksansevkiyat.Interface.APIClient;
 import com.replik.peksansevkiyat.Interface.APIInterface;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -175,34 +177,35 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
                 return;
             }
 
-            double amount;
+            BigDecimal amount;
             try {
-                amount = Double.parseDouble(amountStr);
+                amount = new BigDecimal(amountStr).setScale(3, RoundingMode.HALF_UP);
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Geçersiz miktar formatı", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (amount <= 0) {
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 Toast.makeText(this, "Miktar 0'dan büyük olmalıdır", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Girilen miktar lot'un miktarından büyük olamaz kontrolü
-            if (amount > selectedLot.getAmount()) {
-                Toast.makeText(this, String.format("En fazla %.2f Kg ekleyebilirsiniz (Lot miktarı)", selectedLot.getAmount()), Toast.LENGTH_SHORT).show();
+            BigDecimal lotAmount = BigDecimal.valueOf(selectedLot.getAmount()).setScale(3, RoundingMode.HALF_UP);
+            if (amount.compareTo(lotAmount) > 0) {
+                Toast.makeText(this, String.format("En fazla %.3f Kg ekleyebilirsiniz (Lot miktarı)", lotAmount), Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Kalan miktar kontrolü
-            double remainingAmount = rawMaterialItem.getRemainingAmount();
-            if (amount > remainingAmount) {
-                Toast.makeText(this, String.format("En fazla %.2f Kg ekleyebilirsiniz (Kalan miktar)", remainingAmount), Toast.LENGTH_SHORT).show();
+            BigDecimal remainingAmount = BigDecimal.valueOf(rawMaterialItem.getRemainingAmount()).setScale(3, RoundingMode.HALF_UP);
+            if (amount.compareTo(remainingAmount) > 0) {
+                Toast.makeText(this, String.format("En fazla %.3f Kg ekleyebilirsiniz (Kalan miktar)", remainingAmount), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Yeni lot oluştur (mevcut lot'un kopyası)
-            LotItem newLot = new LotItem(selectedLot.getSerialNumber(), selectedLot.getLotNumber(), amount);
+            // Yeni lot oluştur
+            LotItem newLot = new LotItem(selectedLot.getSerialNumber(), selectedLot.getLotNumber(), amount.doubleValue());
             rawMaterialItem.addLot(newLot);
 
             // Lot eklendikten sonra adapter'ı güncelle
@@ -218,15 +221,19 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
             layoutAmountInput.setVisibility(View.GONE);
 
             // Debug için log ekleyelim
-            double totalAmount = 0;
-            for (LotItem lot : rawMaterialItem.getLots()) {
-                totalAmount += lot.getAmount();
-            }
-            android.util.Log.d("LotListActivity", String.format("StockCode: %s, NewLotAmount: %.2f, TotalAmount: %.2f, StockAmount: %.2f, RemainingAmount: %.2f",
-                stockCode, amount, totalAmount, stockAmount, rawMaterialItem.getRemainingAmount()));
+            BigDecimal totalAmount = rawMaterialItem.getLots().stream()
+                    .map(lot -> BigDecimal.valueOf(lot.getAmount()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .setScale(3, RoundingMode.HALF_UP);
+
+            BigDecimal stockAmountBD = BigDecimal.valueOf(stockAmount).setScale(3, RoundingMode.HALF_UP);
+            BigDecimal remainingAmountBD = stockAmountBD.subtract(totalAmount).setScale(3, RoundingMode.HALF_UP);
+
+            android.util.Log.d("LotListActivity", String.format("StockCode: %s, NewLotAmount: %.3f, TotalAmount: %.3f, StockAmount: %.3f, RemainingAmount: %.3f",
+                stockCode, amount, totalAmount, stockAmountBD, remainingAmountBD));
 
             // Kalan miktar 0 ise sayfayı kapat
-            if (Math.abs(rawMaterialItem.getRemainingAmount()) < 0.001) {
+            if (remainingAmountBD.abs().compareTo(new BigDecimal("0.001")) < 0) {
                 Toast.makeText(this, "Stok miktarı tamamlandı", Toast.LENGTH_SHORT).show();
                 onBackPressed();
             }
@@ -274,6 +281,8 @@ public class LotListActivity extends AppCompatActivity implements LotAdapter.OnL
         selectedLot = lot;
         layoutAmountInput.setVisibility(View.VISIBLE);
         layoutSearch.setVisibility(View.GONE);
-        etAmount.setText(String.format(Locale.US, "%.2f", rawMaterialItem.getRemainingAmount()));
+        BigDecimal remainingAmount = BigDecimal.valueOf(rawMaterialItem.getRemainingAmount())
+            .setScale(3, RoundingMode.HALF_UP);
+        etAmount.setText(String.format(Locale.US, "%.3f", remainingAmount));
     }
 } 
