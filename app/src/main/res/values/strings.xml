@@ -57,6 +57,8 @@
     <string name="quantity">Miktar</string>
     <string name="quantity2">Miktar2</string>
     <string name="error_pallet_barcode">Lütfen Palet Barkodu Okutunuz</string>
+    <string name="error_products_do_not_match">Ürünler Uyuşmuyor!</string>
+    <string name="error_palette_used">Bu Seri Zaten Girilmiş!</string>
     <string name="error_wrong_pallet">Seri Başka Palette Tanımlı</string>
     <string name="no">HAYIR</string>
     <string name="yes">EVET</string>
@@ -78,6 +80,7 @@
     <string name="question_order_finish">Sipariş Sevk Edilecek</string>
     <string name="question_order_shipping_add">Yeni Teslimat Bilgisi Oluşturulacak</string>
     <string name="question_pallet_print">Palet Etiketi Yazıdırılacak\nLütfen Yazıcınızı Kontrol Ediniz!</string>
+    <string name="question_pallet_will_be_added">Bu ürün zaten eklenmiş, tekrardan eklensin mi?</string>
     <string name="question_end">İşlem Sonlandırılacak</string>
     <string name="question_new_version">Yeni Versiyon Mevcut Kurulsun mu?</string>
     <string name="save">KAYDET</string>
