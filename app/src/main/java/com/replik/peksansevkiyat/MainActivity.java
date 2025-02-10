@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     APIInterface apiInterface;
-    ProgressDialog nDialog;
     AlertDialog alert;
 
     Context context = MainActivity.this;
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     Integer SelectedPersonCode = -1;
 
     private SQLiteDatabase database;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager();
 
+        progressBar = findViewById(R.id.progressBar);
 
         if (!checkPermission()) requestPer();
 
@@ -83,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         lblVersion = findViewById(R.id.lblVersion);
         lblVersion.setText(GlobalVariable.apiVersion);
-
-        nDialog = Dialog.getDialog(context, getString(R.string.loading));
 
         ddlUser = findViewById(R.id.ddlUser);
 
@@ -188,11 +188,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fnVersionControl() {
-        nDialog.show();
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        
         apiInterface.getApkVersion().enqueue(new Callback<ApkVersion>() {
             @Override
             public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
-                nDialog.hide();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                
                 if (response.isSuccessful()) {
                     if (!response.body().getVersion().equals(GlobalVariable.apiVersion)) {
                         fnNewVersionDownload(response.body().getUrl(), response.body().getDetail());
@@ -202,10 +208,12 @@ public class MainActivity extends AppCompatActivity {
                     alert.show();
                 }
             }
-
+            
             @Override
             public void onFailure(Call<ApkVersion> call, Throwable t) {
-                nDialog.hide();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -217,13 +225,13 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                nDialog.dismiss();
+                //nDialog.dismiss();
             }
         });
         builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                nDialog.hide();
+                //nDialog.hide();
                 DownloadApk downloadApk = new DownloadApk(context);
                 downloadApk.startDownloadingApk(url, "update");
             }
@@ -259,11 +267,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getPersonelList() {
-        nDialog.show();
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        
         apiInterface.getUserList().enqueue(new Callback<PersonelList>() {
             @Override
             public void onResponse(Call<PersonelList> call, Response<PersonelList> response) {
-                nDialog.hide();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                
                 if (response != null) {
                     if (response.body().getSuccess()) {
                         personels = response.body();
@@ -277,7 +291,6 @@ public class MainActivity extends AppCompatActivity {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         ddlUser.setAdapter(adapter);
                     } else {
-                        nDialog.hide();
                         alert = Alert.getAlert(context, getString(R.string.error), response.body().getMessage());
                         alert.show();
                     }
@@ -286,7 +299,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PersonelList> call, Throwable t) {
-                nDialog.hide();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                
                 alert = Alert.getAlert(context, getString(R.string.error), t.getMessage());
                 alert.show();
             }

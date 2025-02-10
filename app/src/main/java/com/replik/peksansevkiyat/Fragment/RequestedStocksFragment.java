@@ -137,10 +137,16 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
 
     private void returnResult(double amount) {
         if (getActivity() != null && selectedStock != null) {
+            // Seçilen stok koduna ait tüm miktarları topla
+            double totalAmount = allStocks.stream()
+                    .filter(stock -> stock.getStockCode().equals(selectedStock.getStockCode()))
+                    .mapToDouble(StockItem::getAmount)
+                    .sum();
+
             Intent intent = new Intent();
             intent.putExtra("stockName", selectedStock.getStockName());
             intent.putExtra("stockCode", selectedStock.getStockCode());
-            intent.putExtra("amount", amount);
+            intent.putExtra("amount", totalAmount);
 
             // Sonucu aktiviteye ekle
             ((RawMaterialStockListActivity) getActivity()).addResult(intent);
@@ -205,6 +211,13 @@ public class RequestedStocksFragment extends Fragment implements StockAdapter.On
         selectedStock = stock;
         layoutAmountInput.setVisibility(View.VISIBLE);
         layoutSearch.setVisibility(View.GONE);
-        etAmount.setText(String.format("%.2f", stock.getAmount()));
+        
+        // Seçilen stok koduna ait tüm miktarları topla
+        double totalAmount = allStocks.stream()
+                .filter(s -> s.getStockCode().equals(stock.getStockCode()))
+                .mapToDouble(StockItem::getAmount)
+                .sum();
+                
+        etAmount.setText(String.format("%.3f", totalAmount));
     }
 } 

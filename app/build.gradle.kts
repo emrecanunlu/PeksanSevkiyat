@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.peksan.warehouse"
+        applicationId = "com.replik.peksansevkiyat"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

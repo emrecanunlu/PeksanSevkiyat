@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:910745141866:android:317e309d230b6e341ac013",
+        "mobilesdk_app_id": "1:910745141866:android:fa0b84015a2859001ac013",
         "android_client_info": {
-          "package_name": "com.peksan.warehouse"
+          "package_name": "com.replik.peksansevkiyat"
         }
       },
       "oauth_client": [],
