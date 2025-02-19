@@ -43,7 +43,7 @@ public class GlobalVariable extends Application {
         apiUrl = url;
     }
 
-    public static String apiVersion = "1.0.49";
+    public static String apiVersion = "1.0.50";
 
     public static int userCode;
 
