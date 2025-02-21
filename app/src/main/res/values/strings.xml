@@ -32,6 +32,8 @@
     <string name="menu_shipment">SEVK İŞLEMLERİ</string>
     <string name="menu_settings">AYARLAR</string>
     <string name="menu_enumeration">SAYIM İŞLEMLERİ</string>
+    <string name="menu_raw_material_counting">HAMMADDE SAYIMI</string>
+    <string name="menu_consumable_counting">SARF SAYIMI</string>
     <string name="palette_add">PALET OLUŞTUR</string>
     <string name="palette_edit">PALET DÜZENLE</string>
     <string name="customer_list">CARİ LİSTESİ</string>

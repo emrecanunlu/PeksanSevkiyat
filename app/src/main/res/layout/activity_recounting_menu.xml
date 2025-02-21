@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/replik"
-    tools:context="com.replik.peksansevkiyat.MenuActivity">
+    tools:context=".OrderFinishActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -50,21 +50,9 @@
                     android:id="@+id/txtMenuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu"
+                    android:text="@string/menu_enumeration"
                     android:textColor="@color/white_light" />
             </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/imgSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/four"
-                android:layout_weight="0"
-                android:backgroundTint="@color/replik"
-                android:contentDescription="@string/empty"
-                app:srcCompat="@drawable/ic_icon_settings"
-                tools:ignore="SpeakableTextPresentCheck" />
-
         </LinearLayout>
 
         <ScrollView
@@ -81,60 +69,25 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/btnPaletteAdd"
+                    android:id="@+id/btnRawMaterialCounting"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy"
-                    android:text="@string/menu_palette"
+                    android:text="@string/menu_raw_material_counting"
                     app:cornerRadius="@dimen/fifteen"
                     app:strokeColor="@color/button_border"
                     app:strokeWidth="@dimen/one" />
 
                 <Button
-                    android:id="@+id/btnPaletteEdit"
+                    android:id="@+id/btnConsumableCounting"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/seventy"
                     android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_order"
+                    android:text="@string/menu_consumable_counting"
                     app:cornerRadius="@dimen/fifteen"
                     app:strokeColor="@color/button_border"
                     app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnShipment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_shipment"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnRawMaterial"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_raw_material"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-                <Button
-                    android:id="@+id/btnEnumeration"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/seventy"
-                    android:layout_marginTop="@dimen/ten"
-                    android:text="@string/menu_enumeration"
-                    app:cornerRadius="@dimen/fifteen"
-                    app:strokeColor="@color/button_border"
-                    app:strokeWidth="@dimen/one" />
-
-
 
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
