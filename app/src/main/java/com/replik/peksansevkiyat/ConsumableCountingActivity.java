@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 import android.widget.Toast;
 import android.widget.Button;
+import android.app.ProgressDialog;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -28,6 +29,18 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.replik.peksansevkiyat.Adapter.ConsumableLotAdapter;
 import com.replik.peksansevkiyat.Adapter.SelectionAdapter;
 import com.replik.peksansevkiyat.Transection.GlobalVariable;
+import com.replik.peksansevkiyat.Transection.Dialog;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Counting.CreateRecountRequest;
+import com.replik.peksansevkiyat.DataClass.ModelDto.Counting.BaseResponse;
+import com.replik.peksansevkiyat.Interface.CountingAPIInterface;
+import com.replik.peksansevkiyat.Interface.CountingAPIClient;
+
+import java.util.ArrayList;
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import com.google.gson.Gson;
 
 public class ConsumableCountingActivity extends AppCompatActivity implements SelectionAdapter.OnItemSelectedListener {
     private ImageButton imgLogo;
@@ -41,6 +54,7 @@ public class ConsumableCountingActivity extends AppCompatActivity implements Sel
     private RecyclerView rvLots;
     private ConsumableLotAdapter lotAdapter;
     private double totalStockQuantity = 0;
+    private ProgressDialog loader;
 
     private static final String TYPE_WAREHOUSE = "warehouse";
     private static final String TYPE_STOCK = "stock";
@@ -50,6 +64,7 @@ public class ConsumableCountingActivity extends AppCompatActivity implements Sel
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumable_counting);
 
+        loader = Dialog.getDialog(this, getString(R.string.loading));
         initializeViews();
         setupViews();
         setupActivityResultLauncher();
@@ -143,8 +158,92 @@ public class ConsumableCountingActivity extends AppCompatActivity implements Sel
         btnAdd.setOnClickListener(v -> showLotEntryDialog());
 
         btnConfirm.setOnClickListener(v -> {
-            // TODO: Onaylama işlemleri burada yapılacak
-            Toast.makeText(this, "Sayım onaylandı", Toast.LENGTH_SHORT).show();
+            // Onaylama işlemi için dialog göster
+            new AlertDialog.Builder(this)
+                .setTitle("Onaylama")
+                .setMessage("Sayımı onaylamak istediğinize emin misiniz?")
+                .setPositiveButton("Evet", (dialog, which) -> {
+                    // CreateRecountRequest nesnesini oluştur
+                    CreateRecountRequest request = new CreateRecountRequest();
+                    
+                    // Depo kodunu ayarla
+                    String warehouseCode = warehouseInput.getText().toString().split(" - ")[0];
+                    request.setDepoKodu(Integer.parseInt(warehouseCode));
+                    
+                    // Stok kodunu ayarla
+                    String stockCode = stockInput.getText().toString().split(" - ")[0];
+                    request.setStokKodu(stockCode);
+                    
+                    // Toplam miktarı ayarla
+                    request.setMiktar(totalStockQuantity);
+                    
+                    // Line items'ları ayarla
+                    List<CreateRecountRequest.RecountLineItem> lineItems = new ArrayList<>();
+                    for (ConsumableLotAdapter.LotItem item : lotAdapter.getItems()) {
+                        lineItems.add(new CreateRecountRequest.RecountLineItem(item.getQuantity(), item.getLotNumber()));
+                    }
+                    request.setLineItems(lineItems);
+                    
+                    // Loading dialog göster
+                    loader.show();
+                    
+                    // API çağrısını yap
+                    CountingAPIInterface apiInterface = CountingAPIClient.getRetrofit().create(CountingAPIInterface.class);
+                    apiInterface.createRecount(request).enqueue(new Callback<BaseResponse<Void>>() {
+                        @Override
+                        public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+                            loader.hide();
+                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                                Toast.makeText(ConsumableCountingActivity.this, getString(R.string.success), Toast.LENGTH_SHORT).show();
+                                clearLotList(); // Adapter'ı resetle
+                                warehouseInput.setText(""); // Depo seçimini temizle
+                                stockInput.setText(""); // Stok seçimini temizle
+                                quantityInput.setText(""); // Miktar girişini temizle
+                                updateInputStates(); // Input alanlarını aktif et
+                            } else {
+                                try {
+                                    if (response.errorBody() != null) {
+                                        BaseResponse<?> errorResponse = new Gson().fromJson(
+                                            response.errorBody().string(),
+                                            BaseResponse.class
+                                        );
+                                        String errorMessage = errorResponse != null && errorResponse.getMessage() != null 
+                                            ? errorResponse.getMessage() 
+                                            : getString(R.string.error_consumable_counting);
+                                        
+                                        new AlertDialog.Builder(ConsumableCountingActivity.this)
+                                            .setTitle(getString(R.string.error))
+                                            .setMessage(errorMessage)
+                                            .setPositiveButton(getString(R.string.close), null)
+                                            .show();
+                                    } else {
+                                        new AlertDialog.Builder(ConsumableCountingActivity.this)
+                                            .setTitle(getString(R.string.error))
+                                            .setMessage(getString(R.string.error_consumable_counting))
+                                            .setPositiveButton(getString(R.string.close), null)
+                                            .show();
+                                    }
+                                } catch (Exception e) {
+                                    new AlertDialog.Builder(ConsumableCountingActivity.this)
+                                        .setTitle(getString(R.string.error))
+                                        .setMessage(getString(R.string.error_consumable_counting))
+                                        .setPositiveButton(getString(R.string.close), null)
+                                        .show();
+                                }
+                            }
+                        }
+                        
+                        @Override
+                        public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+                            loader.hide();
+                            Toast.makeText(ConsumableCountingActivity.this, 
+                                "Bağlantı hatası: " + t.getMessage(), 
+                                Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Hayır", null)
+                .show();
         });
     }
 
@@ -259,21 +358,23 @@ public class ConsumableCountingActivity extends AppCompatActivity implements Sel
 
                 // Miktar validasyonu
                 if (quantityStr.isEmpty()) {
-                    Toast.makeText(this, "Miktar boş olamaz", Toast.LENGTH_SHORT).show();
+                    quantityLayout.setError("Miktar boş olamaz");
                     isValid = false;
                 } else {
                     try {
                         double quantity = Double.parseDouble(quantityStr);
                         
                         if (quantity <= 0) {
-                            Toast.makeText(this, "Miktar 0'dan büyük olmalıdır", Toast.LENGTH_SHORT).show();
+                            quantityLayout.setError("Miktar 0'dan büyük olmalıdır");
                             isValid = false;
                         } else if ((currentTotal + quantity) > totalStockQuantity) {
-                            Toast.makeText(this, "Toplam miktar stok miktarını aşamaz", Toast.LENGTH_SHORT).show();
+                            quantityLayout.setError("Toplam miktar stok miktarını aşamaz");
                             isValid = false;
+                        } else {
+                            quantityLayout.setError(null);
                         }
                     } catch (NumberFormatException e) {
-                        Toast.makeText(this, "Geçerli bir miktar giriniz", Toast.LENGTH_SHORT).show();
+                        quantityLayout.setError("Geçerli bir miktar giriniz");
                         isValid = false;
                     }
                 }

@@ -75,6 +75,9 @@ public class ConsumableLotAdapter extends RecyclerView.Adapter<ConsumableLotAdap
         if (position >= 0 && position < items.size()) {
             items.remove(position);
             notifyItemRemoved(position);
+            if (position < items.size()) {
+                notifyItemRangeChanged(position, items.size() - position);
+            }
         }
     }
 
