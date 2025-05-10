@@ -193,7 +193,7 @@ public class PaletteAdd extends AppCompatActivity {
             public void onResponse(Call<PalletContentResponse> call, Response<PalletContentResponse> response) {
                 loader.hide();
 
-                if (response.body().getSuccessfull()) {
+                if (response.code() == 200) {
 
                     Optional<PalletContent> productQuery = response.body().getData().stream().filter(x -> x.getSerialNo().equalsIgnoreCase(barcode)).findFirst();
 
@@ -202,7 +202,9 @@ public class PaletteAdd extends AppCompatActivity {
                         setListAdapter(products);
                     }
                 } else {
-                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), response.body().getMessage()).show();
+                    ErrorResult error = new Gson().fromJson(response.errorBody().charStream(), ErrorResult.class);
+
+                    Alert.getAlert(PaletteAdd.this, getString(R.string.error), error.getStatusCode() + ": " + error.getMessage()).show();
                 }
             }
 
